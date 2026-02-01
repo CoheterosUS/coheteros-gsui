@@ -5,7 +5,7 @@ import ChartAcceleration from '@/components/charts/chart-acceleration'
 import ChartVoltageTemperature from '@/components/charts/chart-voltage-temperature'
 import { useWebsocket } from '@/hooks/useWebsocket'
 import SerialStatus from '@/components/serial/serial-status'
-import TelemetryTable from '@/components/telemetry/telemetry-table'
+import Telemetry from '@/components/telemetry/telemetry'
 
 export default function DashboardPage () {
   const { data, status } = useWebsocket()
@@ -23,7 +23,7 @@ export default function DashboardPage () {
         >
           {
             data.length > 0 && (
-              <TelemetryTable
+              <Telemetry
                 data={data[data.length - 1]}
               />
             )

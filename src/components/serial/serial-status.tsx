@@ -9,7 +9,7 @@ export default function SerialStatus ({
 }: SerialStatusProps) {
   return (
     <div
-      className='w-full h-6 flex items-center justify-end px-1 bg-primary'
+      className='w-full h-6 flex items-center justify-end px-2 py-1 bg-primary'
     >
       <SerialConnectionIcon
         status={status}

@@ -1,14 +1,14 @@
-interface TelemetryTableHeaderProps {
+interface TelemetryHeaderProps {
+  timestamp: number
   batteryVoltage: number
   temperature: number
-  timestamp: number
 }
 
-export default function TelemetryTableHeader ({
+export default function TelemetryHeader ({
   timestamp,
   batteryVoltage,
   temperature
-}: TelemetryTableHeaderProps) {
+}: TelemetryHeaderProps) {
   return (
     <div
       className='flex justify-between text-sm'

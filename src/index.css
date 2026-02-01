@@ -19,6 +19,15 @@
 
   --color-battery: var(--color-yellow-400);
   --color-temperature: var(--color-red-400);
+
+  --color-acceleration: var(--color-green-400);
+  --color-gyroscope: var(--color-blue-400);
+  --color-status: var(--color-indigo-400);
+  --color-altitude: var(--color-purple-400);
+  --color-position: var(--color-teal-400);
+
+  --color-positive: var(--color-green-500);
+  --color-negative: var(--color-red-500);
 }
 
 *, html, body {

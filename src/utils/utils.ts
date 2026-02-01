@@ -4,78 +4,103 @@ export const paddings = {
   temperature: 5
 }
 
-export const telemetryFields = [
+export const telemetryTableFields: TelemetryTableStructure[] = [
   {
-    label: 'Timestamp',
-    value: (data: TelemetryPacket) => data.timestamp.toFixed(2)
+    name: 'ACCELERATION',
+    className: 'text-acceleration',
+    fields: [
+      {
+        label: 'ACCELERATION X',
+        value: (data: TelemetryPacket) => data.accelerationX.toFixed(2),
+        unit: 'm/s²'
+      },
+      {
+        label: 'ACCELERATION Y',
+        value: (data: TelemetryPacket) => data.accelerationY.toFixed(2),
+        unit: 'm/s²'
+      },
+      {
+        label: 'ACCELERATION Z',
+        value: (data: TelemetryPacket) => data.accelerationZ.toFixed(2),
+        unit: 'm/s²'
+      },
+      {
+        label: 'TOTAL ACCELERATION',
+        value: (data: TelemetryPacket) => data.totalAcceleration.toFixed(2),
+        unit: 'm/s²'
+      }
+    ]
   },
   {
-    label: 'Altitude (m)',
-    value: (data: TelemetryPacket) => data.altitude.toFixed(2)
+    name: 'GYROSCOPE',
+    className: 'text-gyroscope',
+    fields: [
+      {
+        label: 'GYROSCOPE X',
+        value: (data: TelemetryPacket) => data.gyroscopeX.toFixed(2),
+        unit: '°/s'
+      },
+      {
+        label: 'GYROSCOPE Y',
+        value: (data: TelemetryPacket) => data.gyroscopeY.toFixed(2),
+        unit: '°/s'
+      },
+      {
+        label: 'GYROSCOPE Z',
+        value: (data: TelemetryPacket) => data.gyroscopeZ.toFixed(2),
+        unit: '°/s'
+      }
+    ]
   },
   {
-    label: 'GPS Altitude (m)',
-    value: (data: TelemetryPacket) => data.gpsAltitude.toFixed(2)
+    name: 'STATUS',
+    className: 'text-status',
+    fields: [
+      {
+        label: 'FSM STATE',
+        value: (data: TelemetryPacket) => data.flightStatus
+      },
+      {
+        label: 'DROGUE',
+        value: () => 'DEPLOYED'
+      },
+      {
+        label: 'MAIN',
+        value: () => 'NOT DEPLOYED'
+      }
+    ]
   },
   {
-    label: 'Flight Status',
-    value: (data: TelemetryPacket) => data.flightStatus
+    name: 'ALTITUDE',
+    className: 'text-altitude',
+    fields: [
+      {
+        label: 'BAROMETRIC ALTITUDE',
+        value: (data: TelemetryPacket) => data.altitude.toFixed(2),
+        unit: 'm'
+      },
+      {
+        label: 'GPS ALTITUDE',
+        value: (data: TelemetryPacket) => data.gpsAltitude.toFixed(2),
+        unit: 'm'
+      }
+    ]
   },
   {
-    label: 'Acceleration X (m/s²)',
-    value: (data: TelemetryPacket) => data.accelerationX.toFixed(2)
-  },
-  {
-    label: 'Acceleration Y (m/s²)',
-    value: (data: TelemetryPacket) => data.accelerationY.toFixed(2)
-  },
-  {
-    label: 'Acceleration Z (m/s²)',
-    value: (data: TelemetryPacket) => data.accelerationZ.toFixed(2)
-  },
-  {
-    label: 'Total Acceleration (m/s²)',
-    value: (data: TelemetryPacket) => data.totalAcceleration.toFixed(2)
-  },
-  {
-    label: 'Gyroscope X (°/s)',
-    value: (data: TelemetryPacket) => data.gyroscopeX.toFixed(2)
-  },
-  {
-    label: 'Gyroscope Y (°/s)',
-    value: (data: TelemetryPacket) => data.gyroscopeY.toFixed(2)
-  },
-  {
-    label: 'Gyroscope Z (°/s)',
-    value: (data: TelemetryPacket) => data.gyroscopeZ.toFixed(2)
-  },
-  {
-    label: 'Roll (°)',
-    value: (data: TelemetryPacket) => data.roll.toFixed(2)
-  },
-  {
-    label: 'Pitch (°)',
-    value: (data: TelemetryPacket) => data.pitch.toFixed(2)
-  },
-  {
-    label: 'Yaw (°)',
-    value: (data: TelemetryPacket) => data.yaw.toFixed(2)
-  },
-  {
-    label: 'GPS Latitude (°)',
-    value: (data: TelemetryPacket) => data.gpsLatitude.toFixed(2)
-  },
-  {
-    label: 'GPS Longitude (°)',
-    value: (data: TelemetryPacket) => data.gpsLongitude.toFixed(2)
-  },
-  {
-    label: 'Battery Voltage (V)',
-    value: (data: TelemetryPacket) => data.batteryVoltage.toFixed(2)
-  },
-  {
-    label: 'Temperature (°C)',
-    value: (data: TelemetryPacket) => data.temperature.toFixed(2)
+    name: 'POSITION',
+    className: 'text-position',
+    fields: [
+      {
+        label: 'GPS LATITUDE',
+        value: (data: TelemetryPacket) => data.gpsLatitude.toFixed(6),
+        unit: '°'
+      },
+      {
+        label: 'GPS LONGITUDE',
+        value: (data: TelemetryPacket) => data.gpsLongitude.toFixed(6),
+        unit: '°'
+      }
+    ]
   }
 ]
 

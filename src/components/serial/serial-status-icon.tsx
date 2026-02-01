@@ -11,7 +11,7 @@ export default function SerialStatusIcon ({
   rate
 }: SerialStatusIconProps) {
   const arrowStyle = `
-    h-4
+    h-4 w-4
     ${direction === 'down' ? 'text-blue-500' : 'text-green-500 rotate-180'}
   `
 
