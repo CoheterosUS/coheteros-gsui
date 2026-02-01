@@ -14,7 +14,7 @@ export default function TelemetryHeader ({
       className='flex justify-between text-sm'
     >
       <p>
-        TIME: {new Date().toLocaleTimeString()}
+        LOCAL TIME: {new Date().toLocaleTimeString()}
       </p>
       <p
         className='text-battery'
@@ -27,7 +27,7 @@ export default function TelemetryHeader ({
         TEMPERATURE: {temperature.toFixed(2)} °C
       </p>
       <p>
-        TIMESTAMP: {timestamp.toFixed(2)}
+        TIMESTAMP: {timestamp.toFixed(2)} s
       </p>
     </div>
   )

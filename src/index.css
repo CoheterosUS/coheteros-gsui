@@ -25,9 +25,13 @@
   --color-status: var(--color-indigo-400);
   --color-altitude: var(--color-purple-400);
   --color-position: var(--color-teal-400);
+  --color-orientation: var(--color-pink-400);
 
   --color-positive: var(--color-green-500);
   --color-negative: var(--color-red-500);
+
+  --color-pitch: var(--color-red-300);
+  --color-roll: var(--color-blue-300);
 }
 
 *, html, body {
