@@ -7,7 +7,7 @@ export default function Sidebar () {
 
   return (
     <div
-      className='w-16 flex bg-primary'
+      className='w-14 flex flex-col items-center justify-between bg-primary'
     >
       <div
         className='w-full flex flex-col items-center'
@@ -22,6 +22,11 @@ export default function Sidebar () {
           ))
         }
       </div>
+      <img
+        src='/logo.png'
+        alt='Logo'
+        className='w-full h-auto p-3 aspect-square'
+      />
     </div>
   )
 }
