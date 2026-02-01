@@ -6,11 +6,15 @@ export default function ControlsPage () {
       className='h-screen flex bg-background'
     >
       <Sidebar />
-      <p
-        className='text-primary-foreground'
+      <div
+        className='p-2'
       >
-        CONTROLS
-      </p>
+        <p
+          className='text-primary-foreground'
+        >
+          CONTROLS
+        </p>
+      </div>
     </div>
   )
 }

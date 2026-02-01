@@ -47,7 +47,7 @@ export default function DashboardPage () {
           }
         </div>
         <div
-          className='h-2/3 grid grid-cols-2 grid-rows-2 gap-4 p-4'
+          className='h-2/3 grid grid-cols-2 grid-rows-2 gap-4 px-2 pb-2'
         >
           <ChartAltitude
             data={data}
