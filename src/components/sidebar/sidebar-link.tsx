@@ -1,0 +1,34 @@
+import { Link } from 'react-router'
+import type { LucideIcon } from 'lucide-react'
+
+interface SidebarLinkProps {
+  Icon: LucideIcon
+  href: string
+  label: string
+  selected?: boolean
+}
+
+export default function SidebarLink ({
+  Icon,
+  href,
+  label,
+  selected
+}: SidebarLinkProps) {
+  const linkStyles = `
+    w-full aspect-square flex justify-center items-center hover:bg-background
+    ${selected ? 'bg-background opacity-100' : 'opacity-60'}
+  `
+
+  return (
+    <Link
+      to={href}
+      title={label}
+      className={linkStyles}
+    >
+      <Icon
+        className='text-primary-foreground'
+        strokeWidth={1.5}
+      />
+    </Link>
+  )
+}

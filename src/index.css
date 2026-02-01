@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'suse';
+  src: url('/fonts/SUSE_Mono.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@theme {
+  --color-background: #0a0a0a;
+  --color-foreground: white;
+
+  --color-primary: #1a1a1a;
+  --color-primary-foreground: white;
+
+  --color-primary-muted: #2a2a2a;
+  --color-primary-muted-foreground: #cccccc;
+
+  --color-battery: var(--color-yellow-400);
+  --color-temperature: var(--color-red-400);
+}
+
+*, html, body {
+  font-family: 'suse', monospace;
+}
