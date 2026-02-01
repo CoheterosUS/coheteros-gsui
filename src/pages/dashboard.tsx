@@ -25,7 +25,7 @@ Chart.register(
 )
 
 export default function DashboardPage () {
-  const { data, status, downlink } = useWebsocket()
+  const { data, status, downlink, pps } = useWebsocket()
 
   return (
     <div
@@ -66,6 +66,7 @@ export default function DashboardPage () {
           status={status}
           downlink={downlink}
           uplink={0}
+          pps={pps}
         />
       </div>
     </div>

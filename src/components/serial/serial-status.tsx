@@ -1,17 +1,20 @@
 import SerialConnectionIcon from '@/components/serial/serial-connection-icon'
 import SerialStatusIcon from '@/components/serial/serial-status-icon'
+import SerialPacketsIcon from '@/components/serial/serial-packets-icon'
 import { WEBSOCKET_PORT } from '@/utils/utils'
 
 interface SerialStatusProps {
   status: string
   downlink: number
   uplink: number
+  pps: number
 }
 
 export default function SerialStatus ({
   status,
   downlink,
-  uplink
+  uplink,
+  pps
 }: SerialStatusProps) {
   return (
     <div
@@ -29,6 +32,9 @@ export default function SerialStatus ({
             />
           ))
         }
+        <SerialPacketsIcon
+          pps={pps}
+        />
       </div>
       <SerialConnectionIcon
         status={status}

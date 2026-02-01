@@ -16,15 +16,15 @@ export default function SerialStatusIcon ({
 
   return (
     <p
-      title={`${direction.toUpperCase()}LINK}`}
-      className='flex items-center justify-center gap-1'
+      title={`${direction.toUpperCase()}LINK`}
+      className='flex items-center justify-center gap-1 text-primary-muted-foreground'
     >
       <ArrowBigDown
         fill='currentColor'
         className={arrowStyle}
       />
       <span
-        className='text-xs text-primary-foreground'
+        className='text-xs'
       >
         {rate.toFixed(2)} KB/s
       </span>

@@ -7,6 +7,7 @@ export function useWebsocket (url: string = URL) {
   const [data, setData] = useState<TelemetryPacket[]>([])
   const [status, setStatus] = useState('disconnected')
   const [downlink, setDownlink] = useState(0)
+  const [pps, setPps] = useState(0)
 
   const websocketRef = useRef<WebSocket | null>(null)
   const reconnectTimeoutRef = useRef<number | null>(null)
@@ -14,6 +15,7 @@ export function useWebsocket (url: string = URL) {
 
   const lastTimestampRef = useRef<number>(Date.now())
   const totalBytesRef = useRef<number>(0)
+  const packetCountRef = useRef<number>(0)
 
   useEffect(() => {
     cleaningUpRef.current = false
@@ -86,14 +88,19 @@ export function useWebsocket (url: string = URL) {
         })
 
         totalBytesRef.current += getCalculatedDataSize(event)
+        packetCountRef.current += 1
         const deltaTime = (Date.now() - lastTimestampRef.current) / 1000
 
         if (deltaTime >= 1) {
           const speedKBs = (totalBytesRef.current / 1024) / deltaTime
+          const currentPps = packetCountRef.current / deltaTime
+
+          setPps(currentPps)
           setDownlink(speedKBs)
 
-          totalBytesRef.current = 0
           lastTimestampRef.current = Date.now()
+          totalBytesRef.current = 0
+          packetCountRef.current = 0
         }
       }
     }
@@ -119,6 +126,7 @@ export function useWebsocket (url: string = URL) {
   return {
     data,
     status,
-    downlink
+    downlink,
+    pps
   }
 }
