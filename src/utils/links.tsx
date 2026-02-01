@@ -4,16 +4,16 @@ export const links = [
   {
     Icon: ChartLine,
     href: '/',
-    label: 'Dashboard'
+    label: 'DASHBOARD'
   },
   {
     Icon: GamepadDirectional,
     href: '/controls',
-    label: 'Controls'
+    label: 'CONTROLS'
   },
   {
     Icon: Terminal,
     href: '/logs',
-    label: 'Logs'
+    label: 'LOGS'
   }
 ]

@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { links } from '@/utils/links'
 import SidebarLink from '@/components/sidebar/sidebar-link'
 
@@ -22,11 +22,16 @@ export default function Sidebar () {
           ))
         }
       </div>
-      <img
-        src='/logo.png'
-        alt='Logo'
-        className='w-full h-auto p-3 aspect-square'
-      />
+      <Link
+        to='https://coheteros.com'
+        target='_blank'
+      >
+        <img
+          src='/logo.png'
+          alt='Logo'
+          className='w-full h-auto p-3 aspect-square'
+        />
+      </Link>
     </div>
   )
 }
