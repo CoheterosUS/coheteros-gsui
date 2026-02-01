@@ -1,5 +1,9 @@
 import { Euler, MathUtils, Object3D } from 'three'
 
+export const WEBSOCKET_PORT = 8765
+export const MAX_DATA_POINTS = 50
+export const RECONNECT_INTERVAL = 3000
+
 export const paddings = {
   gyroscope: 50,
   voltage: 0.5,
@@ -156,14 +160,6 @@ export function getPaddedMinMax (
   }
 }
 
-export function getFirstCapitalized (str: string) {
-  if (str.length === 0) {
-    return str
-  }
-
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
 export function getCenteredMesh (obj: Object3D) {
   if (obj == null) {
     return
@@ -183,4 +179,18 @@ export function getOrientation (roll: number, pitch: number, yaw: number) {
     MathUtils.degToRad(roll),
     'YXZ'
   )
+}
+
+export function getCalculatedDataSize (event: MessageEvent) {
+  let byteLength = 0
+
+  if (typeof event.data === 'string') {
+    byteLength = new TextEncoder().encode(event.data).length
+  } else if (event.data instanceof Blob) {
+    byteLength = event.data.size
+  } else if (event.data instanceof ArrayBuffer) {
+    byteLength = event.data.byteLength
+  }
+
+  return byteLength
 }

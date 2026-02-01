@@ -1,12 +1,13 @@
 import { CircleCheck, CircleSlash, LoaderCircle } from 'lucide-react'
-import { getFirstCapitalized } from '@/utils/utils'
 
 interface SerialConnectionIconProps {
   status: string
+  port: number
 }
 
 export default function SerialConnectionIcon ({
-  status
+  status,
+  port
 }: SerialConnectionIconProps) {
   const iconStyle = `
     h-4 w-4
@@ -15,8 +16,20 @@ export default function SerialConnectionIcon ({
 
   return (
     <p
-      title={getFirstCapitalized(status)}
+      title={status.toUpperCase()}
+      className='flex items-center gap-2'
     >
+      <span
+        className='text-xs text-primary-muted-foreground'
+      >
+        {
+          status === 'connected' ? (
+            `:${port}`
+          ) : (
+            status.toUpperCase()
+          )
+        }
+      </span>
       {
         status === 'connected' ? (
           <CircleCheck

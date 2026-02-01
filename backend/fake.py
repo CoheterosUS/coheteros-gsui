@@ -6,7 +6,7 @@ import time
 import math
 
 PORT = 8765
-PACKET_FREQUENCY = 10
+PACKET_FREQUENCY = 20
 START_TIME = time.time()
 
 async def main ():

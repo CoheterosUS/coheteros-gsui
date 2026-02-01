@@ -32,6 +32,9 @@
 
   --color-pitch: var(--color-red-300);
   --color-roll: var(--color-blue-300);
+
+  --color-downlink: var(--color-blue-400);
+  --color-uplink: var(--color-green-400);
 }
 
 *, html, body {

@@ -1,4 +1,3 @@
-import { getFirstCapitalized } from '@/utils/utils'
 import { ArrowBigDown } from 'lucide-react'
 
 interface SerialStatusIconProps {
@@ -12,23 +11,23 @@ export default function SerialStatusIcon ({
 }: SerialStatusIconProps) {
   const arrowStyle = `
     h-4 w-4
-    ${direction === 'down' ? 'text-blue-500' : 'text-green-500 rotate-180'}
+    ${direction === 'down' ? 'text-downlink' : 'text-uplink rotate-180'}
   `
 
   return (
-    <div
-      title={getFirstCapitalized(`${direction}link`)}
-      className='flex items-center justify-center'
+    <p
+      title={`${direction.toUpperCase()}LINK}`}
+      className='flex items-center justify-center gap-1'
     >
       <ArrowBigDown
         fill='currentColor'
         className={arrowStyle}
       />
-      <p
-        className='text-sm text-primary-foreground'
+      <span
+        className='text-xs text-primary-foreground'
       >
         {rate.toFixed(2)} KB/s
-      </p>
-    </div>
+      </span>
+    </p>
   )
 }

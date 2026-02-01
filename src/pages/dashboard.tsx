@@ -7,8 +7,25 @@ import { useWebsocket } from '@/hooks/useWebsocket'
 import SerialStatus from '@/components/serial/serial-status'
 import Telemetry from '@/components/telemetry/telemetry'
 
+import {
+  Chart,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Legend
+} from 'chart.js'
+
+Chart.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Legend
+)
+
 export default function DashboardPage () {
-  const { data, status } = useWebsocket()
+  const { data, status, downlink } = useWebsocket()
 
   return (
     <div
@@ -47,6 +64,8 @@ export default function DashboardPage () {
         </div>
         <SerialStatus
           status={status}
+          downlink={downlink}
+          uplink={0}
         />
       </div>
     </div>

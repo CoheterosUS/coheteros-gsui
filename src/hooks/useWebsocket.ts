@@ -1,16 +1,19 @@
-import { useEffect, useRef, useCallback, useState } from 'react'
+import { getCalculatedDataSize, MAX_DATA_POINTS, RECONNECT_INTERVAL, WEBSOCKET_PORT } from '@/utils/utils'
+import { useEffect, useRef, useState } from 'react'
 
-const URL = 'ws://localhost:8765/'
-const MAX_DATA_POINTS = 50
-const RECONNECT_INTERVAL = 3000
+const URL = `ws://localhost:${WEBSOCKET_PORT}`
 
 export function useWebsocket (url: string = URL) {
   const [data, setData] = useState<TelemetryPacket[]>([])
   const [status, setStatus] = useState('disconnected')
+  const [downlink, setDownlink] = useState(0)
 
   const websocketRef = useRef<WebSocket | null>(null)
   const reconnectTimeoutRef = useRef<number | null>(null)
   const cleaningUpRef = useRef(false)
+
+  const lastTimestampRef = useRef<number>(Date.now())
+  const totalBytesRef = useRef<number>(0)
 
   useEffect(() => {
     cleaningUpRef.current = false
@@ -81,6 +84,17 @@ export function useWebsocket (url: string = URL) {
 
           return updated
         })
+
+        totalBytesRef.current += getCalculatedDataSize(event)
+        const deltaTime = (Date.now() - lastTimestampRef.current) / 1000
+
+        if (deltaTime >= 1) {
+          const speedKBs = (totalBytesRef.current / 1024) / deltaTime
+          setDownlink(speedKBs)
+
+          totalBytesRef.current = 0
+          lastTimestampRef.current = Date.now()
+        }
       }
     }
 
@@ -104,6 +118,7 @@ export function useWebsocket (url: string = URL) {
 
   return {
     data,
-    status
+    status,
+    downlink
   }
 }
