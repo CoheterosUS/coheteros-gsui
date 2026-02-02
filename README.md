@@ -1,10 +1,14 @@
 <p align="center">
-  <img src="https://github.com/CoheterosUS/coheteros-gsui/blob/main/assets/logo.png" width="150" />
+  <img src="https://github.com/CoheterosUS/coheteros-gsui-continued/blob/main/public/logo.png" width="150" />
 </p>
 
 <h3 align="center">
   Coheteros US Ground Station
 </h3>
+
+<p align="center">
+  <img src="https://github.com/CoheterosUS/coheteros-gsui-continued/blob/main/public/screenshot.png" />
+</p>
 
 #### Installation
 
