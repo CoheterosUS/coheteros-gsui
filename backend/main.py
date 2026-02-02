@@ -1,0 +1,95 @@
+import asyncio
+import json
+import uvicorn
+
+from os import getenv
+from dotenv import load_dotenv
+
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+
+from src.utils.fake import create_fake_data
+from src.utils.serial import get_serial_ports
+from src.state.state import WebsocketState
+
+import src.commands.start_fake_packets
+import src.commands.stop_fake_packets
+import src.commands.deploy_parachute
+
+load_dotenv()
+
+PORT = int(getenv("VITE_WS_PORT", 8000))
+PACKET_FREQUENCY = 20
+
+app = FastAPI()
+
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins=["*"],
+  allow_credentials=True,
+  allow_methods=["*"],
+  allow_headers=["*"]
+)
+
+commands = {
+  "START_FAKE_PACKETS": src.commands.start_fake_packets,
+  "STOP_FAKE_PACKETS": src.commands.stop_fake_packets,
+  "DEPLOY_PARACHUTE": src.commands.deploy_parachute
+}
+
+@app.get("/ports")
+async def get_serial():
+  return get_serial_ports()
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+  await websocket.accept()
+  state = WebsocketState()
+
+  async def send_packets():
+    while True:
+      if state.send_fake_packets:
+        fake_data = create_fake_data()
+        fake_packet = {
+          "type": "TELEMETRY_PACKET",
+          "data": fake_data
+        }
+
+        await websocket.send_text(json.dumps(fake_packet))
+      await asyncio.sleep(1 / PACKET_FREQUENCY)
+
+  async def receive_packets():
+    try:
+      async for message in websocket.iter_text():
+        await handle_command(message)
+    except WebSocketDisconnect:
+      pass
+
+  async def handle_command (message: str):
+    try:
+      json_msg = json.loads(message)
+      command_type = json_msg.get("type")
+      command_data = json_msg.get("data", None)
+
+      print(f"RECEIVED COMMAND: {command_type} | DATA: {command_data}")
+      if command_type in commands:
+        await commands[command_type].execute(websocket, command_data, state)
+      else:
+        print(f"UNKNOWN COMMAND: {command_type}")
+    except json.JSONDecodeError:
+      print("INVALID JSON")
+      pass
+
+  send_task = asyncio.create_task(send_packets())
+  receive_task = asyncio.create_task(receive_packets())
+
+  _, pending = await asyncio.wait(
+    [send_task, receive_task],
+    return_when=asyncio.FIRST_COMPLETED
+  )
+
+  for task in pending:
+    task.cancel()
+
+if __name__ == "__main__":
+  uvicorn.run(app, host="localhost", port=PORT)

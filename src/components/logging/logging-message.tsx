@@ -1,19 +1,19 @@
 interface LoggingMessageProps {
-  packet: TelemetryPacket
+  data: TelemetryData
 }
 
 export default function LoggingMessage ({
-  packet
+  data
 }: LoggingMessageProps) {
   return (
     <div
-      className='flex gap-6 text-primary-muted-foreground whitespace-nowrap'
+      className='flex gap-6 text-primary-muted-foreground'
     >
       <span>
-        {packet.timestamp.toFixed(2)}
+        {data.timestamp.toFixed(2)}s
       </span>
       <span>
-        {JSON.stringify(packet)}
+        {JSON.stringify(data)}
       </span>
     </div>
   )

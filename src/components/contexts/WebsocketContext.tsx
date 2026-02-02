@@ -1,13 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react'
 import { useWebsocket } from '@/hooks/useWebsocket'
 
-interface WebsocketContextType {
-  data: TelemetryPacket[]
-  status: string
-  downlink: number
-  pps: number
-}
-
 interface WebsocketProviderProps {
   children: ReactNode
 }
@@ -20,7 +13,9 @@ export function WebsocketProvider ({
   const websocketState = useWebsocket()
 
   return (
-    <WebsocketContext.Provider value={websocketState}>
+    <WebsocketContext.Provider
+      value={websocketState}
+    >
       {children}
     </WebsocketContext.Provider>
   )

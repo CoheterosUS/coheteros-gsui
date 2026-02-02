@@ -1,4 +1,4 @@
 @echo off
-python -m venv .venv
-call activate.bat
+call ..\.venv\Scripts\activate.bat
+cd backend
 pip install -r requirements.txt

@@ -4,7 +4,7 @@ import VisualizerScene from '@/components/visualizer/visualizer-scene'
 import { telemetryTableFields } from '@/utils/utils'
 
 interface TelemetryProps {
-  data: TelemetryPacket
+  data: TelemetryData
 }
 
 export default function Telemetry ({
@@ -12,7 +12,7 @@ export default function Telemetry ({
 }: TelemetryProps) {
   return (
     <div
-      className='h-full flex flex-col gap-2 p-2 text-primary-foreground'
+      className='flex flex-col gap-2 p-2 text-primary-foreground'
     >
       <TelemetryHeader
         timestamp={data.timestamp}
@@ -20,10 +20,10 @@ export default function Telemetry ({
         temperature={data.temperature}
       />
       <div
-        className='h-full flex gap-1'
+        className='flex flex-1 gap-1'
       >
         <div
-          className='flex-1 grid grid-cols-3 gap-1'
+          className='grid flex-1 grid-cols-3 gap-1'
         >
           {
             telemetryTableFields.map((table) => (

@@ -31,8 +31,7 @@ Start backend:
 
 ```bash
 cd backend
-activate.bat
-python fake.py
+run.bat
 ```
 
 Start frontend:
@@ -48,8 +47,7 @@ Start backend:
 
 ```bash
 cd backend
-activate.bat
-python fake.py
+run.bat
 ```
 
 Start frontend:

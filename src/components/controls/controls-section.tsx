@@ -11,7 +11,7 @@ export default function ControlsSection ({
 }: ControlsSectionProps) {
   return (
     <div
-      className='flex flex-col gap-2 p-2 border-b-2 border-primary-muted'
+      className='flex flex-col gap-2 p-4 border-b-2 border-primary-muted'
     >
       <p
         className='text-primary-foreground'
@@ -19,7 +19,7 @@ export default function ControlsSection ({
         {title}
       </p>
       <div
-        className='flex flex-row gap-2'
+        className='flex gap-2'
       >
         {children}
       </div>

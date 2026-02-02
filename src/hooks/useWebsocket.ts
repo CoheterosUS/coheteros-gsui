@@ -1,12 +1,12 @@
-import { getCalculatedDataSize, MAX_DATA_POINTS, RECONNECT_INTERVAL, WEBSOCKET_PORT } from '@/utils/utils'
 import { useEffect, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
+import { getCalculatedDataSize } from '@/utils/utils'
+import { WS_URL, RECONNECT_INTERVAL, MAX_DATA_POINTS } from '@/utils/config'
 
-const URL = `ws://localhost:${WEBSOCKET_PORT}`
-
-export function useWebsocket (url: string = URL) {
-  const [data, setData] = useState<TelemetryPacket[]>([])
+export function useWebsocket (url: string = WS_URL): WebsocketContextType {
+  const [data, setData] = useState<TelemetryData[]>([])
   const [status, setStatus] = useState('disconnected')
-  const [downlink, setDownlink] = useState(0)
+  const [rate, setRate] = useState(0)
   const [pps, setPps] = useState(0)
 
   const websocketRef = useRef<WebSocket | null>(null)
@@ -54,6 +54,9 @@ export function useWebsocket (url: string = URL) {
 
         if (!cleaningUpRef.current && reconnectTimeoutRef.current == null) {
           setStatus('disconnected')
+          setRate(0)
+          setPps(0)
+
           reconnectTimeoutRef.current = setTimeout(() => {
             console.log('WS: Reconnecting')
             setStatus('reconnecting')
@@ -76,39 +79,52 @@ export function useWebsocket (url: string = URL) {
           return
         }
 
-        const packet: TelemetryPacket = JSON.parse(event.data)
+        const packet: WebsocketPacket = JSON.parse(event.data)
 
-        setData(prev => {
-          const updated = [...prev, packet]
-          if (updated.length > MAX_DATA_POINTS) {
-            updated.shift()
-          }
+        switch (packet.type) {
+          case 'TELEMETRY_PACKET':
+            setData(prev => {
+              const updated = [...prev, packet.data]
+              if (updated.length > MAX_DATA_POINTS) {
+                updated.shift()
+              }
 
-          return updated
-        })
+              return updated
+            })
+          break
+          case 'NOTIFICATION_PACKET':
+            console.log('WS: Notification', packet.data)
+            toast(packet.data)
+          break
+        }
 
         totalBytesRef.current += getCalculatedDataSize(event)
         packetCountRef.current += 1
-        const deltaTime = (Date.now() - lastTimestampRef.current) / 1000
-
-        if (deltaTime >= 1) {
-          const speedKBs = (totalBytesRef.current / 1024) / deltaTime
-          const currentPps = packetCountRef.current / deltaTime
-
-          setPps(currentPps)
-          setDownlink(speedKBs)
-
-          lastTimestampRef.current = Date.now()
-          totalBytesRef.current = 0
-          packetCountRef.current = 0
-        }
       }
     }
+
+    const interval = setInterval(() => {
+      const now = Date.now()
+      const elapsedSeconds = (now - lastTimestampRef.current) / 1000
+
+      if (elapsedSeconds >= 1) {
+        const currentRate = totalBytesRef.current / 1024 / elapsedSeconds
+        const currentPps = packetCountRef.current / elapsedSeconds
+
+        setRate(currentRate)
+        setPps(currentPps)
+
+        totalBytesRef.current = 0
+        packetCountRef.current = 0
+        lastTimestampRef.current = now
+      }
+    }, 1000)
 
     connectWebsocket()
 
     return () => {
       cleaningUpRef.current = true
+      clearInterval(interval)
 
       if (reconnectTimeoutRef.current != null) {
         clearTimeout(reconnectTimeoutRef.current)
@@ -123,10 +139,18 @@ export function useWebsocket (url: string = URL) {
     }
   }, [url])
 
+  const sendCommand = (command: Command) => {
+    const ws = websocketRef.current
+    if (ws != null && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(command))
+    }
+  }
+
   return {
     data,
     status,
-    downlink,
-    pps
+    rate,
+    pps,
+    sendCommand
   }
 }

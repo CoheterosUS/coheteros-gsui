@@ -1,27 +1,33 @@
 import { useWebsocketContext } from '@/components/contexts/WebsocketContext'
-import Sidebar from '@/components/sidebar/sidebar'
-import SerialStatus from '@/components/serial/serial-status'
 import Logging from '@/components/logging/logging'
+import { MAX_DATA_POINTS } from '@/utils/config'
 
 export default function LoggingPage () {
-  const { data, status, downlink, pps } = useWebsocketContext()
+  const { data } = useWebsocketContext()
 
   return (
     <div
-      className='w-full h-screen flex bg-background'
+      className='h-full flex flex-col'
     >
-      <Sidebar />
-      <div
-        className='w-full h-full flex flex-col overflow-hidden pb-6'
+      <p
+        className='px-4 pt-4 text-xl text-primary-foreground'
       >
+        LOGGING
+      </p>
+      <div
+        className='flex-1 overflow-y-auto'
+      >
+        {
+          data.length >= MAX_DATA_POINTS && (
+            <p
+              className='px-4 pt-4 text-xs text-primary-muted-foreground'
+            >
+              Displaying latest {MAX_DATA_POINTS} packets
+            </p>
+          )
+        }
         <Logging
           data={data}
-        />
-        <SerialStatus
-          status={status}
-          downlink={downlink}
-          uplink={0}
-          pps={pps}
         />
       </div>
     </div>

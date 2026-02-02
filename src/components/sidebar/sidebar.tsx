@@ -7,7 +7,7 @@ export default function Sidebar () {
 
   return (
     <div
-      className='min-w-14 w-14 h-full flex flex-col items-center justify-between bg-primary pb-6'
+      className='min-w-14 w-14 h-full flex flex-col items-center justify-between bg-primary'
     >
       <div
         className='w-full flex flex-col items-center'

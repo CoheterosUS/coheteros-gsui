@@ -14,9 +14,7 @@ export default function VisualizerScene ({
   yaw
 }: VisualizerSceneProps) {
   return (
-    <div
-      className='w-1/3'
-    >
+    <div>
       <Canvas
         camera={{
           position: [3, 4, 3],
@@ -36,6 +34,7 @@ export default function VisualizerScene ({
         />
         <OrbitControls
           enablePan={false}
+          enableDamping={false}
           enableZoom={true}
           minDistance={1}
           maxDistance={8}

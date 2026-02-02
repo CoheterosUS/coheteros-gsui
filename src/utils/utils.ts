@@ -1,9 +1,5 @@
 import { Euler, MathUtils, Object3D } from 'three'
 
-export const WEBSOCKET_PORT = 8765
-export const MAX_DATA_POINTS = 50
-export const RECONNECT_INTERVAL = 5000
-
 export const paddings = {
   gyroscope: 50,
   voltage: 0.5,
@@ -17,7 +13,7 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'FSM STATE',
-        value: (data: TelemetryPacket) => data.flightStatus
+        value: (data: TelemetryData) => data.flightStatus
       },
       {
         label: 'DROGUE',
@@ -35,12 +31,12 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'BAROMETRIC ALTITUDE',
-        value: (data: TelemetryPacket) => data.altitude.toFixed(2),
+        value: (data: TelemetryData) => data.altitude.toFixed(2),
         unit: 'm'
       },
       {
         label: 'GPS ALTITUDE',
-        value: (data: TelemetryPacket) => data.gpsAltitude.toFixed(2),
+        value: (data: TelemetryData) => data.gpsAltitude.toFixed(2),
         unit: 'm'
       }
     ]
@@ -51,12 +47,12 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'GPS LATITUDE',
-        value: (data: TelemetryPacket) => data.gpsLatitude.toFixed(6),
+        value: (data: TelemetryData) => data.gpsLatitude.toFixed(6),
         unit: '°'
       },
       {
         label: 'GPS LONGITUDE',
-        value: (data: TelemetryPacket) => data.gpsLongitude.toFixed(6),
+        value: (data: TelemetryData) => data.gpsLongitude.toFixed(6),
         unit: '°'
       }
     ]
@@ -67,17 +63,17 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'ROLL',
-        value: (data: TelemetryPacket) => data.roll.toFixed(2),
+        value: (data: TelemetryData) => data.roll.toFixed(2),
         unit: '°'
       },
       {
         label: 'PITCH',
-        value: (data: TelemetryPacket) => data.pitch.toFixed(2),
+        value: (data: TelemetryData) => data.pitch.toFixed(2),
         unit: '°'
       },
       {
         label: 'YAW',
-        value: (data: TelemetryPacket) => data.yaw.toFixed(2),
+        value: (data: TelemetryData) => data.yaw.toFixed(2),
         unit: '°'
       }
     ]
@@ -88,22 +84,22 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'ACCELERATION X',
-        value: (data: TelemetryPacket) => data.accelerationX.toFixed(2),
+        value: (data: TelemetryData) => data.accelerationX.toFixed(2),
         unit: 'm/s²'
       },
       {
         label: 'ACCELERATION Y',
-        value: (data: TelemetryPacket) => data.accelerationY.toFixed(2),
+        value: (data: TelemetryData) => data.accelerationY.toFixed(2),
         unit: 'm/s²'
       },
       {
         label: 'ACCELERATION Z',
-        value: (data: TelemetryPacket) => data.accelerationZ.toFixed(2),
+        value: (data: TelemetryData) => data.accelerationZ.toFixed(2),
         unit: 'm/s²'
       },
       {
         label: 'TOTAL ACCELERATION',
-        value: (data: TelemetryPacket) => data.totalAcceleration.toFixed(2),
+        value: (data: TelemetryData) => data.totalAcceleration.toFixed(2),
         unit: 'm/s²'
       }
     ]
@@ -114,17 +110,17 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'GYROSCOPE X',
-        value: (data: TelemetryPacket) => data.gyroscopeX.toFixed(2),
+        value: (data: TelemetryData) => data.gyroscopeX.toFixed(2),
         unit: '°/s'
       },
       {
         label: 'GYROSCOPE Y',
-        value: (data: TelemetryPacket) => data.gyroscopeY.toFixed(2),
+        value: (data: TelemetryData) => data.gyroscopeY.toFixed(2),
         unit: '°/s'
       },
       {
         label: 'GYROSCOPE Z',
-        value: (data: TelemetryPacket) => data.gyroscopeZ.toFixed(2),
+        value: (data: TelemetryData) => data.gyroscopeZ.toFixed(2),
         unit: '°/s'
       }
     ]
@@ -132,7 +128,7 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
 ]
 
 export function getPaddedMinMax (
-  data: TelemetryPacket[],
+  data: TelemetryData[],
   keys: string[],
   padding = 0
 ) {
@@ -148,7 +144,7 @@ export function getPaddedMinMax (
 
   for (const point of data) {
     for (const key of keys) {
-      const value = point[key as keyof TelemetryPacket]
+      const value = point[key as keyof TelemetryData]
       if (value < min) min = value
       if (value > max) max = value
     }

@@ -1,4 +1,13 @@
-interface TelemetryPacket {
+type WebsocketPacketType =
+  | 'TELEMETRY_PACKET'
+  | 'NOTIFICATION_PACKET'
+
+interface WebsocketPacket {
+  type: WebsocketPacketType
+  data: any
+}
+
+interface TelemetryData {
   timestamp: number
   altitude: number
   gpsAltitude: number
@@ -23,7 +32,7 @@ interface TelemetryPacket {
 }
 
 interface ChartComponentProps {
-  data: TelemetryPacket[]
+  data: TelemetryData[]
 }
 
 interface TelemetryTableStructure {
@@ -34,7 +43,7 @@ interface TelemetryTableStructure {
 
 interface TelemetryTableStructureField {
   label: string
-  value: (data: TelemetryPacket) => string | number
+  value: (data: TelemetryData) => string | number
   unit?: string
   className?: string
 }
@@ -44,4 +53,22 @@ interface TelemetryTableFieldProps {
   value: string | number
   unit?: string
   className?: string
+}
+
+interface SerialPort {
+  name: string
+  description: string
+}
+
+interface Command {
+  type: string
+  data?: string
+}
+
+interface WebsocketContextType {
+  data: TelemetryData[]
+  status: string
+  rate: number
+  pps: number
+  sendCommand: (command: Command) => void
 }
