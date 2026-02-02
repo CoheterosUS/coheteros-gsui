@@ -10,17 +10,17 @@ export default function LoggingPage () {
       className='h-full flex flex-col'
     >
       <p
-        className='px-4 pt-4 text-xl text-primary-foreground'
+        className='px-4 pt-4 text-xl'
       >
         LOGGING
       </p>
       <div
-        className='flex-1 overflow-y-auto'
+        className='min-h-0 flex flex-col'
       >
         {
           data.length >= MAX_DATA_POINTS && (
             <p
-              className='px-4 pt-4 text-xs text-primary-muted-foreground'
+              className='px-4 pb-2 text-xs text-primary-muted-foreground'
             >
               Displaying latest {MAX_DATA_POINTS} packets
             </p>
