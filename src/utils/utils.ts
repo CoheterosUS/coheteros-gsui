@@ -2,7 +2,7 @@ import { Euler, MathUtils, Object3D } from 'three'
 
 export const WEBSOCKET_PORT = 8765
 export const MAX_DATA_POINTS = 50
-export const RECONNECT_INTERVAL = 3000
+export const RECONNECT_INTERVAL = 5000
 
 export const paddings = {
   gyroscope: 50,

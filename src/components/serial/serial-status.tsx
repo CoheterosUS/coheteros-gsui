@@ -18,7 +18,7 @@ export default function SerialStatus ({
 }: SerialStatusProps) {
   return (
     <div
-      className='w-full h-6 flex items-center justify-between px-2 py-1 bg-primary'
+      className='fixed bottom-0 left-0 w-full h-6 flex items-center justify-between px-2 py-1 bg-primary'
     >
       <div
         className='flex gap-2'

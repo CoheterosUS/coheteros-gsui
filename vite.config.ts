@@ -15,7 +15,7 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    hmr: false
+    // hmr: false
   },
   preview: {
     port: 3000

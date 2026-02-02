@@ -1,5 +1,5 @@
-import LoggingMessage from '@/components/logging/logging-message'
 import { useEffect, useRef } from 'react'
+import LoggingMessage from '@/components/logging/logging-message'
 
 interface LoggingProps {
   data: TelemetryPacket[]
@@ -11,25 +11,26 @@ export default function Logging ({
   const listRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    if (listRef.current) {
-      listRef.current.scrollTop = listRef.current.scrollHeight
+    if (listRef.current == null) {
+      return
     }
 
+    listRef.current.scrollTop = listRef.current.scrollHeight
   }, [data])
 
   return (
     <div
-      className='h-full p-2 overflow-auto'
-      ref={listRef}
+      className='flex-1 overflow-auto'
     >
       <div
-        className='flex flex-col gap-1'
+        ref={listRef}
+        className='w-full h-full flex flex-col gap-2 p-2 overflow-auto bg-background'
       >
         {
-          data.map((message, index) => (
+          data.map((packet, index) => (
             <LoggingMessage
               key={index}
-              message={JSON.stringify(message).slice(0, 100) + '...'}
+              packet={packet}
             />
           ))
         }

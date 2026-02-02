@@ -24,6 +24,7 @@ export default function SidebarLink ({
       to={href}
       title={label}
       className={linkStyles}
+      // reloadDocument
     >
       <Icon
         className='text-primary-foreground'

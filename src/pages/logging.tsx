@@ -1,21 +1,20 @@
+import { useWebsocketContext } from '@/components/contexts/WebsocketContext'
 import Sidebar from '@/components/sidebar/sidebar'
-// import SerialStatus from '@/components/serial/serial-status'
-// import { useWebsocket } from '@/hooks/useWebsocket'
-// import Logging from '@/components/logging/logging'
+import SerialStatus from '@/components/serial/serial-status'
+import Logging from '@/components/logging/logging'
 
 export default function LoggingPage () {
-  // const { data, status, downlink, pps } = useWebsocket()
+  const { data, status, downlink, pps } = useWebsocketContext()
 
   return (
     <div
-      className='h-screen flex bg-background'
+      className='w-full h-screen flex bg-background'
     >
       <Sidebar />
       <div
-        className='flex flex-1 flex-col'
+        className='w-full h-full flex flex-col overflow-hidden pb-6'
       >
-        {/* Investigate */}
-        {/* <Logging
+        <Logging
           data={data}
         />
         <SerialStatus
@@ -23,7 +22,7 @@ export default function LoggingPage () {
           downlink={downlink}
           uplink={0}
           pps={pps}
-        /> */}
+        />
       </div>
     </div>
   )
