@@ -1,10 +1,11 @@
 export const options = {
   // responsive: false,
   maintainAspectRatio: false,
-  animation: {
-    duration: 0
-  },
+  animation: false,
   normalized: true,
+  hover: {
+    mode: null
+  },
   scales: {
     y: {
       grid: {
@@ -15,6 +16,9 @@ export const options = {
     }
   },
   plugins: {
+    tooltip: {
+      enabled: false
+    },
     legend: {
       labels: {
         color: 'rgba(255, 255, 255, 0.9)',
@@ -23,7 +27,8 @@ export const options = {
         }
       }
     }
-  }
+  },
+  events: []
 }
 
 export const colors = {

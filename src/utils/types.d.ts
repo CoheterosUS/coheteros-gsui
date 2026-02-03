@@ -70,5 +70,6 @@ interface WebsocketContextType {
   status: string
   rate: number
   pps: number
-  sendCommand: (command: Command) => void
+  send: (command: Command) => void
+  reconnect: () => void
 }

@@ -1,4 +1,4 @@
-import { useWebsocketContext } from '@/components/contexts/WebsocketContext'
+import { useWebsocketContext } from '@/contexts/WebsocketContext'
 import ChartAltitude from '@/components/charts/chart-altitude'
 import ChartGyroscope from '@/components/charts/chart-gyroscope'
 import ChartAcceleration from '@/components/charts/chart-acceleration'

@@ -17,91 +17,122 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
   const totalBytesRef = useRef<number>(0)
   const packetCountRef = useRef<number>(0)
 
-  useEffect(() => {
-    cleaningUpRef.current = false
-    let websocket: WebSocket | null = null
+  const connectWebsocket = () => {
+    if (cleaningUpRef.current) {
+      return
+    }
 
-    const connectWebsocket = () => {
+    if (websocketRef.current != null && websocketRef.current.readyState === WebSocket.OPEN) {
+      return
+    }
+
+    const ws = new WebSocket(url)
+    websocketRef.current = ws
+    
+    if (reconnectTimeoutRef.current != null) {
+      clearTimeout(reconnectTimeoutRef.current)
+      reconnectTimeoutRef.current = null
+    }
+
+    ws.onopen = () => {
+      if (cleaningUpRef.current) {
+        ws.close()
+        return
+      }
+
+      console.log('WS: Connected')
+      setStatus('connected')
+    }
+
+    ws.onclose = () => {
+      console.log('WS: Disconnected')
+
+      if (!cleaningUpRef.current && reconnectTimeoutRef.current == null) {
+        setStatus('disconnected')
+        setRate(0)
+        setPps(0)
+
+        console.log(`WS: Reconnecting in ${RECONNECT_INTERVAL}ms`)
+        reconnectTimeoutRef.current = setTimeout(() => {
+          console.log('WS: Reconnecting')
+          setStatus('reconnecting')
+          connectWebsocket()
+        }, RECONNECT_INTERVAL)
+      }
+    }
+
+    ws.onerror = (error) => {
+      if (!cleaningUpRef.current) {
+        setStatus('disconnected')
+      }
+
+      console.error('WS: Error', error)
+      ws.close()
+    }
+
+    ws.onmessage = (event) => {
       if (cleaningUpRef.current) {
         return
       }
 
-      if (websocket != null && websocket.readyState === WebSocket.OPEN) {
-        return
-      }
+      const packet: WebsocketPacket = JSON.parse(event.data)
 
-      websocket = new WebSocket(url)
-      websocketRef.current = websocket
-      reconnectTimeoutRef.current = null
+      switch (packet.type) {
+        case 'TELEMETRY_PACKET':
+          setData(prev => {
+            const updated = [...prev, packet.data]
+            if (updated.length > MAX_DATA_POINTS) {
+              updated.shift()
+            }
 
-      websocket.onopen = () => {
-        if (cleaningUpRef.current) {
-          websocket?.close()
-          return
-        }
-
-        console.log('WS: Connected')
-        setStatus('connected')
-
-        if (reconnectTimeoutRef.current != null) {
-          clearTimeout(reconnectTimeoutRef.current)
-          reconnectTimeoutRef.current = null
-        }
-      }
-
-      websocket.onclose = () => {
-        console.log('WS: Disconnected')
-
-        if (!cleaningUpRef.current && reconnectTimeoutRef.current == null) {
-          setStatus('disconnected')
-          setRate(0)
-          setPps(0)
-
-          reconnectTimeoutRef.current = setTimeout(() => {
-            console.log('WS: Reconnecting')
-            setStatus('reconnecting')
-            connectWebsocket()
-          }, RECONNECT_INTERVAL)
-        }
-      }
-
-      websocket.onerror = (error) => {
-        if (!cleaningUpRef.current) {
-          console.error('WS: Error', error)
-          setStatus('disconnected')
-        }
-
-        websocket?.close()
-      }
-
-      websocket.onmessage = (event) => {
-        if (cleaningUpRef.current) {
-          return
-        }
-
-        const packet: WebsocketPacket = JSON.parse(event.data)
-
-        switch (packet.type) {
-          case 'TELEMETRY_PACKET':
-            setData(prev => {
-              const updated = [...prev, packet.data]
-              if (updated.length > MAX_DATA_POINTS) {
-                updated.shift()
-              }
-
-              return updated
-            })
+            return updated
+          })
           break
-          case 'NOTIFICATION_PACKET':
-            console.log('WS: Notification', packet.data)
-            toast(packet.data)
+        case 'NOTIFICATION_PACKET':
+          console.log('WS: Notification', packet.data)
+          toast(packet.data)
           break
-        }
-
-        totalBytesRef.current += getCalculatedDataSize(event)
-        packetCountRef.current += 1
       }
+
+      totalBytesRef.current += getCalculatedDataSize(event)
+      packetCountRef.current += 1
     }
+  }
+
+  const reconnect = () => {
+    if (websocketRef.current != null) {
+      websocketRef.current.onclose = null
+      websocketRef.current.close()
+      websocketRef.current = null
+    }
+
+    if (reconnectTimeoutRef.current != null) {
+      clearTimeout(reconnectTimeoutRef.current)
+      reconnectTimeoutRef.current = null
+    }
+
+    setRate(0)
+    setPps(0)
+    setData([])
+    totalBytesRef.current = 0
+    packetCountRef.current = 0
+
+    console.log('WS: Reconnecting')
+    setStatus('reconnecting')
+    connectWebsocket()
+  }
+
+  const send = (command: Command) => {
+    const ws = websocketRef.current
+    if (ws != null && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(command))
+    }
+  }
+
+  useEffect(() => {
+    cleaningUpRef.current = false
+
+    connectWebsocket()    
 
     const interval = setInterval(() => {
       const now = Date.now()
@@ -120,8 +151,6 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
       }
     }, 1000)
 
-    connectWebsocket()
-
     return () => {
       cleaningUpRef.current = true
       clearInterval(interval)
@@ -130,27 +159,20 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
         clearTimeout(reconnectTimeoutRef.current)
       }
 
-      if (websocket != null) {
-        websocket.close()
-        websocket = null
+      if (websocketRef.current != null) {
+        websocketRef.current.onclose = null
+        websocketRef.current.close()
+        websocketRef.current = null
       }
-
-      websocketRef.current = null
     }
   }, [url])
-
-  const sendCommand = (command: Command) => {
-    const ws = websocketRef.current
-    if (ws != null && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(command))
-    }
-  }
 
   return {
     data,
     status,
     rate,
     pps,
-    sendCommand
+    send,
+    reconnect
   }
 }

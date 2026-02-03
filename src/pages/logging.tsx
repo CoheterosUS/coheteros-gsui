@@ -1,4 +1,4 @@
-import { useWebsocketContext } from '@/components/contexts/WebsocketContext'
+import { useWebsocketContext } from '@/contexts/WebsocketContext'
 import Logging from '@/components/logging/logging'
 import { MAX_DATA_POINTS } from '@/utils/config'
 

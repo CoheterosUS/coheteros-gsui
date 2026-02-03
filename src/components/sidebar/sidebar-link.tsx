@@ -5,7 +5,7 @@ interface SidebarLinkProps {
   Icon: LucideIcon
   href: string
   label: string
-  selected?: boolean
+  selected: boolean
 }
 
 export default function SidebarLink ({
@@ -15,8 +15,13 @@ export default function SidebarLink ({
   selected
 }: SidebarLinkProps) {
   const linkStyles = `
-    w-full aspect-square flex justify-center items-center hover:bg-background
+    w-full h-14 flex items-center p-4 hover:bg-background
     ${selected ? 'bg-background opacity-100' : 'opacity-60'}
+  `
+
+  const labelStyles = `
+    whitespace-nowrap overflow-hidden transition
+    ml-4 group-hover:opacity-100 group-hover:translate-x-0
   `
 
   return (
@@ -27,9 +32,14 @@ export default function SidebarLink ({
       // reloadDocument
     >
       <Icon
-        className='text-primary-foreground'
+        className='shrink-0 text-primary-foreground'
         strokeWidth={1.5}
       />
+      <p
+        className={labelStyles}
+      >
+        {label}
+      </p>
     </Link>
   )
 }

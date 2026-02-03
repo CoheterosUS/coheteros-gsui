@@ -43,6 +43,19 @@ npm run preview
 
 #### Development
 
+Edit `.env` file to enable testing mode if needed:
+
+```
+VITE_TESTING_MODE=TRUE
+```
+
+If not enabled, create a virtual COM pair, and run the simulation:
+
+```bash
+cd backend
+simulate.bat
+```
+
 Start backend:
 
 ```bash

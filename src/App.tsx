@@ -1,10 +1,11 @@
 import { Route, Routes } from 'react-router'
 import { ToastBar, Toaster } from 'react-hot-toast'
 import { Info } from 'lucide-react'
-import { WebsocketProvider } from '@/components/contexts/WebsocketContext'
+import { WebsocketProvider } from '@/contexts/WebsocketContext'
 import DashboardPage from '@/pages/dashboard'
 import ControlsPage from '@/pages/controls'
 import LoggingPage from '@/pages/logging'
+import AboutPage from '@/pages/about'
 import AppLayout from '@/layout'
 
 const toastOptions = {
@@ -33,6 +34,10 @@ export default function App () {
             path='/logs'
             element={<LoggingPage />}
           />
+          <Route
+            path='/about'
+            element={<AboutPage />}
+          />
         </Route>
       </Routes>
       <Toaster
@@ -48,6 +53,7 @@ export default function App () {
                 ({ message }) => (
                   <>
                     <Info
+                      className='h-4 w-4'
                       strokeWidth={1.5}
                     />
                     {message}

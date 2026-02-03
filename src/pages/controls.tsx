@@ -3,41 +3,39 @@ import ControlsButton from '@/components/controls/controls-button'
 import ControlsDropdown from '@/components/controls/controls-dropdown'
 import ControlsSection from '@/components/controls/controls-section'
 import useFetchState from '@/hooks/useFetchState'
-import { useWebsocketContext } from '@/components/contexts/WebsocketContext'
+import { useWebsocketContext } from '@/contexts/WebsocketContext'
+import { DEFAULT_BAUDRATE, TESTING_MODE } from '@/utils/config'
 
 export default function ControlsPage () {
-  const { sendCommand } = useWebsocketContext()
+  const { send, reconnect } = useWebsocketContext()
   const { data, getData } = useFetchState<SerialPort[]>()
   const [inputPort, setInputPort] = useState<string>('')
-  const [outputPort, setOutputPort] = useState<string>('')
+  const [baudrate, setBaudrate] = useState<string>(DEFAULT_BAUDRATE)
 
   const handleCommand = (type: string) => {
-    sendCommand({
+    send({
       type
     })
   }
 
   const handlePorts = () => {
-    sendCommand({
-      type: 'SET_PORTS',
+    send({
+      type: 'CONNECT_SERIAL',
       data: JSON.stringify({
         input_port: inputPort,
-        output_port: outputPort
+        baudrate: baudrate
       })
     })
   }
 
   const fetchPorts = async () => {
     const { data } = await getData('/ports')
-    console.log('Serial Ports:', data)
     if (data == null) {
       return
     }
 
-    console.log('Data length:', data.length)
     if (data.length >= 2) {
       setInputPort(data[0].name)
-      setOutputPort(data[1].name)
     }
   }
 
@@ -78,33 +76,28 @@ export default function ControlsPage () {
                     className='flex flex-row gap-2'
                   >
                     <ControlsDropdown
-                      label='INPUT PORT'
+                      label='PORT'
                       options={data.map(port => port.name)}
                       selectedOption={inputPort}
                       setSelectedOption={setInputPort}
                     />
                     <ControlsDropdown
-                      label='OUTPUT PORT'
-                      options={data.map(port => port.name)}
-                      selectedOption={outputPort}
-                      setSelectedOption={setOutputPort}
+                      label='BAUDRATE'
+                      options={['9600', '19200', '38400', '57600', '115200']}
+                      selectedOption={baudrate}
+                      setSelectedOption={setBaudrate}
                     />
                   </div>
                   <ControlsButton
                     label='CONNECT'
-                    disabled={inputPort === outputPort}
                     onClick={handlePorts}
                   />
+                  <ControlsButton
+                    label='DISCONNECT'
+                    onClick={() => handleCommand('DISCONNECT_SERIAL')}
+                    variant='danger'
+                  />
                 </div>
-                {
-                  inputPort === outputPort && (
-                    <p
-                      className='text-sm text-negative'
-                    >
-                      Input and output ports cannot be the same.
-                    </p>
-                  )
-                }
               </>
             ) : (
               <div
@@ -124,16 +117,37 @@ export default function ControlsPage () {
           }
         </ControlsSection>
         <ControlsSection
-          title='TESTING'
+          title='WEBSOCKET'
         >
           <ControlsButton
-            label='START FAKE TELEMETRY'
-            onClick={() => handleCommand('START_FAKE_PACKETS')}
+            label='FORCE RECONNECTION'
+            onClick={reconnect}
+            variant='danger'
           />
-          <ControlsButton
-            label='STOP FAKE TELEMETRY'
-            onClick={() => handleCommand('STOP_FAKE_PACKETS')}
-          />
+        </ControlsSection>
+        <ControlsSection
+          title='TESTING'
+        >
+          {
+            TESTING_MODE ? (
+              <>
+                <ControlsButton
+                  label='START FAKE TELEMETRY'
+                  onClick={() => handleCommand('START_FAKE_TELEMETRY')}
+                />
+                <ControlsButton
+                  label='STOP FAKE TELEMETRY'
+                  onClick={() => handleCommand('STOP_FAKE_TELEMETRY')}
+                />
+              </>
+            ) : (
+              <p
+                className='text-primary-muted-foreground'
+              >
+                Testing mode is disabled.
+              </p>
+            )
+          }
         </ControlsSection>
       </div>
     </div>

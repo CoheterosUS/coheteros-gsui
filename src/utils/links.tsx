@@ -1,4 +1,4 @@
-import { ChartLine, GamepadDirectional, Terminal } from 'lucide-react'
+import { BookHeart, ChartLine, GamepadDirectional, Terminal } from 'lucide-react'
 
 export const links = [
   {
@@ -15,5 +15,10 @@ export const links = [
     Icon: Terminal,
     href: '/logs',
     label: 'LOGS'
+  },
+  {
+    Icon: BookHeart,
+    href: '/about',
+    label: 'ABOUT'
   }
 ]

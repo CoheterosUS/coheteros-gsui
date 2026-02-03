@@ -1,16 +1,22 @@
-import { Link, useLocation } from 'react-router'
+import { useLocation } from 'react-router'
 import { links } from '@/utils/links'
 import SidebarLink from '@/components/sidebar/sidebar-link'
+import SidebarCredits from './sidebar-credits'
 
 export default function Sidebar () {
   const location = useLocation()
 
+  const sidebarStyle = `
+    min-w-14 group h-full flex flex-col justify-between bg-primary transition-all
+    w-14 hover:w-56
+  `
+
   return (
     <div
-      className='min-w-14 w-14 h-full flex flex-col items-center justify-between bg-primary'
+      className={sidebarStyle}
     >
       <div
-        className='w-full flex flex-col items-center'
+        className='w-full flex flex-col'
       >
         {
           links.map((link, index) => (
@@ -22,16 +28,11 @@ export default function Sidebar () {
           ))
         }
       </div>
-      <Link
-        to='https://coheteros.com'
-        target='_blank'
+      <div
+        className='h-14 flex px-4'
       >
-        <img
-          src='/logo.png'
-          alt='Logo'
-          className='w-full h-auto p-3 aspect-square'
-        />
-      </Link>
+        <SidebarCredits />
+      </div>
     </div>
   )
 }
