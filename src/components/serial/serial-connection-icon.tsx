@@ -1,7 +1,7 @@
 import { CircleCheck, CircleSlash, LoaderCircle } from 'lucide-react'
 
 interface SerialConnectionIconProps {
-  status: string
+  status: WebsocketStatus
   port: number
 }
 

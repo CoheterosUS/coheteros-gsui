@@ -55,9 +55,15 @@ interface TelemetryTableFieldProps {
   className?: string
 }
 
+interface SerialPortsResponse {
+  port_in_use?: SerialPort
+  available_ports: SerialPort[]
+}
+
 interface SerialPort {
   name: string
-  description: string
+  description?: string
+  baudrate: string
 }
 
 interface Command {
@@ -65,9 +71,11 @@ interface Command {
   data?: string
 }
 
+type WebsocketStatus = 'disconnected' | 'connected' | 'reconnecting'
+
 interface WebsocketContextType {
   data: TelemetryData[]
-  status: string
+  status: WebsocketStatus
   rate: number
   pps: number
   send: (command: Command) => void

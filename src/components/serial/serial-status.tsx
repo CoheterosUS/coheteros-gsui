@@ -4,7 +4,7 @@ import SerialPacketsIcon from '@/components/serial/serial-packets-icon'
 import { WEBSOCKET_PORT } from '@/utils/config'
 
 interface SerialStatusProps {
-  status: string
+  status: WebsocketStatus
   rate: number
   pps: number
 }

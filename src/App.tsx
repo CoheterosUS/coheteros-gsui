@@ -31,7 +31,7 @@ export default function App () {
             element={<ControlsPage />}
           />
           <Route
-            path='/logs'
+            path='/logging'
             element={<LoggingPage />}
           />
           <Route

@@ -5,14 +5,21 @@ interface ControlsDropdownProps {
   options: string[]
   selectedOption: string
   setSelectedOption: (option: string) => void
+  disabled?: boolean
 }
 
 export default function ControlsDropdown ({
   label,
   options,
   selectedOption,
-  setSelectedOption
+  setSelectedOption,
+  disabled = false
 }: ControlsDropdownProps) {
+  const dropdownStyle = `
+    px-4 py-2 rounded border-dashed border-2 cursor-pointer focus:outline-none hover:border-solid transition
+    disabled:border-dashed disabled:cursor-default disabled:border-primary-muted disabled:text-primary-muted disabled:bg-transparent
+  `
+
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption(e.target.value)
   }
@@ -27,9 +34,10 @@ export default function ControlsDropdown ({
         {label}
       </p>
       <select
-        className='px-4 py-2 rounded border-dashed border-2 cursor-pointer focus:outline-none hover:border-solid transition'
+        className={dropdownStyle}
         value={selectedOption}
         onChange={handleChange}
+        disabled={disabled}
       >
         {
           options.map((option, index) => (

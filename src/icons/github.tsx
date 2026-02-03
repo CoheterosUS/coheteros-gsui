@@ -1,7 +1,7 @@
 import type { SVGProps } from 'react'
 
 // lucide-react's Github icon is deprecated
-export default function Github(props: SVGProps<SVGSVGElement>) {
+export default function Github (props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'

@@ -12,10 +12,10 @@ async def execute (websocket: WebSocket, data: dict, state: WebsocketState, seri
 
   websocket_send = get_packet(
     "NOTIFICATION_PACKET",
-    "DISCONNECTED" if state.input_port is None else f"DISCONNECTED FROM {state.input_port}@{state.baudrate}"
+    "DISCONNECTED" if state.input_port is None else
+    f"DISCONNECTED FROM {state.input_port}@{state.baudrate}"
   )
 
-  state.input_port = None
-  state.baudrate = None
+  state.reset()
 
   await websocket.send_text(json.dumps(websocket_send))

@@ -13,8 +13,8 @@ export const links = [
   },
   {
     Icon: Terminal,
-    href: '/logs',
-    label: 'LOGS'
+    href: '/logging',
+    label: 'LOGGING'
   },
   {
     Icon: BookHeart,

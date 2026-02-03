@@ -8,19 +8,19 @@ interface LoggingProps {
 export default function Logging ({
   data
 }: LoggingProps) {
-  const logsRef = useRef<HTMLDivElement>(null)
+  const loggingRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (logsRef.current == null) {
+    if (loggingRef.current == null) {
       return
     }
 
-    logsRef.current.scrollTop = logsRef.current.scrollHeight
+    loggingRef.current.scrollTop = loggingRef.current.scrollHeight
   }, [])
 
   return (
     <div
-      ref={logsRef}
+      ref={loggingRef}
       className='h-full flex flex-col gap-4 p-4 bg-background overflow-y-auto'
     >
       {

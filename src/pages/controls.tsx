@@ -7,8 +7,8 @@ import { useWebsocketContext } from '@/contexts/WebsocketContext'
 import { DEFAULT_BAUDRATE, TESTING_MODE } from '@/utils/config'
 
 export default function ControlsPage () {
-  const { send, reconnect } = useWebsocketContext()
-  const { data, getData } = useFetchState<SerialPort[]>()
+  const { status, send, reconnect } = useWebsocketContext()
+  const { data, getData } = useFetchState<SerialPortsResponse>()
   const [inputPort, setInputPort] = useState<string>('')
   const [baudrate, setBaudrate] = useState<string>(DEFAULT_BAUDRATE)
 
@@ -18,14 +18,16 @@ export default function ControlsPage () {
     })
   }
 
-  const handlePorts = () => {
+  const handlePorts = async (disconnect: boolean = false) => {
     send({
-      type: 'CONNECT_SERIAL',
-      data: JSON.stringify({
+      type: disconnect ? 'DISCONNECT_SERIAL' : 'CONNECT_SERIAL',
+      data: disconnect ? undefined : JSON.stringify({
         input_port: inputPort,
         baudrate: baudrate
       })
     })
+
+    await fetchPorts()
   }
 
   const fetchPorts = async () => {
@@ -34,14 +36,17 @@ export default function ControlsPage () {
       return
     }
 
-    if (data.length >= 2) {
-      setInputPort(data[0].name)
+    if (data.available_ports.length > 0) {
+      setInputPort(data.port_in_use == null ? data.available_ports[0].name : data.port_in_use.name)
+      setBaudrate(data.port_in_use == null ? DEFAULT_BAUDRATE : data.port_in_use.baudrate ?? DEFAULT_BAUDRATE)
     }
   }
 
   useEffect(() => {
     fetchPorts()
   }, [])
+
+  const connected = data?.port_in_use != null
 
   return (
     <div
@@ -67,7 +72,7 @@ export default function ControlsPage () {
           title='SERIAL'
         >
           {
-            data != null && data.length > 0 ? (
+            data != null && data.available_ports.length > 0 ? (
               <>
                 <div
                   className='flex flex-col gap-2'
@@ -77,25 +82,29 @@ export default function ControlsPage () {
                   >
                     <ControlsDropdown
                       label='PORT'
-                      options={data.map(port => port.name)}
+                      options={data.available_ports.map(port => port.name)}
                       selectedOption={inputPort}
                       setSelectedOption={setInputPort}
+                      disabled={connected}
                     />
                     <ControlsDropdown
                       label='BAUDRATE'
                       options={['9600', '19200', '38400', '57600', '115200']}
                       selectedOption={baudrate}
                       setSelectedOption={setBaudrate}
+                      disabled={connected}
                     />
                   </div>
                   <ControlsButton
                     label='CONNECT'
-                    onClick={handlePorts}
+                    onClick={() => handlePorts()}
+                    disabled={connected}
                   />
                   <ControlsButton
                     label='DISCONNECT'
-                    onClick={() => handleCommand('DISCONNECT_SERIAL')}
+                    onClick={() => handlePorts(true)}
                     variant='danger'
+                    disabled={!connected}
                   />
                 </div>
               </>
@@ -123,6 +132,7 @@ export default function ControlsPage () {
             label='FORCE RECONNECTION'
             onClick={reconnect}
             variant='danger'
+            disabled={status === 'connected' || status === 'reconnecting'}
           />
         </ControlsSection>
         <ControlsSection

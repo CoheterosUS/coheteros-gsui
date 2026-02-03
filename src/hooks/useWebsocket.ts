@@ -5,7 +5,7 @@ import { WS_URL, RECONNECT_INTERVAL, MAX_DATA_POINTS } from '@/utils/config'
 
 export function useWebsocket (url: string = WS_URL): WebsocketContextType {
   const [data, setData] = useState<TelemetryData[]>([])
-  const [status, setStatus] = useState('disconnected')
+  const [status, setStatus] = useState<('disconnected' | 'connected' | 'reconnecting')>('disconnected')
   const [rate, setRate] = useState(0)
   const [pps, setPps] = useState(0)
 

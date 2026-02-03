@@ -27,6 +27,7 @@ PACKET_FREQUENCY = int(getenv("VITE_PACKET_FREQUENCY", 10))
 
 app = FastAPI()
 serial_manager = SerialManager()
+state = WebsocketState()
 
 app.add_middleware(
   CORSMiddleware,
@@ -46,12 +47,11 @@ commands = {
 
 @app.get("/ports")
 async def get_serial():
-  return get_serial_ports()
+  return get_serial_ports(state)
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
   await websocket.accept()
-  state = WebsocketState()
 
   async def send_packets ():
     try:
@@ -82,9 +82,8 @@ async def websocket_endpoint(websocket: WebSocket):
             await asyncio.sleep(0.01)
         else:
           await asyncio.sleep(0.1)
-    except asyncio.CancelledError as e:
-      print(f"SEND PACKETS TASK CANCELLED: {e}")
-      pass
+    except asyncio.CancelledError:
+      raise
 
   async def receive_packets ():
     try:
@@ -92,7 +91,7 @@ async def websocket_endpoint(websocket: WebSocket):
         await handle_command(message)
     except WebSocketDisconnect as e:
       print(f"WEBSOCKET DISCONNECTED: {e}")
-      pass
+      raise
 
   async def handle_command (message: str):
     try:
@@ -123,6 +122,8 @@ async def websocket_endpoint(websocket: WebSocket):
 
     if serial_manager is not None:
       await asyncio.to_thread(serial_manager.disconnect)
+
+    state.reset()
 
 if __name__ == "__main__":
   uvicorn.run(app, host="localhost", port=PORT)

@@ -1,5 +1,6 @@
-import Github from '@/icons/github';
-import { Link } from 'react-router';
+import { Link } from 'react-router'
+import Github from '@/icons/github'
+import Linkedin from '@/icons/linkedin'
 
 export default function AboutPage () {
   return (
@@ -14,6 +15,11 @@ export default function AboutPage () {
       <div
         className='h-full flex flex-col justify-center items-center gap-4'
       >
+        <img
+          src='/logo.png'
+          alt='Coheteros Logo'
+          className='w-32 h-32'
+        />
         <div
           className='flex flex-col items-center gap-2'
         >
@@ -32,19 +38,36 @@ export default function AboutPage () {
             COHETEROS © {new Date().getFullYear()}. ALL RIGHTS RESERVED.
           </p>
         </div>
-        <Link
-          to='https://github.com/CoheterosUS/coheteros-gsui'
-          target='_blank'
-          className='flex items-center gap-2 text-primary-muted-foreground border-primary-muted-foreground'
+        <div
+          className='flex flex-col items-center gap-2'
         >
-          <Github
-            strokeWidth={1.5}
-            className='w-6 h-6'
-          />
-          <p>
-            VIEW ON GITHUB
-          </p>
-        </Link>
+          <Link
+            to='https://github.com/CoheterosUS'
+            target='_blank'
+            className='flex items-center gap-2 text-primary-muted-foreground border-primary-muted-foreground'
+          >
+            <Github
+              strokeWidth={1.5}
+              className='w-6 h-6'
+            />
+            <p>
+              VIEW ON GITHUB
+            </p>
+          </Link>
+          <Link
+            to='https://www.linkedin.com/company/coheteros-us/'
+            target='_blank'
+            className='flex items-center gap-2 text-primary-muted-foreground border-primary-muted-foreground'
+          >
+            <Linkedin
+              strokeWidth={1.5}
+              className='w-6 h-6'
+            />
+            <p>
+              VIEW ON LINKEDIN
+            </p>
+          </Link>
+        </div>
       </div>
     </div>
   )
