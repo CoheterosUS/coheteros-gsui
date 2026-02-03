@@ -15,10 +15,12 @@ from src.state.state import WebsocketState
 import src.commands.start_fake_packets
 import src.commands.stop_fake_packets
 import src.commands.deploy_parachute
+import src.commands.set_ports
 
 load_dotenv()
 
 PORT = int(getenv("VITE_WS_PORT", 8000))
+TESTING_MODE = getenv("VITE_TESTING_MODE", "FALSE") == "TRUE"
 PACKET_FREQUENCY = 20
 
 app = FastAPI()
@@ -34,7 +36,8 @@ app.add_middleware(
 commands = {
   "START_FAKE_PACKETS": src.commands.start_fake_packets,
   "STOP_FAKE_PACKETS": src.commands.stop_fake_packets,
-  "DEPLOY_PARACHUTE": src.commands.deploy_parachute
+  "DEPLOY_PARACHUTE": src.commands.deploy_parachute,
+  "SET_PORTS": src.commands.set_ports
 }
 
 @app.get("/ports")
@@ -48,7 +51,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
   async def send_packets():
     while True:
-      if state.send_fake_packets:
+      if state.send_fake_packets and TESTING_MODE:
         fake_data = create_fake_data()
         fake_packet = {
           "type": "TELEMETRY_PACKET",
@@ -69,7 +72,7 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
       json_msg = json.loads(message)
       command_type = json_msg.get("type")
-      command_data = json_msg.get("data", None)
+      command_data = json.loads(json_msg.get("data", "{}"))
 
       print(f"RECEIVED COMMAND: {command_type} | DATA: {command_data}")
       if command_type in commands:

@@ -17,21 +17,31 @@ export default function ControlsPage () {
     })
   }
 
-  useEffect(() => {
-    const fetchPorts = async () => {
-      const { data } = await getData('/ports')
-      console.log('Serial Ports:', data)
+  const handlePorts = () => {
+    sendCommand({
+      type: 'SET_PORTS',
+      data: JSON.stringify({
+        input_port: inputPort,
+        output_port: outputPort
+      })
+    })
+  }
 
-      if (data == null) {
-        return
-      }
-
-      if (data.length >= 2) {
-        setInputPort(data[0].name)
-        setOutputPort(data[1].name)
-      }
+  const fetchPorts = async () => {
+    const { data } = await getData('/ports')
+    console.log('Serial Ports:', data)
+    if (data == null) {
+      return
     }
 
+    console.log('Data length:', data.length)
+    if (data.length >= 2) {
+      setInputPort(data[0].name)
+      setOutputPort(data[1].name)
+    }
+  }
+
+  useEffect(() => {
     fetchPorts()
   }, [])
 
@@ -59,7 +69,7 @@ export default function ControlsPage () {
           title='SERIAL'
         >
           {
-            data != null && (
+            data != null && data.length > 0 ? (
               <>
                 <div
                   className='flex flex-col gap-2'
@@ -83,6 +93,7 @@ export default function ControlsPage () {
                   <ControlsButton
                     label='CONNECT'
                     disabled={inputPort === outputPort}
+                    onClick={handlePorts}
                   />
                 </div>
                 {
@@ -95,6 +106,20 @@ export default function ControlsPage () {
                   )
                 }
               </>
+            ) : (
+              <div
+                className='flex flex-col gap-2'
+              >
+                <p
+                  className='text-primary-muted-foreground'
+                >
+                  No serial ports available.
+                </p>
+                <ControlsButton
+                  label='REFRESH PORTS'
+                  onClick={fetchPorts}
+                />
+              </div>
             )
           }
         </ControlsSection>
