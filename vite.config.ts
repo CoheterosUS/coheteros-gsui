@@ -15,7 +15,8 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    // hmr: false
+    // Could HMR be causing issues with RAM consumption?
+    hmr: false
   },
   preview: {
     port: 3000
