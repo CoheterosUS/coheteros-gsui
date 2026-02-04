@@ -39,7 +39,7 @@ run.bat
 > [!IMPORTANT]
 > Most changes on the `.env` file won't be applied, since the frontend is pre-built. To apply changes, clone the repository and follow the `Installation` and `Usage` instructions below. 
 
-> ![IMPORTANT]
+> [!IMPORTANT]
 > Python is required to run the backend.
 
 #### INSTALLATION
