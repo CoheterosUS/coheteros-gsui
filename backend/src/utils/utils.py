@@ -12,7 +12,6 @@ def get_controls_status (state: WebsocketState):
   available_ports = [
     {"name": port.device, "description": port.description}
     for port in ports
-    if port.device != state.input_port
   ]
 
   return {

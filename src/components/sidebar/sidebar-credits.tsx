@@ -14,7 +14,7 @@ export default function SidebarCredits () {
     >
       COHETEROS @ {new Date().getFullYear()}
       <img
-        src='/logo.png'
+        src='/images/logo.png'
         alt='Coheteros Logo'
         className='h-8'
       />

@@ -55,6 +55,14 @@ export default ({ mode }: Mode) => {
               {
                 name: 'lucide',
                 test: /[\\/]node_modules[\\/](lucide-react)[\\/]/
+              },
+              {
+                name: 'maplibre',
+                test: /[\\/]node_modules[\\/](maplibre-gl)[\\/]/
+              },
+              {
+                name: 'react-maplibre',
+                test: /[\\/]node_modules[\\/](react-map-gl)[\\/]/
               }
             ]
           }

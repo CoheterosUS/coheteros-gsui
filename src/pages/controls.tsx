@@ -47,8 +47,6 @@ export default function ControlsPage () {
     fetchPorts()
   }, [])
 
-  const serialConnected = data?.ports.port_in_use != null
-
   return (
     <div
       className='h-full flex flex-col'
@@ -87,26 +85,26 @@ export default function ControlsPage () {
                       options={data.ports.available_ports.map(port => port.name)}
                       selectedOption={inputPort}
                       setSelectedOption={setInputPort}
-                      disabled={serialConnected}
+                      disabled={data.ports.port_in_use != null}
                     />
                     <ControlsDropdown
                       label='BAUDRATE'
                       options={[...BAUDRATE_OPTIONS]}
                       selectedOption={baudrate}
                       setSelectedOption={setBaudrate}
-                      disabled={serialConnected}
+                      disabled={data.ports.port_in_use != null}
                     />
                   </div>
                   <ControlsButton
                     label='CONNECT'
                     onClick={() => handlePorts()}
-                    disabled={data.fake_telemetry_enabled || serialConnected}
+                    disabled={data.fake_telemetry_enabled || data.ports.port_in_use != null}
                   />
                   <ControlsButton
                     label='DISCONNECT'
                     onClick={() => handlePorts(true)}
                     variant='danger'
-                    disabled={!serialConnected}
+                    disabled={data.ports.port_in_use == null}
                   />
                 </div>
               </>
@@ -146,7 +144,7 @@ export default function ControlsPage () {
                 <ControlsButton
                   label='START FAKE TELEMETRY'
                   onClick={() => handleCommand('START_FAKE_TELEMETRY')}
-                  disabled={data.fake_telemetry_enabled || serialConnected}
+                  disabled={data.fake_telemetry_enabled || data.ports.port_in_use != null}
                 />
                 <ControlsButton
                   label='STOP FAKE TELEMETRY'

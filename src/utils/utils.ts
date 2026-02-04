@@ -129,6 +129,15 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
   }
 ]
 
+export const initialViewport = {
+  longitude: 0,
+  latitude: 0,
+  zoom: 16,
+  pitch: 60,
+  maxPitch: 85,
+  bearing: 0
+}
+
 export function getPaddedMinMax (
   data: TelemetryData[],
   keys: string[],
@@ -196,65 +205,33 @@ export function getCalculatedDataSize (event: MessageEvent) {
 export function getToastIcon (category: ToastCategory) {
   switch (category.toUpperCase()) {
     case 'SUCCESS':
-      return CircleCheck
-    case 'ERROR':
-      return CircleX
-    default:
-      return Info
-  }
-}
-
-export function getToastStyles (category: ToastCategory) {
-  const Icon = getToastIcon(category)
-
-  switch (category.toUpperCase()) {
-    case 'SUCCESS':
       return {
-        color: 'var(--color-positive)',
-        border: '2px solid var(--color-positive)',
-        Icon
+        styles: 'text-toast-success',
+        Icon: CircleCheck
       }
     case 'ERROR':
       return {
-        color: 'var(--color-negative)',
-        border: '2px solid var(--color-negative)',
-        Icon
+        styles: 'text-toast-error',
+        Icon: CircleX
       }
     default:
       return {
-        color: 'var(--color-primary-foreground)',
-        border: '2px solid var(--color-primary-foreground)',
-        Icon
+        styles: 'text-primary-foreground',
+        Icon: Info
       }
   }
 }
 
 export function showToast (packet: WebsocketPacket) {
-  const { border, color } = getToastStyles(packet.category?.toUpperCase() as ToastCategory)
-
-  switch (packet.category) {
+  switch (packet.category?.toUpperCase()) {
     case 'SUCCESS':
-      toast.success(packet.data, {
-        style: {
-          border,
-          color
-        }
-      })
+      toast.success(packet.data)
       break
     case 'ERROR':
-      toast.error(packet.data, {
-        style: {
-          border,
-          color
-        }
-      })
+      toast.error(packet.data)
       break
     default:
-      toast(packet.data, {
-        style: {
-          border,
-          color
-        }
-      })
+      toast(packet.data)
+      break
   }
 }

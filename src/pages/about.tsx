@@ -8,7 +8,7 @@ export default function AboutPage () {
       className='h-full flex flex-col justify-center items-center gap-6'
     >
       <img
-        src='/logo.png'
+        src='/images/logo.png'
         alt='Coheteros Logo'
         className='w-32 h-32'
       />
@@ -16,7 +16,7 @@ export default function AboutPage () {
         className='flex flex-col items-center gap-2'
       >
         <p
-          className='text-2xl'
+          className='text-2xl font-bold tracking-widest'
         >
           COHETEROS GROUND STATION UI
         </p>
@@ -34,19 +34,6 @@ export default function AboutPage () {
         className='flex flex-col items-center gap-2'
       >
         <Link
-          to='https://github.com/CoheterosUS'
-          target='_blank'
-          className='flex items-center gap-2 text-primary-muted-foreground border-primary-muted-foreground'
-        >
-          <Github
-            strokeWidth={1.5}
-            className='w-6 h-6'
-          />
-          <p>
-            VIEW ON GITHUB
-          </p>
-        </Link>
-        <Link
           to='https://www.linkedin.com/company/coheteros-us/'
           target='_blank'
           className='flex items-center gap-2 text-primary-muted-foreground border-primary-muted-foreground'
@@ -57,6 +44,19 @@ export default function AboutPage () {
           />
           <p>
             VIEW ON LINKEDIN
+          </p>
+        </Link>
+        <Link
+          to='https://github.com/CoheterosUS'
+          target='_blank'
+          className='flex items-center gap-2 text-primary-muted-foreground border-primary-muted-foreground'
+        >
+          <Github
+            strokeWidth={1.5}
+            className='w-6 h-6'
+          />
+          <p>
+            VIEW ON GITHUB
           </p>
         </Link>
       </div>

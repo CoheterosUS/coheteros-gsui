@@ -141,11 +141,12 @@ if MODE == "PROD":
     print(f"DIST DIRECTORY NOT FOUND AT {DIST_DIR}. FRONTEND NOT SERVED.")
   else:
     app.mount("/assets", StaticFiles(directory=path.join(DIST_DIR, "assets")), name="assets")
-    app.mount("/model", StaticFiles(directory=path.join(DIST_DIR, "model")), name="model")
     app.mount("/fonts", StaticFiles(directory=path.join(DIST_DIR, "fonts")), name="fonts")
+    app.mount("/model", StaticFiles(directory=path.join(DIST_DIR, "model")), name="model")
+    app.mount("/images", StaticFiles(directory=path.join(DIST_DIR, "images")), name="images")
 
-    @app.get("/{catch_all:path}")
-    async def serve_frontend (catch_all: str):
+    @app.get("/{full_path:path}")
+    async def serve_frontend (full_path: str):
       return FileResponse(path.join(DIST_DIR, "index.html"))
 
 if __name__ == "__main__":

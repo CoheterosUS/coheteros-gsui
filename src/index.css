@@ -31,6 +31,9 @@
   --color-negative: var(--color-red-500);
   --color-warning: var(--color-yellow-500);
 
+  --color-toast-success: var(--color-green-600);
+  --color-toast-error: var(--color-red-600);
+
   --color-pitch: var(--color-red-300);
   --color-roll: var(--color-blue-300);
 

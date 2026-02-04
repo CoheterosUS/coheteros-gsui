@@ -5,14 +5,14 @@ import DashboardPage from '@/pages/dashboard'
 import ControlsPage from '@/pages/controls'
 import LoggingPage from '@/pages/logging'
 import AboutPage from '@/pages/about'
+import MapPage from '@/pages/map'
 import AppLayout from '@/layout'
 import { getToastIcon } from '@/utils/utils'
 
 const toastOptions = {
   style: {
     background: 'var(--color-primary-muted)',
-    color: 'var(--color-primary-foreground)',
-    border: '2px solid var(--color-primary-foreground)'
+    color: 'var(--color-primary-foreground)'
   }
 }
 
@@ -39,10 +39,14 @@ export default function App () {
             path='/about'
             element={<AboutPage />}
           />
+          <Route
+            path='/map'
+            element={<MapPage />}
+          />
         </Route>
       </Routes>
       <Toaster
-        position='bottom-right'
+        position='top-right'
         toastOptions={toastOptions}
       >
         {
@@ -52,12 +56,16 @@ export default function App () {
             >
               {
                 ({ message }) => {
-                  const Icon = getToastIcon(t.type as ToastCategory)
+                  const { Icon, styles } = getToastIcon(t.type as ToastCategory)
+                  const iconStyle = `
+                    h-4 w-4
+                    ${styles}
+                  `
 
                   return (
                     <>
                       <Icon
-                        className='h-4 w-4'
+                        className={iconStyle}
                         strokeWidth={1.5}
                       />
                       {message}

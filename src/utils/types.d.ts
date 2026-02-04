@@ -86,4 +86,4 @@ interface WebsocketContextType {
   reconnect: () => void
 }
 
-type ToastCategory = 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR'
+type ToastCategory = 'INFO' | 'SUCCESS' | 'ERROR'
