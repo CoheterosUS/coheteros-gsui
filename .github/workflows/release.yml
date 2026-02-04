@@ -26,10 +26,39 @@ jobs:
       - name: Build Vite frontend
         run: npm run build
 
+      - name: Create .env file
+        run: |
+          cat << EOF > .env
+          # VITE prefix needed for Vite to load these variables
+
+          ## MODE
+          # ENVIRONMENT FOR TESTING MODE: TEST | PROD
+          VITE_MODE=PROD
+
+          ## PORTS
+          VITE_BACKEND_PORT=8000 # BACKEND PORT
+          VITE_FRONTEND_PORT=3000 # FRONTEND PORT, USED IN TEST MODE ONLY
+
+          ## WEBSOCKET
+          VITE_WS_RECONNECT_INTERVAL=5000 # WEBSOCKET RECONNECT INTERVAL IN MS
+
+          ## SERIAL
+          VITE_DEFAULT_BAUDRATE=9600 # DEFAULT SERIAL BAUDRATE DISPLAYED IN UI
+
+          ## PLOTTING
+          VITE_MAX_DATA_POINTS=50 # MAX DATA POINTS TO STORE FOR PLOTTING/TELEMETRY
+
+          ## TESTING
+          # FAKE PACKET GENERATION IS DISABLED WITH VITE_MODE=PROD
+          VITE_PACKET_FREQUENCY=20 # FREQUENCY OF FAKE TELEMETRY PACKETS IN HZ
+          VITE_TESTING_COM_PAIR=COM2 # COM PAIR FOR TESTING MODE (E.G. COM2 IF COM1 IS USED BY THE GSUI)
+          VITE_TESTING_COM_BAUDRATE=9600 # BAUDRATE FOR THE TESTING COM PORT
+          EOF
+
       - name: Create ZIP
         run: |
           mkdir release
-          cp -r dist backend release/
+          cp -r dist backend .env release/
           cd release
           zip -r ../coheteros-gsui.zip .
 

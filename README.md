@@ -26,6 +26,15 @@ If production mode is selected, follow the `Usage` instructions below. This mode
 
 The data received via the COM port can be either from a real device or from a simulation program (like the one included) with a virtual COM pair (a separate program is needed to create the virtual COM pair).
 
+#### DOWNLOAD
+
+Download the [latest release](https://github.com/CoheterosUS/coheteros-gsui/releases/latest) and extract the ZIP file. Modify the `.env` file as needed, then start the app:
+
+```bash
+cd backend
+run.bat
+```
+
 #### INSTALLATION
 
 Install npm packages:
