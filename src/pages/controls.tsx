@@ -8,7 +8,7 @@ import { DEFAULT_BAUDRATE, ALLOW_FAKE_PACKETS, BAUDRATE_OPTIONS } from '@/utils/
 
 export default function ControlsPage () {
   const { status, send, reconnect } = useWebsocketContext()
-  const { data, getData } = useFetchState<ControlsResponse>()
+  const { data, getData, setData } = useFetchState<ControlsResponse>()
   const [inputPort, setInputPort] = useState<string>('')
   const [baudrate, setBaudrate] = useState<string>(DEFAULT_BAUDRATE)
 
@@ -32,6 +32,11 @@ export default function ControlsPage () {
   }
 
   const fetchPorts = async () => {
+    if (status !== 'connected') {
+      setData(null)
+      return
+    }
+
     const { data } = await getData('/api/controls')
     if (data == null) {
       return
@@ -45,7 +50,7 @@ export default function ControlsPage () {
 
   useEffect(() => {
     fetchPorts()
-  }, [])
+  }, [status])
 
   return (
     <div
