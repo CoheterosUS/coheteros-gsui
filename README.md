@@ -32,10 +32,11 @@ Download the [latest release](https://github.com/CoheterosUS/coheteros-gsui/rele
 
 ```bash
 cd backend
+setup.bat
 run.bat
 ```
 
-#### INSTALLATION
+#### INSTALLATION FOR DEVELOPMENT
 
 Install npm packages:
 
