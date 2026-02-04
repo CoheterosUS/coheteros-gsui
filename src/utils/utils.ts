@@ -129,15 +129,6 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
   }
 ]
 
-export const initialViewport = {
-  longitude: 0,
-  latitude: 0,
-  zoom: 16,
-  pitch: 60,
-  maxPitch: 85,
-  bearing: 0
-}
-
 export function getPaddedMinMax (
   data: TelemetryData[],
   keys: string[],

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import Map, { type MapRef, Marker } from 'react-map-gl/maplibre'
-import { initialViewport } from '@/utils/utils'
+import Map, { type MapRef, Source, Layer } from 'react-map-gl/maplibre'
+import { initialViewport } from '@/utils/charts'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import { labelLayer, pointLayer } from '@/utils/charts'
 
 interface MapProps {
   gpsLatitude: number
@@ -22,15 +23,30 @@ export default function GPSMap ({
     ${anchored ? 'bg-primary text-primary-foreground' : 'bg-primary-foreground text-primary'}
   `
 
+  const pointGeoJSON = {
+    type: 'FeatureCollection',
+    features: [
+      {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [gpsLongitude, gpsLatitude]
+        },
+        properties: {
+          altitude: gpsAltitude.toFixed(1)
+        }
+      }
+    ]
+  }
+
   useEffect(() => {
     if (mapRef.current == null) {
       return
     }
 
     if (anchored) {
-      mapRef.current.setCenter({
-        lng: gpsLongitude,
-        lat: gpsLatitude
+      mapRef.current.jumpTo({
+        center: [gpsLongitude, gpsLatitude]
       })
     }
   }, [gpsLatitude, gpsLongitude, anchored])
@@ -45,28 +61,21 @@ export default function GPSMap ({
         mapStyle='https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
         // mapStyle='https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json'
       >
-        <Marker
-          longitude={gpsLongitude}
-          latitude={gpsLatitude}
-          anchor='bottom'
-          className='flex flex-col items-center gap-1'
+        <Source
+          id='gps'
+          type='geojson'
+          // @ts-expect-error
+          data={pointGeoJSON}
         >
-          <p
-            className='bg-primary p-1 rounded'
-          >
-            {gpsAltitude.toFixed(1)}m
-          </p>
-          <p
-            className='bg-primary p-1 rounded'
-          >
-            {gpsLatitude.toFixed(5)}, {gpsLongitude.toFixed(5)}
-          </p>
-          <img
-            src='/images/logo.png'
-            alt='Marker'
-            className='w-8 h-8'
+          {/* @ts-expect-error */}
+          <Layer
+            {...pointLayer}
           />
-        </Marker>
+          {/* @ts-expect-error */}
+          <Layer
+            {...labelLayer}
+          />
+        </Source>
       </Map>
       <button
         title='TOGGLE ANCHOR'

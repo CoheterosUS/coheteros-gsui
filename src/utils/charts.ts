@@ -45,3 +45,41 @@ export const colors = {
   batteryVoltage: 'rgba(255, 215, 0, 1)',
   temperature: 'rgba(255, 112, 67, 1)'
 }
+
+export const initialViewport = {
+  longitude: 0,
+  latitude: 0,
+  zoom: 16,
+  pitch: 60,
+  bearing: 0
+}
+
+export const pointLayer = {
+  id: 'point-layer',
+  type: 'circle',
+  source: 'gps',
+  paint: {
+    'circle-radius': 6,
+    'circle-color': '#f00',
+    'circle-stroke-width': 2,
+    'circle-stroke-color': '#000'
+  }
+}
+
+export const labelLayer = {
+  id: 'gps-label',
+  type: 'symbol',
+  source: 'gps',
+  layout: {
+    'text-field': ['concat', ['to-string', ['get', 'altitude']], ' m'],
+    'text-size': 16,
+    'text-offset': [0, -2],
+    'text-anchor': 'top',
+    'text-allow-overlap': true,
+    'text-ignore-placement': true,
+    'text-optional': true
+  },
+  paint: {
+    'text-color': '#000',
+  }
+}
