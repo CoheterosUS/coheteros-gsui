@@ -2,7 +2,7 @@ import json
 
 from fastapi import WebSocket
 
-from ..utils.packet import get_packet
+from ..utils.utils import get_packet
 from ..state.state import WebsocketState
 from ..serial.manager import SerialManager
 
@@ -13,7 +13,8 @@ async def execute (websocket: WebSocket, data: dict, state: WebsocketState, seri
   websocket_send = get_packet(
     "NOTIFICATION_PACKET",
     "DISCONNECTED" if state.input_port is None else
-    f"DISCONNECTED FROM {state.input_port}@{state.baudrate}"
+    f"DISCONNECTED FROM {state.input_port}@{state.baudrate}",
+    "SUCCESS"
   )
 
   state.reset()

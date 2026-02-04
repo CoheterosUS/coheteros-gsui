@@ -1,4 +1,6 @@
 import { Euler, MathUtils, Object3D } from 'three'
+import { CircleCheck, CircleX, Info } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 export const paddings = {
   gyroscope: 50,
@@ -189,4 +191,70 @@ export function getCalculatedDataSize (event: MessageEvent) {
   }
 
   return byteLength
+}
+
+export function getToastIcon (category: ToastCategory) {
+  switch (category.toUpperCase()) {
+    case 'SUCCESS':
+      return CircleCheck
+    case 'ERROR':
+      return CircleX
+    default:
+      return Info
+  }
+}
+
+export function getToastStyles (category: ToastCategory) {
+  const Icon = getToastIcon(category)
+
+  switch (category.toUpperCase()) {
+    case 'SUCCESS':
+      return {
+        color: 'var(--color-positive)',
+        border: '2px solid var(--color-positive)',
+        Icon
+      }
+    case 'ERROR':
+      return {
+        color: 'var(--color-negative)',
+        border: '2px solid var(--color-negative)',
+        Icon
+      }
+    default:
+      return {
+        color: 'var(--color-primary-foreground)',
+        border: '2px solid var(--color-primary-foreground)',
+        Icon
+      }
+  }
+}
+
+export function showToast (packet: WebsocketPacket) {
+  const { border, color } = getToastStyles(packet.category?.toUpperCase() as ToastCategory)
+
+  switch (packet.category) {
+    case 'SUCCESS':
+      toast.success(packet.data, {
+        style: {
+          border,
+          color
+        }
+      })
+      break
+    case 'ERROR':
+      toast.error(packet.data, {
+        style: {
+          border,
+          color
+        }
+      })
+      break
+    default:
+      toast(packet.data, {
+        style: {
+          border,
+          color
+        }
+      })
+  }
 }

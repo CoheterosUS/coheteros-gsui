@@ -4,6 +4,7 @@ import ChartGyroscope from '@/components/charts/chart-gyroscope'
 import ChartAcceleration from '@/components/charts/chart-acceleration'
 import ChartVoltageTemperature from '@/components/charts/chart-voltage-temperature'
 import Telemetry from '@/components/telemetry/telemetry'
+import TelemetryEmpty from '@/components/telemetry/telemetry-empty'
 
 import {
   Chart,
@@ -50,10 +51,6 @@ export default function DashboardPage () {
       </div>
     </div>
   ) : (
-    <div
-      className='h-full flex items-center justify-center text-primary-foreground'
-    >
-      NO TELEMETRY DATA RECEIVED YET
-    </div>
+    <TelemetryEmpty />
   )
 }

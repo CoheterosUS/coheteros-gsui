@@ -5,6 +5,7 @@ type WebsocketPacketType =
 interface WebsocketPacket {
   type: WebsocketPacketType
   data: any
+  category?: ToastCategory
 }
 
 interface TelemetryData {
@@ -55,9 +56,12 @@ interface TelemetryTableFieldProps {
   className?: string
 }
 
-interface SerialPortsResponse {
-  port_in_use?: SerialPort
-  available_ports: SerialPort[]
+interface ControlsResponse {
+  ports: {
+    port_in_use?: SerialPort
+    available_ports: SerialPort[]
+  }
+  fake_telemetry_enabled: boolean
 }
 
 interface SerialPort {
@@ -81,3 +85,5 @@ interface WebsocketContextType {
   send: (command: Command) => void
   reconnect: () => void
 }
+
+type ToastCategory = 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR'

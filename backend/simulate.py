@@ -17,16 +17,15 @@ PACKET_FREQUENCY = int(getenv("VITE_PACKET_FREQUENCY", 10))
 def main ():
   try:
     with Serial(COM_PAIR, COM_BAUDRATE, timeout=1) as ser:
-      print(f"Connected to {COM_PAIR} at {COM_BAUDRATE} baud.")
+      print(f"CONNECTED TO {COM_PAIR} AT {COM_BAUDRATE} BAUD")
       while True:
         data = create_fake_data()
         json_data = json.dumps(data)
         ser.write((json_data + "\n").encode('utf-8'))
         time.sleep(1 / PACKET_FREQUENCY)
   except SerialException as e:
-    print(f"Error opening serial port {COM_PAIR}: {e}")
+    print(f"ERROR OPENING SERIAL PORT {COM_PAIR}: {e}")
   except KeyboardInterrupt:
-    print("Stopped by user.")
-
+    print("STOPPED BY USER")
 if __name__ == "__main__":
   main()

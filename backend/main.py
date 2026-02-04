@@ -2,14 +2,17 @@ import asyncio
 import json
 import uvicorn
 
-from os import getenv
+from os import getenv, path
 from dotenv import load_dotenv
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from src.utils.fake import create_fake_data
-from src.serial.utils import get_serial_ports
+from src.utils.utils import get_controls_status
 from src.state.state import WebsocketState
 from src.serial.manager import SerialManager
 
@@ -21,9 +24,12 @@ import src.commands.disconnect_serial
 
 load_dotenv()
 
-PORT = int(getenv("VITE_WS_PORT", 8000))
-TESTING_MODE = getenv("VITE_TESTING_MODE", "FALSE") == "TRUE"
+BACKEND_PORT = int(getenv("VITE_BACKEND_PORT", 8000))
 PACKET_FREQUENCY = int(getenv("VITE_PACKET_FREQUENCY", 10))
+MODE = getenv("VITE_MODE", "PROD")
+
+BASE_DIR = path.dirname(path.abspath(__file__))
+DIST_DIR = path.join(BASE_DIR, "..", "dist")
 
 app = FastAPI()
 serial_manager = SerialManager()
@@ -37,6 +43,11 @@ app.add_middleware(
   allow_headers=["*"]
 )
 
+app.add_middleware(
+  GZipMiddleware,
+  minimum_size=1000
+)
+
 commands = {
   "START_FAKE_TELEMETRY": src.commands.start_fake_telemetry,
   "STOP_FAKE_TELEMETRY": src.commands.stop_fake_telemetry,
@@ -45,18 +56,18 @@ commands = {
   "DISCONNECT_SERIAL": src.commands.disconnect_serial
 }
 
-@app.get("/ports")
-async def get_serial():
-  return get_serial_ports(state)
+@app.get("/api/controls")
+async def get_controls ():
+  return get_controls_status(state)
 
 @app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
+async def websocket_endpoint (websocket: WebSocket):
   await websocket.accept()
 
   async def send_packets ():
     try:
       while True:
-        if state.send_fake_telemetry and TESTING_MODE:
+        if state.send_fake_telemetry and MODE == "TEST":
           fake_data = create_fake_data()
           fake_packet = {
             "type": "TELEMETRY_PACKET",
@@ -125,5 +136,21 @@ async def websocket_endpoint(websocket: WebSocket):
 
     state.reset()
 
+if MODE == "PROD":
+  if not path.exists(DIST_DIR):
+    print(f"DIST DIRECTORY NOT FOUND AT {DIST_DIR}. FRONTEND NOT SERVED.")
+  else:
+    app.mount("/assets", StaticFiles(directory=path.join(DIST_DIR, "assets")), name="assets")
+    app.mount("/model", StaticFiles(directory=path.join(DIST_DIR, "model")), name="model")
+    app.mount("/fonts", StaticFiles(directory=path.join(DIST_DIR, "fonts")), name="fonts")
+
+    @app.get("/{catch_all:path}")
+    async def serve_frontend (catch_all: str):
+      return FileResponse(path.join(DIST_DIR, "index.html"))
+
 if __name__ == "__main__":
-  uvicorn.run(app, host="localhost", port=PORT)
+  print(f"STARTING BACKEND ON PORT {BACKEND_PORT} IN {MODE} MODE")
+  if MODE == "PROD" and path.exists(DIST_DIR):
+    print(f"SERVING FRONTEND ON PORT {BACKEND_PORT} IN {MODE} MODE")
+
+  uvicorn.run(app, host="localhost", port=BACKEND_PORT)

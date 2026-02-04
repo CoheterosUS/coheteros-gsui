@@ -1,10 +1,12 @@
 export const options = {
   // responsive: false,
   maintainAspectRatio: false,
-  animation: false,
+  animation: {
+    duration: 0
+  },
   normalized: true,
   hover: {
-    mode: null
+    mode: undefined
   },
   scales: {
     y: {

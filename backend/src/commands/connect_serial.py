@@ -2,7 +2,7 @@ import json
 
 from fastapi import WebSocket
 
-from ..utils.packet import get_packet
+from ..utils.utils import get_packet
 from ..state.state import WebsocketState
 from ..serial.manager import SerialManager
 
@@ -24,6 +24,7 @@ async def execute (websocket: WebSocket, data: dict, state: WebsocketState, seri
     "NOTIFICATION_PACKET",
     f"CONNECTED TO {input_port}@{baudrate}" if success else
     f"FAILED TO CONNECT TO {input_port}@{baudrate}",
+    "SUCCESS" if success else "ERROR"
   )
 
   await websocket.send_text(json.dumps(websocket_send))

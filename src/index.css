@@ -29,6 +29,7 @@
 
   --color-positive: var(--color-green-500);
   --color-negative: var(--color-red-500);
+  --color-warning: var(--color-yellow-500);
 
   --color-pitch: var(--color-red-300);
   --color-roll: var(--color-blue-300);

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import toast from 'react-hot-toast'
-import { getCalculatedDataSize } from '@/utils/utils'
+import { getCalculatedDataSize, showToast } from '@/utils/utils'
 import { WS_URL, RECONNECT_INTERVAL, MAX_DATA_POINTS } from '@/utils/config'
 
 export function useWebsocket (url: string = WS_URL): WebsocketContextType {
@@ -90,7 +89,7 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
           break
         case 'NOTIFICATION_PACKET':
           console.log('WS: Notification', packet.data)
-          toast(packet.data)
+          showToast(packet)
           break
       }
 
