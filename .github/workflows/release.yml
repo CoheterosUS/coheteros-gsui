@@ -2,7 +2,7 @@ name: Build and Release ZIP
 
 on:
   release:
-    types: [published]
+    types: [created]
 
 permissions:
   contents: write
