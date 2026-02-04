@@ -12,7 +12,7 @@
 
 #### EXPLANATION
 
-This application has two modes of execution: testing mode (VITE_MODE=TEST) and production mode (VITE_MODE=PROD).
+This application has two modes of execution: testing mode (`VITE_MODE=TEST`) and production mode (`VITE_MODE=PROD`).
 If testing mode is selected, follow the `Development` instructions below. This mode gives two options for representing data:
 
 - Generating its own fake data.
@@ -36,9 +36,11 @@ setup.bat
 run.bat
 ```
 
-> **NOTE**: Most changes on the `.env` file won't be applied, since the frontend is pre-built. To apply changes, clone the repository and follow the `Installation` and `Usage` instructions below. 
+> [!IMPORTANT]
+> Most changes on the `.env` file won't be applied, since the frontend is pre-built. To apply changes, clone the repository and follow the `Installation` and `Usage` instructions below. 
 
-> **NOTE**: Python is required to run the backend.
+> ![IMPORTANT]
+> Python is required to run the backend.
 
 #### INSTALLATION
 
