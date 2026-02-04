@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/CoheterosUS/coheteros-gsui-continued/blob/main/public/images/logo.png" width="150" />
+  <img src="https://github.com/CoheterosUS/coheteros-gsui/blob/main/public/images/logo.png" width="150" />
 </p>
 
 <h3 align="center">
@@ -7,7 +7,7 @@
 </h3>
 
 <p align="center">
-  <img src="https://github.com/CoheterosUS/coheteros-gsui-continued/blob/main/public/images/screenshot.png" />
+  <img src="https://github.com/CoheterosUS/coheteros-gsui/blob/main/public/images/screenshot.png" />
 </p>
 
 #### EXPLANATION
