@@ -1,4 +1,4 @@
-import { ArrowBigDown, ArrowDownToLine } from 'lucide-react'
+import { ArrowDownToLine } from 'lucide-react'
 
 interface SerialStatusIconProps {
   rate: number
