@@ -51,118 +51,109 @@ export default function ControlsPage () {
     <div
       className='h-full flex flex-col'
     >
-      <p
-        className='mx-4 mt-4 text-xl text-primary-foreground'
+      <ControlsSection
+        title='ACTIONS'
       >
-        CONTROLS
-      </p>
-      <div
-        className='flex flex-col'
+        <ControlsButton
+          label='DEPLOY PARACHUTE'
+          onClick={() => handleCommand('DEPLOY_PARACHUTE')}
+          disabled={status !== 'connected'}
+        />
+      </ControlsSection>
+      <ControlsSection
+        title='SERIAL'
       >
-        <ControlsSection
-          title='ACTIONS'
-        >
-          <ControlsButton
-            label='DEPLOY PARACHUTE'
-            onClick={() => handleCommand('DEPLOY_PARACHUTE')}
-            disabled={status !== 'connected'}
-          />
-        </ControlsSection>
-        <ControlsSection
-          title='SERIAL'
-        >
-          {
-            data != null && data.ports.available_ports.length > 0 ? (
-              <>
-                <div
-                  className='flex flex-col gap-2'
-                >
-                  <div
-                    className='flex flex-row gap-2'
-                  >
-                    <ControlsDropdown
-                      label='PORT'
-                      options={data.ports.available_ports.map(port => port.name)}
-                      selectedOption={inputPort}
-                      setSelectedOption={setInputPort}
-                      disabled={data.ports.port_in_use != null}
-                    />
-                    <ControlsDropdown
-                      label='BAUDRATE'
-                      options={[...BAUDRATE_OPTIONS]}
-                      selectedOption={baudrate}
-                      setSelectedOption={setBaudrate}
-                      disabled={data.ports.port_in_use != null}
-                    />
-                  </div>
-                  <ControlsButton
-                    label='CONNECT'
-                    onClick={() => handlePorts()}
-                    disabled={data.fake_telemetry_enabled || data.ports.port_in_use != null}
-                  />
-                  <ControlsButton
-                    label='DISCONNECT'
-                    onClick={() => handlePorts(true)}
-                    variant='danger'
-                    disabled={data.ports.port_in_use == null}
-                  />
-                </div>
-              </>
-            ) : (
+        {
+          data != null && data.ports.available_ports.length > 0 ? (
+            <>
               <div
                 className='flex flex-col gap-2'
               >
-                <p
-                  className='text-primary-muted-foreground'
+                <div
+                  className='flex flex-row gap-2'
                 >
-                  No serial ports available.
-                </p>
+                  <ControlsDropdown
+                    label='PORT'
+                    options={data.ports.available_ports.map(port => port.name)}
+                    selectedOption={inputPort}
+                    setSelectedOption={setInputPort}
+                    disabled={data.ports.port_in_use != null}
+                  />
+                  <ControlsDropdown
+                    label='BAUDRATE'
+                    options={[...BAUDRATE_OPTIONS]}
+                    selectedOption={baudrate}
+                    setSelectedOption={setBaudrate}
+                    disabled={data.ports.port_in_use != null}
+                  />
+                </div>
                 <ControlsButton
-                  label='REFRESH PORTS'
-                  onClick={fetchPorts}
-                />
-              </div>
-            )
-          }
-        </ControlsSection>
-        <ControlsSection
-          title='WEBSOCKET'
-        >
-          <ControlsButton
-            label='FORCE RECONNECTION'
-            onClick={reconnect}
-            variant='danger'
-            disabled={status === 'connected' || status === 'reconnecting'}
-          />
-        </ControlsSection>
-        <ControlsSection
-          title='TESTING'
-        >
-          {
-            ALLOW_FAKE_PACKETS && data != null ? (
-              <>
-                <ControlsButton
-                  label='START FAKE TELEMETRY'
-                  onClick={() => handleCommand('START_FAKE_TELEMETRY')}
+                  label='CONNECT'
+                  onClick={() => handlePorts()}
                   disabled={data.fake_telemetry_enabled || data.ports.port_in_use != null}
                 />
                 <ControlsButton
-                  label='STOP FAKE TELEMETRY'
-                  onClick={() => handleCommand('STOP_FAKE_TELEMETRY')}
+                  label='DISCONNECT'
+                  onClick={() => handlePorts(true)}
                   variant='danger'
-                  disabled={!data.fake_telemetry_enabled}
+                  disabled={data.ports.port_in_use == null}
                 />
-              </>
-            ) : (
+              </div>
+            </>
+          ) : (
+            <div
+              className='flex flex-col gap-2'
+            >
               <p
                 className='text-primary-muted-foreground'
               >
-                Fake telemetry packets are disabled in the configuration.
+                NO SERIAL PORTS AVAILABLE
               </p>
-            )
-          }
-        </ControlsSection>
-      </div>
+              <ControlsButton
+                label='REFRESH PORTS'
+                onClick={fetchPorts}
+              />
+            </div>
+          )
+        }
+      </ControlsSection>
+      <ControlsSection
+        title='WEBSOCKET'
+      >
+        <ControlsButton
+          label='FORCE RECONNECTION'
+          onClick={reconnect}
+          variant='danger'
+          disabled={status === 'connected' || status === 'reconnecting'}
+        />
+      </ControlsSection>
+      <ControlsSection
+        title='TESTING'
+      >
+        {
+          ALLOW_FAKE_PACKETS && data != null ? (
+            <>
+              <ControlsButton
+                label='START FAKE TELEMETRY'
+                onClick={() => handleCommand('START_FAKE_TELEMETRY')}
+                disabled={data.fake_telemetry_enabled || data.ports.port_in_use != null}
+              />
+              <ControlsButton
+                label='STOP FAKE TELEMETRY'
+                onClick={() => handleCommand('STOP_FAKE_TELEMETRY')}
+                variant='danger'
+                disabled={!data.fake_telemetry_enabled}
+              />
+            </>
+          ) : (
+            <p
+              className='text-primary-muted-foreground'
+            >
+              FAKE TELEMETRY PACKETS ARE DISABLED
+            </p>
+          )
+        }
+      </ControlsSection>
     </div>
   )
 }
