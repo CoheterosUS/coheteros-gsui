@@ -28,13 +28,17 @@ The data received via the COM port can be either from a real device or from a si
 
 #### DOWNLOAD
 
-Download the [latest release](https://github.com/CoheterosUS/coheteros-gsui/releases/latest) and extract the ZIP file. Modify the `.env` file as needed, then start the app:
+Download the [latest release](https://github.com/CoheterosUS/coheteros-gsui/releases/latest) and extract the ZIP file. Then, to start the application, run the following commands in a terminal:
 
 ```bash
 cd backend
 setup.bat
 run.bat
 ```
+
+> **NOTE**: Most changes on the `.env` file won't be applied, since the frontend is pre-built. To apply changes, clone the repository and follow the `Installation` and `Usage` instructions below. 
+
+> **NOTE**: Python is required to run the backend.
 
 #### INSTALLATION
 
