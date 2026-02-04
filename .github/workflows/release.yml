@@ -23,9 +23,6 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
-      - name: Build Vite frontend
-        run: npm run build
-
       - name: Create .env file
         run: |
           cat << EOF > .env
@@ -54,6 +51,9 @@ jobs:
           VITE_TESTING_COM_PAIR=COM2 # COM PAIR FOR TESTING MODE (E.G. COM2 IF COM1 IS USED BY THE GSUI)
           VITE_TESTING_COM_BAUDRATE=9600 # BAUDRATE FOR THE TESTING COM PORT
           EOF
+
+      - name: Build Vite frontend
+        run: npm run build
 
       - name: Create ZIP
         run: |
