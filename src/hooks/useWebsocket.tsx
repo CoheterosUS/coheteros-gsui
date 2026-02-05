@@ -1,13 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { getCalculatedDataSize, showToast } from '@/utils/utils'
-import { WS_URL, RECONNECT_INTERVAL, MAX_DATA_POINTS } from '@/utils/config'
+import { WS_URL, RECONNECT_INTERVAL } from '@/utils/config'
+
+type TelemetryCallback = (data: WebsocketTelemetryData) => void
 
 // TODO: Subscriber pattern for better performance and separation of concerns
 export function useWebsocket (url: string = WS_URL): WebsocketContextType {
-  const [data, setData] = useState<WebsocketTelemetryData[]>([])
   const [status, setStatus] = useState<('disconnected' | 'connected' | 'reconnecting')>('disconnected')
   const [rate, setRate] = useState(0)
   const [pps, setPps] = useState(0)
+
+  const subscribersRef = useRef<Set<TelemetryCallback>>(new Set())
 
   const websocketRef = useRef<WebSocket | null>(null)
   const reconnectTimeoutRef = useRef<number | null>(null)
@@ -17,12 +20,15 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
   const totalBytesRef = useRef<number>(0)
   const packetCountRef = useRef<number>(0)
 
-  const connectWebsocket = () => {
-    if (cleaningUpRef.current) {
-      return
+  const subscribe = useCallback((callback: TelemetryCallback) => {
+    subscribersRef.current.add(callback)
+    return () => {
+      subscribersRef.current.delete(callback)
     }
+  }, [])
 
-    if (websocketRef.current != null && websocketRef.current.readyState === WebSocket.OPEN) {
+  const connectWebsocket = useCallback(() => {
+    if (cleaningUpRef.current || websocketRef.current?.readyState === WebSocket.OPEN) {
       return
     }
 
@@ -79,14 +85,7 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
 
       switch (packet.type) {
         case 'TELEMETRY_PACKET':
-          setData(prev => {
-            const updated = [...prev, packet.data]
-            if (updated.length > MAX_DATA_POINTS) {
-              updated.shift()
-            }
-
-            return updated
-          })
+          subscribersRef.current.forEach(callback => callback(packet.data))
           break
         case 'NOTIFICATION_PACKET':
           console.log('WS: Notification', packet.data)
@@ -97,7 +96,7 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
       totalBytesRef.current += getCalculatedDataSize(event)
       packetCountRef.current += 1
     }
-  }
+  }, [url])
 
   const reconnect = () => {
     if (websocketRef.current != null) {
@@ -113,7 +112,6 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
 
     setRate(0)
     setPps(0)
-    setData([])
     totalBytesRef.current = 0
     packetCountRef.current = 0
 
@@ -168,7 +166,7 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
   }, [url])
 
   return {
-    data,
+    subscribe,
     status,
     rate,
     pps,

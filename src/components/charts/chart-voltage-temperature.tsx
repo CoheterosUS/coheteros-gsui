@@ -1,99 +1,99 @@
-import { colors, options } from '@/utils/charts'
-import { getPaddedMinMax, paddings } from '@/utils/utils'
+import { useEffect, useMemo, useRef } from 'react'
 import type { Chart } from 'chart.js'
-import { useEffect, useRef } from 'react'
 import { Line } from 'react-chartjs-2'
+import { useWebsocketContext } from '@/contexts/WebsocketContext'
+import { colors, options } from '@/utils/charts'
+import { MAX_DATA_POINTS } from '@/utils/config'
 
-export default function ChartVoltageTemperature ({
-  data
-}: ChartComponentProps) {
+export default function ChartVoltageTemperature () {
+  const { subscribe } = useWebsocketContext()
   const voltageRef = useRef<Chart<'line'>>(null)
   const temperatureRef = useRef<Chart<'line'>>(null)
 
-  const voltage = {
-    labels: data.map(data => data.timestamp.toFixed(2)),
+  const voltageInitialData = useMemo(() => ({
+    labels: [],
     datasets: [
       {
         label: 'Battery Voltage (V)',
-        data: data.map(data => data.batteryVoltage),
+        data: [],
         borderColor: colors.batteryVoltage,
         tension: 0,
         pointRadius: 0
       }
     ]
-  }
+  }), [])
 
-  const temperature = {
-    labels: data.map(data => data.timestamp.toFixed(2)),
+  const temperatureInitialData = useMemo(() => ({
+    labels: [],
     datasets: [
       {
         label: 'Temperature (°C)',
-        data: data.map(data => data.temperature),
+        data: [],
         borderColor: colors.temperature,
         tension: 0,
         pointRadius: 0
       }
     ]
-  }
-
-  const { min: voltageMin, max: voltageMax } = getPaddedMinMax(
-    data,
-    ['batteryVoltage'],
-    paddings.voltage
-  )
-
-  const { min: tempMin, max: tempMax } = getPaddedMinMax(
-    data,
-    ['temperature'],
-    paddings.temperature
-  )
-
-  const voltageCustom = {
-    ...options,
-    scales: {
-      y: {
-        ...options.scales.y,
-        min: voltageMin,
-        max: voltageMax
-      }
-    }
-  }
-
-  const temperatureCustom = {
-    ...options,
-    scales: {
-      y: {
-        ...options.scales.y,
-        min: tempMin,
-        max: tempMax
-      }
-    }
-  }
+  }), [])
 
   useEffect(() => {
-    if (voltageRef.current != null) {
-      voltageRef.current.reset()
-    }
+    const unsubscribe = subscribe((packet) => {
+      const voltageChart = voltageRef.current
+      const temperatureChart = temperatureRef.current
 
-    if (temperatureRef.current != null) {
-      temperatureRef.current.reset()
+      const timestamp = packet.timestamp.toFixed(2)
+      if (voltageChart != null) {
+        voltageChart.data.labels?.push(timestamp)
+        voltageChart.data.datasets[0].data.push(packet.batteryVoltage)
+
+        if (voltageChart.data.labels != null && voltageChart.data.labels.length > MAX_DATA_POINTS) {
+          voltageChart.data.labels.shift()
+          voltageChart.data.datasets[0].data.shift()
+        }
+
+        voltageChart.update('none')
+      }
+
+      if (temperatureChart != null) {
+        temperatureChart.data.labels?.push(timestamp)
+        temperatureChart.data.datasets[0].data.push(packet.temperature)
+
+        if (temperatureChart.data.labels != null && temperatureChart.data.labels.length > MAX_DATA_POINTS) {
+          temperatureChart.data.labels.shift()
+          temperatureChart.data.datasets[0].data.shift()
+        }
+
+        temperatureChart.update('none')
+      }
+    })
+
+    return () => {
+      unsubscribe()
     }
-  }, [data])
+  }, [subscribe])
 
   return (
     <div
-      className='w-1/2 flex gap-2'
+      className='w-full h-full min-h-0 min-w-0 flex gap-2'
     >
-      <Line
-        ref={voltageRef}
-        data={voltage}
-        options={voltageCustom}
-      />
-      <Line
-        ref={temperatureRef}
-        data={temperature}
-        options={temperatureCustom}
-      />
+      <div
+        className='flex-1 min-w-0'
+      >
+        <Line
+          ref={voltageRef}
+          data={voltageInitialData}
+          options={options}
+        />
+      </div>
+      <div
+        className='flex-1 min-w-0'
+      >
+        <Line
+          ref={temperatureRef}
+          data={temperatureInitialData}
+          options={options}
+        />
+      </div>
     </div>
   )
 }

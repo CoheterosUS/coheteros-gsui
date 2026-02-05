@@ -1,55 +1,103 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Map, { type MapRef, Source, Layer } from 'react-map-gl/maplibre'
-import { initialViewport } from '@/utils/charts'
+import { pointLayer, labelLayer } from '@/utils/charts'
+import { useWebsocketContext } from '@/contexts/WebsocketContext'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { labelLayer, pointLayer } from '@/utils/charts'
 
-interface MapProps {
-  gpsLatitude: number
-  gpsLongitude: number
-  gpsAltitude: number
+interface GPSMapProps {
+  initial: WebsocketTelemetryData
 }
 
 export default function GPSMap ({
-  gpsLatitude,
-  gpsLongitude,
-  gpsAltitude
-}: MapProps) {
+  initial
+}: GPSMapProps) {
+  const { subscribe } = useWebsocketContext()
   const mapRef = useRef<MapRef>(null)
   const [anchored, setAnchored] = useState(true)
+  const anchoredRef = useRef(true)
+  const lastUpdateRef = useRef(0)
+
+  const initialViewState = useMemo(() => ({
+    longitude: initial.gpsLongitude,
+    latitude: initial.gpsLatitude,
+    zoom: 15,
+    pitch: 60,
+    bearing: 0
+  }), [initial])
+
+  const initialGeoJson = useMemo(() => ({
+    type: 'FeatureCollection',
+    features: [{
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [initial.gpsLongitude, initial.gpsLatitude]
+      },
+      properties: {
+        altitude: initial.gpsAltitude.toFixed(1)
+      }
+    }]
+  }), [initial])
+
+
+  useEffect(() => {
+    anchoredRef.current = anchored
+  }, [anchored])
+
+  useEffect(() => {
+    const unsubscribe = subscribe((packet) => {
+      const map = mapRef.current?.getMap()
+      if (map == null) {
+        return
+      }
+
+      const now = Date.now()
+
+      // TODO: Implement refresh rate selection, settings
+      if (now - lastUpdateRef.current > 100) {
+        const {
+          gpsLatitude,
+          gpsLongitude,
+          gpsAltitude
+        } = packet
+
+        const source = map.getSource('gps')
+        if (source != null) {
+          // @ts-expect-error
+          source.setData({
+            type: 'FeatureCollection',
+            features: [{
+              type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: [gpsLongitude, gpsLatitude]
+              },
+              properties: {
+                altitude: gpsAltitude.toFixed(1)
+              }
+            }]
+          })
+        }
+
+        if (anchoredRef.current) {
+          map.jumpTo({
+            center: [gpsLongitude, gpsLatitude]
+          })
+        }
+
+        lastUpdateRef.current = now
+      }
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [subscribe])
 
   const buttonStyle = `
     fixed top-4 right-4 w-32 flex justify-center gap-2 px-2 py-1 font-semibold tracking-wider border-2 border-primary rounded cursor-pointer hover:opacity-80
     ${anchored ? 'bg-primary text-primary-foreground' : 'bg-primary-foreground text-primary'}
   `
-
-  const pointGeoJSON = {
-    type: 'FeatureCollection',
-    features: [
-      {
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [gpsLongitude, gpsLatitude]
-        },
-        properties: {
-          altitude: gpsAltitude.toFixed(1)
-        }
-      }
-    ]
-  }
-
-  useEffect(() => {
-    if (mapRef.current == null) {
-      return
-    }
-
-    if (anchored) {
-      mapRef.current.jumpTo({
-        center: [gpsLongitude, gpsLatitude]
-      })
-    }
-  }, [gpsLatitude, gpsLongitude, anchored])
 
   return (
     <div
@@ -57,7 +105,7 @@ export default function GPSMap ({
     >
       <Map
         ref={mapRef}
-        initialViewState={initialViewport}
+        initialViewState={initialViewState}
         mapStyle='https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
         // mapStyle='https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json'
       >
@@ -65,7 +113,7 @@ export default function GPSMap ({
           id='gps'
           type='geojson'
           // @ts-expect-error
-          data={pointGeoJSON}
+          data={initialGeoJson}
         >
           {/* @ts-expect-error */}
           <Layer

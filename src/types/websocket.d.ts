@@ -8,7 +8,7 @@ type WebsocketPacketType =
   | 'NOTIFICATION_PACKET'
 
 interface WebsocketContextType {
-  data: WebsocketTelemetryData[]
+  subscribe: (callback: (data: WebsocketTelemetryData) => void) => () => void
   status: WebsocketStatus
   rate: number
   pps: number

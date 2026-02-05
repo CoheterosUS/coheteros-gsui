@@ -46,14 +46,6 @@ export const colors = {
   temperature: 'rgba(255, 112, 67, 1)'
 }
 
-export const initialViewport = {
-  longitude: 0,
-  latitude: 0,
-  zoom: 16,
-  pitch: 60,
-  bearing: 0
-}
-
 export const pointLayer = {
   id: 'point-layer',
   type: 'circle',

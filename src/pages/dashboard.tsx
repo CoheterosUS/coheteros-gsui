@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useWebsocketContext } from '@/contexts/WebsocketContext'
 import ChartAltitude from '@/components/charts/chart-altitude'
 import ChartGyroscope from '@/components/charts/chart-gyroscope'
@@ -24,30 +25,26 @@ Chart.register(
 )
 
 export default function DashboardPage () {
-  const { data } = useWebsocketContext()
+  const { subscribe } = useWebsocketContext()
+  const [loaded, setLoaded] = useState(false)
 
-  return data.length > 0 ? (
+  useEffect(() => {
+    const unsubscribe = subscribe(() => setLoaded((prev) => prev ? prev : true))
+    return () => unsubscribe()
+  }, [subscribe])
+
+  return loaded ? (
     <div
-      className='h-full flex flex-col'
+      className='h-full flex flex-col overflow-hidden'
     >
-      <Telemetry
-        data={data[data.length - 1]}
-      />
+      <Telemetry />
       <div
-        className='flex-1 grid grid-cols-2 grid-rows-2 gap-4 px-2'
+        className='min-h-0 flex-1 grid grid-cols-2 grid-rows-2 gap-4 px-2'
       >
-        <ChartAltitude
-          data={data}
-        />
-        <ChartGyroscope
-          data={data}
-        />
-        <ChartAcceleration
-          data={data}
-        />
-        <ChartVoltageTemperature
-          data={data}
-        />
+        <ChartAltitude />
+        <ChartGyroscope />
+        <ChartAcceleration />
+        <ChartVoltageTemperature />
       </div>
     </div>
   ) : (
