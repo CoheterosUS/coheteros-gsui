@@ -1,5 +1,5 @@
 interface LoggingMessageProps {
-  data: TelemetryData
+  data: WebsocketTelemetryData
 }
 
 export default function LoggingMessage ({

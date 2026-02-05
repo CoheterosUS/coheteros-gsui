@@ -7,17 +7,14 @@ from ..managers.state import StateManager
 from ..managers.serial import SerialManager
 
 async def execute (websocket: WebSocket, data: dict, state: StateManager, serial_manager: SerialManager):
-  if serial_manager is not None:
-    serial_manager.disconnect()
+  if serial_manager is not None and state.record_csv:
+    state.record_csv = False
+    serial_manager.stop_csv_record()
 
   websocket_send = get_packet(
     "NOTIFICATION_PACKET",
-    "DISCONNECTED" if state.input_port is None else
-    f"DISCONNECTED FROM {state.input_port}@{state.baudrate}",
+    "CSV RECORDING STOPPED",
     "SUCCESS"
   )
-
-  state.input_port = None
-  state.baudrate = None
 
   await websocket.send_text(json.dumps(websocket_send))

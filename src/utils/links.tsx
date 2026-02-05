@@ -1,4 +1,4 @@
-import { BookHeart, ChartLine, GamepadDirectional, MapPin, Terminal } from 'lucide-react'
+import { BookHeart, ChartLine, GamepadDirectional, MapPin, Settings, Terminal } from 'lucide-react'
 
 export const links = [
   {
@@ -20,6 +20,11 @@ export const links = [
     Icon: Terminal,
     href: '/logging',
     label: 'LOGGING'
+  },
+  {
+    Icon: Settings,
+    href: '/settings',
+    label: 'SETTINGS'
   },
   {
     Icon: BookHeart,

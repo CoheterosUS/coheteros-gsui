@@ -2,14 +2,15 @@ import json
 
 from fastapi import WebSocket
 
-from ..state.state import WebsocketState
 from ..utils.utils import get_packet
-from ..serial.manager import SerialManager
+from ..managers.state import StateManager
+from ..managers.serial import SerialManager
 
-async def execute (websocket: WebSocket, data: dict, state: WebsocketState, serial_manager: SerialManager):
+async def execute (websocket: WebSocket, data: dict, state: StateManager, serial_manager: SerialManager):
   if serial_manager is not None:
     serial_manager.disconnect()
-    state.reset()
+    state.input_port = None
+    state.baudrate = None
 
   state.send_fake_telemetry = True
   websocket_send = get_packet(

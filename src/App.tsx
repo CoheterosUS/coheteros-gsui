@@ -6,6 +6,7 @@ import ControlsPage from '@/pages/controls'
 import LoggingPage from '@/pages/logging'
 import AboutPage from '@/pages/about'
 import MapPage from '@/pages/map'
+import SettingsPage from '@/pages/settings'
 import AppLayout from '@/layout'
 import { getToastIcon } from '@/utils/utils'
 
@@ -32,16 +33,20 @@ export default function App () {
             element={<ControlsPage />}
           />
           <Route
+            path='/map'
+            element={<MapPage />}
+          />
+          <Route
             path='/logging'
             element={<LoggingPage />}
           />
           <Route
-            path='/about'
-            element={<AboutPage />}
+            path='/settings'
+            element={<SettingsPage />}
           />
           <Route
-            path='/map'
-            element={<MapPage />}
+            path='/about'
+            element={<AboutPage />}
           />
         </Route>
       </Routes>

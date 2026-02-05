@@ -1,15 +1,25 @@
 import asyncio
 import json
+import datetime
+import time
+import os
 
 from serial import Serial, SerialException
+
+from ..managers.csv import CSVManager
 
 class SerialManager:
   def __init__ (self):
     self.serial_connection = None
     self.is_connected = False
+    self.csv_manager = None
 
   def connect (self, port: str, baudrate: int, timeout: float = 1.0):
     """Connect to serial"""
+    loop = asyncio.get_event_loop()
+    return loop.run_in_executor(None, self._connect_sync, port, baudrate, timeout)
+
+  def _connect_sync (self, port: str, baudrate: int, timeout: float):
     try:
       self.serial_connection = Serial(
         port=port,
@@ -56,7 +66,31 @@ class SerialManager:
     """Parse telemetry data from line"""
     try:
       data = json.loads(line)
+      data['ground_timestamp'] = time.time()
       return data
     except json.JSONDecodeError:
       print(f"INVALID TELEMETRY DATA: {line}")
       return None
+
+  def write_csv (self, data: dict):
+    """Write telemetry data to CSV"""
+    if self.csv_manager is not None:
+      self.csv_manager.add_packet(data)
+
+  def start_csv_record (self):
+    """Start CSV record"""
+    if self.csv_manager is None:
+      self.csv_manager = CSVManager()
+
+    self.csv_manager.start_recording(f"telemetry_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
+
+  def stop_csv_record (self):
+    """Stop CSV record"""
+    if self.csv_manager is not None:
+      self.csv_manager.stop_recording()
+      self.csv_manager = None
+
+  # TODO: Investigate dumping
+  def dump_csv_record (self):
+    """Dump CSV record"""
+    print("CSV RECORD DUMPED")

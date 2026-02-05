@@ -4,7 +4,7 @@ import VisualizerScene from '@/components/visualizer/visualizer-scene'
 import { telemetryTableFields } from '@/utils/utils'
 
 interface TelemetryProps {
-  data: TelemetryData
+  data: WebsocketTelemetryData
 }
 
 export default function Telemetry ({

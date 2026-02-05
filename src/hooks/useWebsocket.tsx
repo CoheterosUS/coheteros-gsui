@@ -3,7 +3,7 @@ import { getCalculatedDataSize, showToast } from '@/utils/utils'
 import { WS_URL, RECONNECT_INTERVAL, MAX_DATA_POINTS } from '@/utils/config'
 
 export function useWebsocket (url: string = WS_URL): WebsocketContextType {
-  const [data, setData] = useState<TelemetryData[]>([])
+  const [data, setData] = useState<WebsocketTelemetryData[]>([])
   const [status, setStatus] = useState<('disconnected' | 'connected' | 'reconnecting')>('disconnected')
   const [rate, setRate] = useState(0)
   const [pps, setPps] = useState(0)
@@ -121,7 +121,7 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
     connectWebsocket()
   }
 
-  const send = (command: Command) => {
+  const send = (command: WebsocketCommand) => {
     const ws = websocketRef.current
     if (ws != null && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify(command))

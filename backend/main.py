@@ -13,14 +13,17 @@ from fastapi.responses import FileResponse
 
 from src.utils.fake import create_fake_data
 from src.utils.utils import get_controls_status
-from src.state.state import WebsocketState
-from src.serial.manager import SerialManager
+from src.managers.state import StateManager
+from src.managers.serial import SerialManager
 
 import src.commands.start_fake_telemetry
 import src.commands.stop_fake_telemetry
 import src.commands.deploy_parachute
 import src.commands.connect_serial
 import src.commands.disconnect_serial
+import src.commands.start_csv_record
+import src.commands.stop_csv_record
+import src.commands.dump_csv_record
 
 load_dotenv()
 
@@ -32,8 +35,8 @@ BASE_DIR = path.dirname(path.abspath(__file__))
 DIST_DIR = path.join(BASE_DIR, "..", "dist")
 
 app = FastAPI()
+state = StateManager()
 serial_manager = SerialManager()
-state = WebsocketState()
 
 app.add_middleware(
   CORSMiddleware,
@@ -53,7 +56,10 @@ commands = {
   "STOP_FAKE_TELEMETRY": src.commands.stop_fake_telemetry,
   "DEPLOY_PARACHUTE": src.commands.deploy_parachute,
   "CONNECT_SERIAL": src.commands.connect_serial,
-  "DISCONNECT_SERIAL": src.commands.disconnect_serial
+  "DISCONNECT_SERIAL": src.commands.disconnect_serial,
+  "START_CSV_RECORD": src.commands.start_csv_record,
+  "STOP_CSV_RECORD": src.commands.stop_csv_record,
+  "DUMP_CSV_RECORD": src.commands.dump_csv_record
 }
 
 @app.get("/api/controls")
@@ -69,6 +75,10 @@ async def websocket_endpoint (websocket: WebSocket):
       while True:
         if state.send_fake_telemetry and MODE == "TEST":
           fake_data = create_fake_data()
+
+          if state.record_csv:
+            serial_manager.write_csv(fake_data)
+
           fake_packet = {
             "type": "TELEMETRY_PACKET",
             "data": fake_data
@@ -83,6 +93,10 @@ async def websocket_endpoint (websocket: WebSocket):
           if line is not None:
             telemetry_data = serial_manager.parse_telemetry(line)
             if telemetry_data is not None:
+
+              if state.record_csv:
+                serial_manager.write_csv(telemetry_data)
+
               telemetry_packet = {
                 "type": "TELEMETRY_PACKET",
                 "data": telemetry_data
@@ -130,11 +144,6 @@ async def websocket_endpoint (websocket: WebSocket):
   finally:
     send_task.cancel()
     receive_task.cancel()
-
-    if serial_manager is not None:
-      await asyncio.to_thread(serial_manager.disconnect)
-
-    state.reset()
 
 if MODE == "PROD":
   if not path.exists(DIST_DIR):

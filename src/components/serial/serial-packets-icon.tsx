@@ -1,15 +1,17 @@
 import { Activity } from 'lucide-react'
 
 interface SerialPacketsIconProps {
+  status: WebsocketStatus
   pps: number
 }
 
 export default function SerialPacketsIcon ({
+  status,
   pps
 }: SerialPacketsIconProps) {
   const iconStyle = `
     h-4 w-4
-    ${pps > 0 ? 'text-downlink' : 'text-primary-muted-foreground'}
+    ${status === 'connected' ? 'text-downlink' : 'text-primary-muted-foreground'}
   `
 
   return (

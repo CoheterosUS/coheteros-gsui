@@ -15,7 +15,7 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'FSM STATE',
-        value: (data: TelemetryData) => data.flightStatus
+        value: (data: WebsocketTelemetryData) => data.flightStatus
       },
       {
         label: 'DROGUE',
@@ -33,12 +33,12 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'BAROMETRIC ALTITUDE',
-        value: (data: TelemetryData) => data.altitude.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.altitude.toFixed(2),
         unit: 'm'
       },
       {
         label: 'GPS ALTITUDE',
-        value: (data: TelemetryData) => data.gpsAltitude.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.gpsAltitude.toFixed(2),
         unit: 'm'
       }
     ]
@@ -49,12 +49,12 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'GPS LATITUDE',
-        value: (data: TelemetryData) => data.gpsLatitude.toFixed(6),
+        value: (data: WebsocketTelemetryData) => data.gpsLatitude.toFixed(6),
         unit: '°'
       },
       {
         label: 'GPS LONGITUDE',
-        value: (data: TelemetryData) => data.gpsLongitude.toFixed(6),
+        value: (data: WebsocketTelemetryData) => data.gpsLongitude.toFixed(6),
         unit: '°'
       }
     ]
@@ -65,17 +65,17 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'ROLL',
-        value: (data: TelemetryData) => data.roll.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.roll.toFixed(2),
         unit: '°'
       },
       {
         label: 'PITCH',
-        value: (data: TelemetryData) => data.pitch.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.pitch.toFixed(2),
         unit: '°'
       },
       {
         label: 'YAW',
-        value: (data: TelemetryData) => data.yaw.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.yaw.toFixed(2),
         unit: '°'
       }
     ]
@@ -86,22 +86,22 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'ACCELERATION X',
-        value: (data: TelemetryData) => data.accelerationX.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.accelerationX.toFixed(2),
         unit: 'm/s²'
       },
       {
         label: 'ACCELERATION Y',
-        value: (data: TelemetryData) => data.accelerationY.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.accelerationY.toFixed(2),
         unit: 'm/s²'
       },
       {
         label: 'ACCELERATION Z',
-        value: (data: TelemetryData) => data.accelerationZ.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.accelerationZ.toFixed(2),
         unit: 'm/s²'
       },
       {
         label: 'TOTAL ACCELERATION',
-        value: (data: TelemetryData) => data.totalAcceleration.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.totalAcceleration.toFixed(2),
         unit: 'm/s²'
       }
     ]
@@ -112,17 +112,17 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'GYROSCOPE X',
-        value: (data: TelemetryData) => data.gyroscopeX.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.gyroscopeX.toFixed(2),
         unit: '°/s'
       },
       {
         label: 'GYROSCOPE Y',
-        value: (data: TelemetryData) => data.gyroscopeY.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.gyroscopeY.toFixed(2),
         unit: '°/s'
       },
       {
         label: 'GYROSCOPE Z',
-        value: (data: TelemetryData) => data.gyroscopeZ.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.gyroscopeZ.toFixed(2),
         unit: '°/s'
       }
     ]
@@ -130,7 +130,7 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
 ]
 
 export function getPaddedMinMax (
-  data: TelemetryData[],
+  data: WebsocketTelemetryData[],
   keys: string[],
   padding = 0
 ) {
@@ -146,7 +146,7 @@ export function getPaddedMinMax (
 
   for (const point of data) {
     for (const key of keys) {
-      const value = point[key as keyof TelemetryData]
+      const value = point[key as keyof WebsocketTelemetryData]
       if (value < min) min = value
       if (value > max) max = value
     }

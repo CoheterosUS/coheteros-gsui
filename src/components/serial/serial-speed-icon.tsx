@@ -1,15 +1,17 @@
 import { ArrowDownToLine } from 'lucide-react'
 
-interface SerialStatusIconProps {
+interface SerialSpeedIconProps {
+  status: WebsocketStatus
   rate: number
 }
 
-export default function SerialStatusIcon ({
+export default function SerialSpeedIcon ({
+  status,
   rate
-}: SerialStatusIconProps) {
+}: SerialSpeedIconProps) {
   const iconStyle = `
     h-4 w-4
-    ${rate > 0 ? 'text-downlink' : 'text-primary-muted-foreground'}
+    ${status === 'connected' ? 'text-downlink' : 'text-primary-muted-foreground'}
   `
 
   return (

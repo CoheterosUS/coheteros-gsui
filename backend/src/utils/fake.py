@@ -34,5 +34,6 @@ def create_fake_data ():
   packet['batteryVoltage'] = 11.5 + random.uniform(-0.1, 0.1)
   packet['temperature'] = 25.0 + random.uniform(-2, 2)
   packet['timestamp'] = elapsed
+  packet['ground_timestamp'] = time.time()
 
   return packet

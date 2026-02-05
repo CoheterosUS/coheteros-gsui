@@ -6,18 +6,15 @@ from ..utils.utils import get_packet
 from ..managers.state import StateManager
 from ..managers.serial import SerialManager
 
+# TODO: Investigate dumping
 async def execute (websocket: WebSocket, data: dict, state: StateManager, serial_manager: SerialManager):
   if serial_manager is not None:
-    serial_manager.disconnect()
+    serial_manager.dump_csv_record()
 
   websocket_send = get_packet(
     "NOTIFICATION_PACKET",
-    "DISCONNECTED" if state.input_port is None else
-    f"DISCONNECTED FROM {state.input_port}@{state.baudrate}",
+    "CSV RECORDING DUMPED",
     "SUCCESS"
   )
-
-  state.input_port = None
-  state.baudrate = None
 
   await websocket.send_text(json.dumps(websocket_send))

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import LoggingMessage from '@/components/logging/logging-message'
 
 interface LoggingProps {
-  data: TelemetryData[]
+  data: WebsocketTelemetryData[]
 }
 
 export default function Logging ({
