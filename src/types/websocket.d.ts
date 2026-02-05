@@ -29,6 +29,7 @@ interface WebsocketPacket {
 
 interface WebsocketTelemetryData {
   timestamp: number
+  ground_timestamp: number
   altitude: number
   gpsAltitude: number
   flightStatus: number
