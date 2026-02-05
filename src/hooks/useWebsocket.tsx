@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { getCalculatedDataSize, showToast } from '@/utils/utils'
 import { WS_URL, RECONNECT_INTERVAL, MAX_DATA_POINTS } from '@/utils/config'
 
+// TODO: Subscriber pattern for better performance and separation of concerns
 export function useWebsocket (url: string = WS_URL): WebsocketContextType {
   const [data, setData] = useState<WebsocketTelemetryData[]>([])
   const [status, setStatus] = useState<('disconnected' | 'connected' | 'reconnecting')>('disconnected')
