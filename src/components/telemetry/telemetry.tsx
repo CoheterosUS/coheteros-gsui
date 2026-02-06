@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import TelemetryContainer from './telemetry-container'
-import { useWebsocketContext } from '@/contexts/WebsocketContext'
+import TelemetryContainer from '@/components/telemetry/telemetry-container'
+import { useWebsocketAPI } from '@/contexts/WebsocketContext'
 
 export default function Telemetry () {
-  const { subscribe } = useWebsocketContext()
+  const { subscribe } = useWebsocketAPI()
   const [data, setData] = useState<WebsocketTelemetryData | null>(null)
   const lastUpdateRef = useRef<number>(0)
 

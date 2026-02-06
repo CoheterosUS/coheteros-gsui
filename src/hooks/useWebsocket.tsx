@@ -98,7 +98,7 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
     }
   }, [url])
 
-  const reconnect = () => {
+  const reconnect = useCallback(() => {
     if (websocketRef.current != null) {
       websocketRef.current.onclose = null
       websocketRef.current.close()
@@ -118,14 +118,14 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
     console.log('WS: Reconnecting')
     setStatus('reconnecting')
     connectWebsocket()
-  }
+  }, [connectWebsocket])
 
-  const send = (command: WebsocketCommand) => {
+  const send = useCallback((command: WebsocketCommand) => {
     const ws = websocketRef.current
     if (ws != null && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify(command))
     }
-  }
+  }, [])
 
   useEffect(() => {
     cleaningUpRef.current = false
@@ -163,7 +163,7 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
         websocketRef.current = null
       }
     }
-  }, [url])
+  }, [url, connectWebsocket])
 
   return {
     subscribe,

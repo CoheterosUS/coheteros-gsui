@@ -1,30 +1,75 @@
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import { useWebsocket } from '@/hooks/useWebsocket'
+
+interface WebsocketAPI {
+  subscribe: (callback: (data: WebsocketTelemetryData) => void) => () => void
+  send: (command: WebsocketCommand) => void
+  reconnect: () => void
+}
+
+interface WebsocketStats {
+  status: WebsocketStatus
+  rate: number
+  pps: number
+}
 
 interface WebsocketProviderProps {
   children: ReactNode
 }
 
-const WebsocketContext = createContext<WebsocketContextType | undefined>(undefined)
+const WebsocketAPIContext = createContext<WebsocketAPI | undefined>(undefined)
+const WebsocketStatsContext = createContext<WebsocketStats | undefined>(undefined)
 
 export function WebsocketProvider ({
   children
 }: WebsocketProviderProps) {
-  const websocketState = useWebsocket()
+  const {
+    subscribe,
+    send,
+    reconnect,
+    status,
+    rate,
+    pps
+  } = useWebsocket()
+
+  const apiValue = useMemo(() => ({
+    subscribe,
+    send,
+    reconnect
+  }), [subscribe, send, reconnect])
+
+  const statsValue = useMemo(() => ({
+    status,
+    rate,
+    pps
+  }), [status, rate, pps])
 
   return (
-    <WebsocketContext.Provider
-      value={websocketState}
+    <WebsocketAPIContext.Provider
+      value={apiValue}
     >
-      {children}
-    </WebsocketContext.Provider>
+        <WebsocketStatsContext.Provider
+          value={statsValue}
+        >
+          {children}
+        </WebsocketStatsContext.Provider>
+    </WebsocketAPIContext.Provider>
   )
 }
 
-export function useWebsocketContext () {
-  const context = useContext(WebsocketContext)
+export function useWebsocketAPI () {
+  const context = useContext(WebsocketAPIContext)
   if (context == null) {
-    throw new Error('useWebsocketContext must be used within WebsocketProvider')
+    throw new Error('useWebsocketAPI must be used within WebsocketProvider')
+  }
+
+  return context
+}
+
+export function useWebsocketStats () {
+  const context = useContext(WebsocketStatsContext)
+  if (context == null) {
+    throw new Error('useWebsocketStats must be used within WebsocketProvider')
   }
 
   return context

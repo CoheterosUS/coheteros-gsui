@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Map, { type MapRef, Source, Layer } from 'react-map-gl/maplibre'
 import { pointLayer, labelLayer } from '@/utils/charts'
-import { useWebsocketContext } from '@/contexts/WebsocketContext'
+import { useWebsocketAPI } from '@/contexts/WebsocketContext'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 interface GPSMapProps {
@@ -11,7 +11,7 @@ interface GPSMapProps {
 export default function GPSMap ({
   initial
 }: GPSMapProps) {
-  const { subscribe } = useWebsocketContext()
+  const { subscribe } = useWebsocketAPI()
   const mapRef = useRef<MapRef>(null)
   const [anchored, setAnchored] = useState(true)
   const anchoredRef = useRef(true)
@@ -38,7 +38,6 @@ export default function GPSMap ({
       }
     }]
   }), [initial])
-
 
   useEffect(() => {
     anchoredRef.current = anchored

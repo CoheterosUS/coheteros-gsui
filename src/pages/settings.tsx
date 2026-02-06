@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useWebsocketContext } from '@/contexts/WebsocketContext'
+import { useWebsocketAPI, useWebsocketStats } from '@/contexts/WebsocketContext'
 import useFetchState from '@/hooks/useFetchState'
 import ControlsButton from '@/components/controls/controls-button'
 import ControlsDropdown from '@/components/controls/controls-dropdown'
@@ -7,7 +7,8 @@ import ControlsSection from '@/components/controls/controls-section'
 import { DEFAULT_BAUDRATE, BAUDRATE_OPTIONS, ALLOW_FAKE_PACKETS } from '@/utils/config'
 
 export default function SettingsPage () {
-  const { status, send, reconnect } = useWebsocketContext()
+  const { send, reconnect } = useWebsocketAPI()
+  const { status } = useWebsocketStats()
   const { data, getData, setData } = useFetchState<ControlsResponse>()
   const [inputPort, setInputPort] = useState<string>('')
   const [baudrate, setBaudrate] = useState<string>(DEFAULT_BAUDRATE)

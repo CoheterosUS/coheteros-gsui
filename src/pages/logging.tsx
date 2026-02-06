@@ -1,11 +1,11 @@
-import { useWebsocketContext } from '@/contexts/WebsocketContext'
+import { useEffect, useRef, useState } from 'react'
+import { useWebsocketAPI } from '@/contexts/WebsocketContext'
 import Logging from '@/components/logging/logging'
 import TelemetryEmpty from '@/components/telemetry/telemetry-empty'
 import { MAX_DATA_POINTS } from '@/utils/config'
-import { useEffect, useRef, useState } from 'react'
 
 export default function LoggingPage () {
-  const { subscribe } = useWebsocketContext()
+  const { subscribe } = useWebsocketAPI()
   const [logs, setLogs] = useState<WebsocketTelemetryData[]>([])
   const bufferRef = useRef<WebsocketTelemetryData[]>([])
 
@@ -19,6 +19,7 @@ export default function LoggingPage () {
     }
   }, [subscribe])
 
+  console.log('LoggingPage render, logs length:', logs.length)
   useEffect(() => {
     // TODO: Implement refresh rate selection, settings
     const interval = setInterval(() => {

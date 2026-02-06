@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useWebsocketContext } from '@/contexts/WebsocketContext'
+import { useWebsocketAPI } from '@/contexts/WebsocketContext'
 import ChartAltitude from '@/components/charts/chart-altitude'
 import ChartGyroscope from '@/components/charts/chart-gyroscope'
 import ChartAcceleration from '@/components/charts/chart-acceleration'
@@ -25,7 +25,7 @@ Chart.register(
 )
 
 export default function DashboardPage () {
-  const { subscribe } = useWebsocketContext()
+  const { subscribe } = useWebsocketAPI()
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {

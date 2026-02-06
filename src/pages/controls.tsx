@@ -1,11 +1,12 @@
 import { useEffect } from 'react'
-import { useWebsocketContext } from '@/contexts/WebsocketContext'
+import { useWebsocketAPI, useWebsocketStats } from '@/contexts/WebsocketContext'
 import ControlsButton from '@/components/controls/controls-button'
 import ControlsSection from '@/components/controls/controls-section'
 import useFetchState from '@/hooks/useFetchState'
 
 export default function ControlsPage () {
-  const { status, send } = useWebsocketContext()
+  const { send } = useWebsocketAPI()
+  const { status } = useWebsocketStats()
   const { data, getData } = useFetchState<ControlsResponse>()
 
   const handleCommand = async (type: string, data?: string) => {

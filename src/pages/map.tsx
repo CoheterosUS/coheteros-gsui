@@ -1,10 +1,10 @@
+import { useEffect, useState } from 'react'
 import GPSMap from '@/components/map/gpsmap'
 import TelemetryEmpty from '@/components/telemetry/telemetry-empty'
-import { useWebsocketContext } from '@/contexts/WebsocketContext'
-import { useEffect, useState } from 'react'
+import { useWebsocketAPI } from '@/contexts/WebsocketContext'
 
 export default function MapPage () {
-  const { subscribe } = useWebsocketContext()
+  const { subscribe } = useWebsocketAPI()
   const [initial, setInitial] = useState<WebsocketTelemetryData | null>(null)
 
   useEffect(() => {

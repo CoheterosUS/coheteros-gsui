@@ -2,18 +2,11 @@ import SerialConnectionIcon from '@/components/serial/serial-connection-icon'
 import SerialSpeedIcon from '@/components/serial/serial-speed-icon'
 import SerialPacketsIcon from '@/components/serial/serial-packets-icon'
 import { WEBSOCKET_PORT } from '@/utils/config'
+import { useWebsocketStats } from '@/contexts/WebsocketContext'
 
-interface SerialStatusProps {
-  status: WebsocketStatus
-  rate: number
-  pps: number
-}
+export default function SerialStatus () {
+  const { status, rate, pps } = useWebsocketStats()
 
-export default function SerialStatus ({
-  status,
-  rate,
-  pps
-}: SerialStatusProps) {
   return (
     <div
       className='h-6 flex items-center justify-between px-2 py-1 bg-primary'

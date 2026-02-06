@@ -1,11 +1,8 @@
 import { Outlet } from 'react-router'
 import Sidebar from '@/components/sidebar/sidebar'
 import SerialStatus from '@/components/serial/serial-status'
-import { useWebsocketContext } from '@/contexts/WebsocketContext'
 
 export default function AppLayout () {
-  const { status, rate, pps } = useWebsocketContext()
-
   return (
     <div
       className='relative h-screen bg-background text-foreground'
@@ -23,11 +20,7 @@ export default function AppLayout () {
         >
           <Outlet />
         </main>
-        <SerialStatus
-          status={status}
-          rate={rate}
-          pps={pps}
-        />
+        <SerialStatus />
       </div>
     </div>
   )

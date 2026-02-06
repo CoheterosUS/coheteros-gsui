@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef } from 'react'
 import type { Chart } from 'chart.js'
 import { Line } from 'react-chartjs-2'
-import { useWebsocketContext } from '@/contexts/WebsocketContext'
+import { useWebsocketAPI } from '@/contexts/WebsocketContext'
 import { colors, options } from '@/utils/charts'
 import { MAX_DATA_POINTS } from '@/utils/config'
 
 export default function ChartGyroscope () {
-  const { subscribe } = useWebsocketContext()
+  const { subscribe } = useWebsocketAPI()
   const chartRef = useRef<Chart<'line'>>(null)
 
   const initialData = useMemo(() => ({
