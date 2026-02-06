@@ -1,3 +1,2 @@
 @echo off
-call activate.bat
-python main.py
+uv run main.py
