@@ -4,7 +4,6 @@ import { WS_URL, RECONNECT_INTERVAL } from '@/utils/config'
 
 type TelemetryCallback = (data: WebsocketTelemetryData) => void
 
-// TODO: Subscriber pattern for better performance and separation of concerns
 export function useWebsocket (url: string = WS_URL): WebsocketContextType {
   const [status, setStatus] = useState<('disconnected' | 'connected' | 'reconnecting')>('disconnected')
   const [rate, setRate] = useState(0)
