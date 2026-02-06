@@ -1,6 +1,9 @@
 import asyncio
 import json
 import uvicorn
+import threading
+import webview
+import sys
 
 from os import getenv, path
 from dotenv import load_dotenv
@@ -23,7 +26,6 @@ import src.commands.connect_serial
 import src.commands.disconnect_serial
 import src.commands.start_csv_record
 import src.commands.stop_csv_record
-import src.commands.dump_csv_record
 
 load_dotenv()
 
@@ -58,8 +60,7 @@ commands = {
   "CONNECT_SERIAL": src.commands.connect_serial,
   "DISCONNECT_SERIAL": src.commands.disconnect_serial,
   "START_CSV_RECORD": src.commands.start_csv_record,
-  "STOP_CSV_RECORD": src.commands.stop_csv_record,
-  "DUMP_CSV_RECORD": src.commands.dump_csv_record
+  "STOP_CSV_RECORD": src.commands.stop_csv_record
 }
 
 @app.get("/api/controls")
@@ -158,9 +159,24 @@ if MODE == "PROD":
     async def serve_frontend (full_path: str):
       return FileResponse(path.join(DIST_DIR, "index.html"))
 
-if __name__ == "__main__":
+def start_server ():
   print(f"STARTING BACKEND ON PORT {BACKEND_PORT} IN {MODE} MODE")
   if MODE == "PROD" and path.exists(DIST_DIR):
     print(f"SERVING FRONTEND ON PORT {BACKEND_PORT} IN {MODE} MODE")
 
   uvicorn.run(app, host="localhost", port=BACKEND_PORT)
+
+if __name__ == "__main__":
+  if MODE == "TEST":
+    start_server()
+  else:
+    server_thread = threading.Thread(target=start_server, daemon=True)
+    server_thread.start()
+
+    webview.create_window(
+      "Coheteros US Ground Station",
+      f"http://localhost:{BACKEND_PORT}",
+      maximized=True
+    )
+    webview.start()
+    sys.exit()

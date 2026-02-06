@@ -4,7 +4,7 @@ import useFetchState from '@/hooks/useFetchState'
 import ControlsButton from '@/components/controls/controls-button'
 import ControlsDropdown from '@/components/controls/controls-dropdown'
 import ControlsSection from '@/components/controls/controls-section'
-import { DEFAULT_BAUDRATE, BAUDRATE_OPTIONS, ALLOW_FAKE_PACKETS } from '@/utils/config'
+import { DEFAULT_BAUDRATE, BAUDRATE_OPTIONS, DEVELOPMENT_MODE } from '@/utils/config'
 
 export default function SettingsPage () {
   const { send, reconnect } = useWebsocketAPI()
@@ -23,7 +23,7 @@ export default function SettingsPage () {
     await handleCommand(command, commandData)
   }
 
-  const handleCommand = async (type: string, data?: string) => {
+  const handleCommand = async (type: WebsocketCommandType, data?: string) => {
     send({
       type,
       data
@@ -131,7 +131,7 @@ export default function SettingsPage () {
         title='TESTING'
       >
         {
-          ALLOW_FAKE_PACKETS && data != null ? (
+          DEVELOPMENT_MODE && data != null ? (
             <>
               <ControlsButton
                 label='START FAKE TELEMETRY'

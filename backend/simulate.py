@@ -11,7 +11,7 @@ from src.utils.fake import create_fake_data
 load_dotenv()
 
 COM_PAIR = getenv("VITE_TESTING_COM_PAIR", "COM2")
-COM_BAUDRATE = int(getenv("VITE_TESTING_COM_BAUDRATE", 115200))
+COM_BAUDRATE = int(getenv("VITE_TESTING_COM_BAUDRATE", 9600))
 PACKET_FREQUENCY = int(getenv("VITE_PACKET_FREQUENCY", 10))
 
 def main ():
@@ -22,6 +22,7 @@ def main ():
         data = create_fake_data()
         json_data = json.dumps(data)
         ser.write((json_data + "\n").encode('utf-8'))
+        ser.flush()
         time.sleep(1 / PACKET_FREQUENCY)
   except SerialException as e:
     print(f"ERROR OPENING SERIAL PORT {COM_PAIR}: {e}")

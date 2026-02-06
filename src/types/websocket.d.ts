@@ -7,6 +7,15 @@ type WebsocketPacketType =
   | 'TELEMETRY_PACKET'
   | 'NOTIFICATION_PACKET'
 
+type WebsocketCommandType =
+  | 'DEPLOY_PARACHUTE'
+  | 'START_FAKE_TELEMETRY'
+  | 'STOP_FAKE_TELEMETRY'
+  | 'START_CSV_RECORD'
+  | 'STOP_CSV_RECORD'
+  | 'CONNECT_SERIAL'
+  | 'DISCONNECT_SERIAL'
+
 interface WebsocketContextType {
   subscribe: (callback: (data: WebsocketTelemetryData) => void) => () => void
   status: WebsocketStatus
@@ -17,7 +26,7 @@ interface WebsocketContextType {
 }
 
 interface WebsocketCommand {
-  type: string
+  type: WebsocketCommandType
   data?: string
 }
 

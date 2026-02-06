@@ -1,13 +1,13 @@
 import { useLocation } from 'react-router'
 import { links } from '@/utils/links'
 import SidebarLink from '@/components/sidebar/sidebar-link'
-import SidebarCredits from './sidebar-credits'
+import SidebarCredits from '@/components/sidebar/sidebar-credits'
 
 export default function Sidebar () {
   const location = useLocation()
 
   const sidebarStyle = `
-    min-w-14 group h-full flex flex-col justify-between bg-primary transition-all
+    min-w-14 group h-full flex flex-col justify-between bg-primary transition-all duration-100
     w-14 hover:w-56
   `
 

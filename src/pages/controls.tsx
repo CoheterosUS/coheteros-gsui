@@ -9,7 +9,7 @@ export default function ControlsPage () {
   const { status } = useWebsocketStats()
   const { data, getData } = useFetchState<ControlsResponse>()
 
-  const handleCommand = async (type: string, data?: string) => {
+  const handleCommand = async (type: WebsocketCommandType, data?: string) => {
     send({
       type,
       data
@@ -61,11 +61,6 @@ export default function ControlsPage () {
           onClick={() => handleCommand('STOP_CSV_RECORD')}
           variant='danger'
           disabled={isDisabled || !data.csv_recording_enabled}
-        />
-        <ControlsButton
-          label='DUMP RECORDING'
-          onClick={() => handleCommand('DUMP_CSV_RECORD')}
-          disabled={isDisabled}
         />
       </ControlsSection>
     </div>

@@ -27,6 +27,8 @@ class SerialManager:
         timeout=timeout
       )
 
+      self.serial_connection.reset_input_buffer()
+
       self.is_connected = True
       print(f"CONNECTED TO SERIAL PORT: {port} AT {baudrate} BAUDRATE")
       return True
@@ -89,8 +91,3 @@ class SerialManager:
     if self.csv_manager is not None:
       self.csv_manager.stop_recording()
       self.csv_manager = None
-
-  # TODO: Investigate dumping
-  def dump_csv_record (self):
-    """Dump CSV record"""
-    print("CSV RECORD DUMPED")

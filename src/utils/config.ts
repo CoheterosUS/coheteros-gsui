@@ -17,7 +17,7 @@ export const BAUDRATE_OPTIONS = new Set<string>([
 ])
 
 // Testing
-export const ALLOW_FAKE_PACKETS = import.meta.env.VITE_MODE === 'TEST'
+export const DEVELOPMENT_MODE = import.meta.env.VITE_MODE === 'TEST'
 
 // Visualizer
 export const MODEL_PATH = '/model/rocket.obj'

@@ -1,8 +1,8 @@
+import { useWebsocketStats } from '@/contexts/WebsocketContext'
 import SerialConnectionIcon from '@/components/serial/serial-connection-icon'
 import SerialSpeedIcon from '@/components/serial/serial-speed-icon'
 import SerialPacketsIcon from '@/components/serial/serial-packets-icon'
-import { WEBSOCKET_PORT } from '@/utils/config'
-import { useWebsocketStats } from '@/contexts/WebsocketContext'
+import { WEBSOCKET_PORT, DEVELOPMENT_MODE } from '@/utils/config'
 
 export default function SerialStatus () {
   const { status, rate, pps } = useWebsocketStats()
@@ -23,6 +23,15 @@ export default function SerialStatus () {
           pps={pps}
         />
       </div>
+      {
+        DEVELOPMENT_MODE && (
+          <p
+            className='text-xs text-negative'
+          >
+            DEVELOPMENT BUILD
+          </p>
+        )
+      }
       <SerialConnectionIcon
         status={status}
         port={WEBSOCKET_PORT}
