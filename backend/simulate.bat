@@ -1,3 +1,2 @@
 @echo off
-call activate.bat
-python simulate.py
+uv run simulate.py
