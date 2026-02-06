@@ -48,6 +48,9 @@ class SerialManager:
       return None
 
     try:
+      if self.serial_connection.in_waiting == 0:
+        return None
+
       loop = asyncio.get_event_loop()
       line = await loop.run_in_executor(None, self.serial_connection.readline)
 

@@ -56,8 +56,6 @@ export default function ChartAltitude () {
     }
   }, [subscribe])
 
-  // TODO: Remove once optimized rendering implemented
-  console.log('RENDER EXECUTED')
   return (
     <div
       className='w-full h-full min-h-0 min-w-0'

@@ -19,7 +19,6 @@ export default function LoggingPage () {
     }
   }, [subscribe])
 
-  console.log('LoggingPage render, logs length:', logs.length)
   useEffect(() => {
     // TODO: Implement refresh rate selection, settings
     const interval = setInterval(() => {
