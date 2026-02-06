@@ -32,7 +32,6 @@ Download the [latest release](https://github.com/CoheterosUS/coheteros-gsui/rele
 
 ```bash
 cd backend
-setup.bat
 run.bat
 ```
 
@@ -48,13 +47,6 @@ Install npm packages:
 
 ```bash
 npm install
-```
-
-Install Python packages:
-
-```bash
-cd backend
-setup.bat
 ```
 
 #### USAGE
@@ -132,6 +124,5 @@ The simulation program will send fake telemetry packets through the COM port spe
 
 #### SCRIPTS
 
-- `setup.bat`: Installs the dependencies and sets up the environment.
 - `run.bat`: Starts the backend server or the whole application, depending on the `VITE_MODE` environment variable.
 - `simulate.bat`: Starts the simulation program that sends fake telemetry packets through a COM port.
