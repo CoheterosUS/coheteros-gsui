@@ -49,6 +49,7 @@ export default function SettingsPage () {
     }
   }
 
+  // TODO: Instead of fetching controls on websocket status change, we should listen for specific websocket messages that indicate when to update the controls state
   useEffect(() => {
     fetchControls()
   }, [status])
