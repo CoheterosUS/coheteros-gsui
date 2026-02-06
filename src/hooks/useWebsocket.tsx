@@ -81,16 +81,21 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
         return
       }
 
-      const packet: WebsocketPacket = JSON.parse(event.data)
+      try {
+        const packet: WebsocketPacket = JSON.parse(event.data)
 
-      switch (packet.type) {
-        case 'TELEMETRY_PACKET':
-          subscribersRef.current.forEach(callback => callback(packet.data))
-          break
-        case 'NOTIFICATION_PACKET':
-          console.log('WS: Notification', packet.data)
-          showToast(packet)
-          break
+        switch (packet.type) {
+          case 'TELEMETRY_PACKET':
+            subscribersRef.current.forEach(callback => callback(packet.data))
+            break
+          case 'NOTIFICATION_PACKET':
+            console.log('WS: Notification', packet.data)
+            showToast(packet)
+            break
+        }
+      } catch (error) {
+        console.error('WS: Failed to parse message', error)
+        return
       }
 
       totalBytesRef.current += getCalculatedDataSize(event)

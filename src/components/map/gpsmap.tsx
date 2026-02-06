@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Map, { type MapRef, Source, Layer } from 'react-map-gl/maplibre'
+import type { FeatureCollection } from 'geojson'
 import { pointLayer, labelLayer } from '@/utils/charts'
 import { useWebsocketAPI } from '@/contexts/WebsocketContext'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -25,7 +26,7 @@ export default function GPSMap ({
     bearing: 0
   }), [initial])
 
-  const initialGeoJson = useMemo(() => ({
+  const initialGeoJson: FeatureCollection = useMemo(() => ({
     type: 'FeatureCollection',
     features: [{
       type: 'Feature',
@@ -111,7 +112,6 @@ export default function GPSMap ({
         <Source
           id='gps'
           type='geojson'
-          // @ts-expect-error
           data={initialGeoJson}
         >
           {/* @ts-expect-error */}
