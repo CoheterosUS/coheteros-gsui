@@ -132,8 +132,6 @@ The simulation program will send fake telemetry packets through the COM port spe
 
 #### SCRIPTS
 
-- `setup.bat`: Creates a virtual environment and installs the required Python packages.
-- `run.bat`: Activates the Python virtual environment and starts the backend server or the whole application, depending on the `VITE_MODE` environment variable.
+- `setup.bat`: Installs the dependencies and sets up the environment.
+- `run.bat`: Starts the backend server or the whole application, depending on the `VITE_MODE` environment variable.
 - `simulate.bat`: Starts the simulation program that sends fake telemetry packets through a COM port.
-- `activate.bat`: Activates the Python virtual environment.
-- `deactivate.bat`: Deactivates the Python virtual environment.
