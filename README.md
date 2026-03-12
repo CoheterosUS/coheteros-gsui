@@ -18,13 +18,13 @@ If testing mode is selected, follow the `Development` instructions below. This m
 - Generating its own fake data.
 - Receiving data via a COM port.
 
-The data received via the COM port can be either from a real device or from a simulation program (like the one included) with a virtual COM pair (a separate program is needed to create the virtual COM pair).
+The data received via the COM port can be either from a real device or from a simulation program (like the one included) with a virtual COM port (a separate program is needed to create the virtual COM port).
 
 If production mode is selected, follow the `Usage` instructions below. This mode gives one option for receiving data:
 
 - Receiving data via a COM port.
 
-The data received via the COM port can be either from a real device or from a simulation program (like the one included) with a virtual COM pair (a separate program is needed to create the virtual COM pair).
+The data received via the COM port can be either from a real device or from a simulation program (like the one included) with a virtual COM port (a separate program is needed to create the virtual COM port).
 
 #### DOWNLOAD
 
@@ -36,10 +36,10 @@ run.bat
 ```
 
 > [!IMPORTANT]
-> Most changes on the `.env` file won't be applied, since the frontend is pre-built. To apply changes, clone the repository and follow the `Installation` and `Usage` instructions below. 
+> Changes on the `.env` file won't be applied at runtime since the frontend is pre-built. To apply changes, clone the repository and follow the `Installation` and `Usage` instructions below.
 
 > [!IMPORTANT]
-> Python is required to run the backend.
+> Python is required to run the program.
 
 #### INSTALLATION
 
@@ -101,9 +101,9 @@ Edit `.env` file to set the following variables:
 - `VITE_WS_RECONNECT_INTERVAL`: Set the interval (in milliseconds) for websocket reconnection attempts. Reconnections can be forced manually.
 - `VITE_DEFAULT_BAUDRATE`: Set the default baud rate that will be displayed in the dropdown for the UI. This option can also be used to add a custom baud rate that is not included in the default list.
 - `VITE_MAX_DATA_POINTS`: Set the maximum number of data points to store for plotting/telemetry/logging.
-- `VITE_PACKET_FREQUENCY`: Set the frequency (in Hz) of the fake telemetry packets generated during testing mode or during simulation with a virtual COM pair.
-- `VITE_TESTING_COM_PAIR`: Set the other COM port of the virtual COM pair to be used during simulation. For example, if the GSUI is using `COM1`, set this variable to `COM2`. Fake packets will be sent through this COM port.
-- `VITE_TESTING_COM_BAUDRATE`: Set the baud rate for the COM port used during simulation.
+- `PACKET_FREQUENCY`: Set the frequency (in Hz) of the telemetry packets sent over websockets to the frontend, applies to the generation of fake packets too.
+- `TESTING_COM_PORT`: Set the virtual COM port to be used during simulation. Fake packets will be sent through this COM port.
+- `TESTING_COM_BAUDRATE`: Set the baud rate for the COM port used during simulation.
 
 #### SIMULATION
 
@@ -113,14 +113,14 @@ When simulating its own fake data, no additional steps are needed.
 
 - Receiving data via a COM port:
 
-When simulating data via a COM port, create a virtual COM pair using a separate program (e.g., VSPE), and run the simulation program included:
+When simulating data via a COM port, create a virtual COM port using a separate program (e.g., VSPE), and run the simulation program included:
 
 ```bash
 cd backend
 simulate.bat
 ```
 
-The simulation program will send fake telemetry packets through the COM port specified by `VITE_TESTING_COM_PAIR` in the virtual COM pair. The GSUI should be configured to use the other COM port in the pair.
+The simulation program will send fake telemetry packets through the virtual COM port specified by `TESTING_COM_PORT`.
 
 #### SCRIPTS
 

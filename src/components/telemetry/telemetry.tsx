@@ -8,7 +8,7 @@ export default function Telemetry () {
   const lastUpdateRef = useRef<number>(0)
 
   useEffect(() => {
-    const unsubscribe = subscribe((data) => {
+    const unsubscribe = subscribe('TELEMETRY_PACKET', (data) => {
       const now = Date.now()
       // TODO: Implement refresh rate selection, settings
       if (now - lastUpdateRef.current > 200) {

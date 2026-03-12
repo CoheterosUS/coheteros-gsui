@@ -2,7 +2,10 @@ import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import { useWebsocket } from '@/hooks/useWebsocket'
 
 interface WebsocketAPI {
-  subscribe: (callback: (data: WebsocketTelemetryData) => void) => () => void
+  subscribe: <T extends WebsocketPacketType>(
+    type: T,
+    callback: WebsocketPacketCallback<T>
+  ) => () => void
   send: (command: WebsocketCommand) => void
   reconnect: () => void
 }

@@ -45,7 +45,7 @@ export default function GPSMap ({
   }, [anchored])
 
   useEffect(() => {
-    const unsubscribe = subscribe((packet) => {
+    const unsubscribe = subscribe('TELEMETRY_PACKET', (packet) => {
       const map = mapRef.current?.getMap()
       if (map == null) {
         return

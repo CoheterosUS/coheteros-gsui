@@ -37,7 +37,7 @@ export default function ChartVoltageTemperature () {
   }), [])
 
   useEffect(() => {
-    const unsubscribe = subscribe((packet) => {
+    const unsubscribe = subscribe('TELEMETRY_PACKET', (packet) => {
       const voltageChart = voltageRef.current
       const temperatureChart = temperatureRef.current
 

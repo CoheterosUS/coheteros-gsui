@@ -10,7 +10,7 @@ export default function LoggingPage () {
   const bufferRef = useRef<WebsocketTelemetryData[]>([])
 
   useEffect(() => {
-    const unsubscribe = subscribe((data) => {
+    const unsubscribe = subscribe('TELEMETRY_PACKET', (data) => {
       bufferRef.current.push(data)
     })
 

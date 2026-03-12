@@ -7,9 +7,9 @@ import ControlsSection from '@/components/controls/controls-section'
 import { DEFAULT_BAUDRATE, BAUDRATE_OPTIONS, DEVELOPMENT_MODE } from '@/utils/config'
 
 export default function SettingsPage () {
-  const { send, reconnect } = useWebsocketAPI()
+  const { subscribe, send, reconnect } = useWebsocketAPI()
   const { status } = useWebsocketStats()
-  const { data, getData, setData } = useFetchState<ControlsResponse>()
+  const { data, getData, setData } = useFetchState<WebsocketStateUpdateData>()
   const [inputPort, setInputPort] = useState<string>('')
   const [baudrate, setBaudrate] = useState<string>(DEFAULT_BAUDRATE)
 
@@ -28,8 +28,15 @@ export default function SettingsPage () {
       type,
       data
     })
+  }
 
-    await fetchControls()
+  const updateData = (data: WebsocketStateUpdateData) => {
+    if (data.serial_available_ports.length > 0) {
+      setInputPort(data.serial_port == null ? data.serial_available_ports[0] : data.serial_port)
+      setBaudrate(data.serial_baudrate == null ? DEFAULT_BAUDRATE : data.serial_baudrate ?? DEFAULT_BAUDRATE)
+    }
+
+    setData(data)
   }
 
   const fetchControls = async () => {
@@ -38,23 +45,26 @@ export default function SettingsPage () {
       return
     }
 
-    const { data } = await getData('/api/controls')
+    const { data } = await getData('/api/status')
     if (data == null) {
       return
     }
 
-    if (data.ports.available_ports.length > 0) {
-      setInputPort(data.ports.port_in_use == null ? data.ports.available_ports[0].name : data.ports.port_in_use.name)
-      setBaudrate(data.ports.port_in_use == null ? DEFAULT_BAUDRATE : data.ports.port_in_use.baudrate ?? DEFAULT_BAUDRATE)
-    }
+    updateData(data)
   }
 
-  // TODO: Instead of fetching controls on websocket status change, we should listen for specific websocket messages that indicate when to update the controls state
   useEffect(() => {
     fetchControls()
   }, [status])
 
-  const disablePortSelection = data != null && (data.fake_telemetry_enabled || data.ports.port_in_use != null)
+  useEffect(() => {
+    const unsubscribe = subscribe('STATE_UPDATE_PACKET', updateData)
+    return () => {
+      unsubscribe()
+    }
+  }, [subscribe])
+
+  const disablePortSelection = data != null && (data.is_sending_fake_telemetry || data.serial_port != null)
 
   return (
     <div
@@ -64,7 +74,7 @@ export default function SettingsPage () {
         title='SERIAL'
       >
         {
-          data != null && data.ports.available_ports.length > 0 ? (
+          data != null && data.serial_available_ports.length > 0 ? (
             <>
               <div
                 className='flex flex-col gap-2'
@@ -74,7 +84,7 @@ export default function SettingsPage () {
                 >
                   <ControlsDropdown
                     label='PORT'
-                    options={data.ports.available_ports.map(port => port.name)}
+                    options={data.serial_available_ports}
                     selectedOption={inputPort}
                     setSelectedOption={setInputPort}
                     disabled={disablePortSelection}
@@ -96,7 +106,7 @@ export default function SettingsPage () {
                   label='DISCONNECT'
                   onClick={() => handlePorts(true)}
                   variant='danger'
-                  disabled={data.ports.port_in_use == null}
+                  disabled={data.serial_port == null}
                 />
               </div>
             </>
@@ -143,7 +153,7 @@ export default function SettingsPage () {
                 label='STOP FAKE TELEMETRY'
                 onClick={() => handleCommand('STOP_FAKE_TELEMETRY')}
                 variant='danger'
-                disabled={!data.fake_telemetry_enabled}
+                disabled={!data.is_sending_fake_telemetry}
               />
             </>
           ) : (

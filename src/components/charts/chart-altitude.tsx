@@ -30,7 +30,7 @@ export default function ChartAltitude () {
   }), [])
 
   useEffect(() => {
-    const unsubscribe = subscribe((packet) => {
+    const unsubscribe = subscribe('TELEMETRY_PACKET', (packet) => {
       const chart = chartRef.current
       if (chart == null) {
         return

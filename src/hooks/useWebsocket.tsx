@@ -2,14 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { getCalculatedDataSize, showToast } from '@/utils/utils'
 import { WS_URL, RECONNECT_INTERVAL } from '@/utils/config'
 
-type TelemetryCallback = (data: WebsocketTelemetryData) => void
-
 export function useWebsocket (url: string = WS_URL): WebsocketContextType {
   const [status, setStatus] = useState<('disconnected' | 'connected' | 'reconnecting')>('disconnected')
   const [rate, setRate] = useState(0)
   const [pps, setPps] = useState(0)
 
-  const subscribersRef = useRef<Set<TelemetryCallback>>(new Set())
+  const subscribersRef = useRef<Map<WebsocketPacketType, Set<WebsocketPacketCallback<any>>>>(new Map())
 
   const websocketRef = useRef<WebSocket | null>(null)
   const reconnectTimeoutRef = useRef<number | null>(null)
@@ -19,10 +17,22 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
   const totalBytesRef = useRef<number>(0)
   const packetCountRef = useRef<number>(0)
 
-  const subscribe = useCallback((callback: TelemetryCallback) => {
-    subscribersRef.current.add(callback)
+  const subscribe = useCallback(<T extends WebsocketPacketType>(
+    type: T,
+    callback: WebsocketPacketCallback<T>
+  ) => {
+    if (!subscribersRef.current.has(type)) {
+      subscribersRef.current.set(type, new Set())
+    }
+
+    const callbacks = subscribersRef.current.get(type)!
+    callbacks.add(callback)
+
     return () => {
-      subscribersRef.current.delete(callback)
+      callbacks.delete(callback)
+      if (callbacks.size === 0) {
+        subscribersRef.current.delete(type)
+      }
     }
   }, [])
 
@@ -81,16 +91,19 @@ export function useWebsocket (url: string = WS_URL): WebsocketContextType {
       }
 
       try {
-        const packet: WebsocketPacket = JSON.parse(event.data)
+        const packet = JSON.parse(event.data)
 
         switch (packet.type) {
-          case 'TELEMETRY_PACKET':
-            subscribersRef.current.forEach(callback => callback(packet.data))
-            break
           case 'NOTIFICATION_PACKET':
             console.log('WS: Notification', packet.data)
             showToast(packet)
             break
+          default:
+            const callbacks = subscribersRef.current.get(packet.type)
+            if (callbacks != null) {
+              const data = JSON.parse(packet.data)
+              callbacks.forEach(callback => callback(data))
+            }
         }
       } catch (error) {
         console.error('WS: Failed to parse message', error)

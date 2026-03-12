@@ -8,7 +8,7 @@ export default function MapPage () {
   const [initial, setInitial] = useState<WebsocketTelemetryData | null>(null)
 
   useEffect(() => {
-    const unsubscribe = subscribe((packet) => setInitial((prev) => prev == null ? packet : prev))
+    const unsubscribe = subscribe('TELEMETRY_PACKET', (packet) => setInitial((prev) => prev == null ? packet : prev))
     return () => {
       unsubscribe()
     }

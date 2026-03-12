@@ -1,2 +1,2 @@
 @echo off
-uv run main.py
+uv run app.py

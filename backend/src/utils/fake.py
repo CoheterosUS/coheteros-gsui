@@ -4,7 +4,7 @@ import math
 
 START_TIME = time.time()
 
-def create_fake_data ():
+def create_fake_data () -> dict[str, float | int]:
   """Create fake telemetry packet"""
   packet: dict[str, float | int] = {}
 

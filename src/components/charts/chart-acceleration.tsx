@@ -37,7 +37,7 @@ export default function ChartAcceleration () {
   }), [])
 
   useEffect(() => {
-    const unsubscribe = subscribe((packet) => {
+    const unsubscribe = subscribe('TELEMETRY_PACKET', (packet) => {
       const chart = chartRef.current
       if (chart == null) {
         return

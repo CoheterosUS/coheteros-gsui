@@ -213,7 +213,7 @@ export function getToastIcon (category: ToastCategory) {
   }
 }
 
-export function showToast (packet: WebsocketPacket) {
+export function showToast (packet: WebsocketNotificationPacket) {
   switch (packet.category?.toUpperCase()) {
     case 'SUCCESS':
       toast.success(packet.data)

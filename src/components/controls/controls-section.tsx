@@ -3,11 +3,13 @@ import type { ReactNode } from 'react'
 interface ControlsSectionProps {
   title: string
   children: ReactNode
+  direction?: 'row' | 'col'
 }
 
 export default function ControlsSection ({
   title,
-  children
+  children,
+  direction = 'row'
 }: ControlsSectionProps) {
   return (
     <div
@@ -19,7 +21,7 @@ export default function ControlsSection ({
         {title}
       </p>
       <div
-        className='flex gap-2'
+        className={`flex ${direction === 'row' ? 'flex-row' : 'w-fit flex-col'} gap-2`}
       >
         {children}
       </div>

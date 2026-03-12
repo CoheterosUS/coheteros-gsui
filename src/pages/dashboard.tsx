@@ -29,7 +29,7 @@ export default function DashboardPage () {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    const unsubscribe = subscribe(() => setLoaded((prev) => prev ? prev : true))
+    const unsubscribe = subscribe('TELEMETRY_PACKET', () => setLoaded((prev) => prev ? prev : true))
     return () => unsubscribe()
   }, [subscribe])
 

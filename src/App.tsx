@@ -63,18 +63,22 @@ export default function App () {
                 ({ message }) => {
                   const { Icon, styles } = getToastIcon(t.type as ToastCategory)
                   const iconStyle = `
-                    h-4 w-4
+                    h-5 w-5
                     ${styles}
                   `
 
                   return (
-                    <>
+                    <div
+                      className={`
+                        grid grid-cols-[auto_1fr] items-center
+                      `}
+                    >
                       <Icon
                         className={iconStyle}
                         strokeWidth={1.5}
                       />
                       {message}
-                    </>
+                    </div>
                   )
                 }
               }

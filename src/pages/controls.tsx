@@ -7,7 +7,7 @@ import useFetchState from '@/hooks/useFetchState'
 export default function ControlsPage () {
   const { send } = useWebsocketAPI()
   const { status } = useWebsocketStats()
-  const { data, getData } = useFetchState<ControlsResponse>()
+  const { data, getData } = useFetchState<WebsocketStateUpdateData>()
 
   const handleCommand = async (type: WebsocketCommandType, data?: string) => {
     send({
@@ -23,7 +23,7 @@ export default function ControlsPage () {
       return
     }
 
-    const { data } = await getData('/api/controls')
+    const { data } = await getData('/api/status')
     if (data == null) {
       return
     }
@@ -54,13 +54,13 @@ export default function ControlsPage () {
         <ControlsButton
           label='START RECORDING'
           onClick={() => handleCommand('START_CSV_RECORD')}
-          disabled={isDisabled || data.csv_recording_enabled}
+          disabled={isDisabled || data.is_recording_csv}
         />
         <ControlsButton
           label='STOP RECORDING'
           onClick={() => handleCommand('STOP_CSV_RECORD')}
           variant='danger'
-          disabled={isDisabled || !data.csv_recording_enabled}
+          disabled={isDisabled || !data.is_recording_csv}
         />
       </ControlsSection>
     </div>
