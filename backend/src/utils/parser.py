@@ -1,12 +1,24 @@
 import struct
 import time
 
-# 37 bytes total
+from ..utils.logger import logger
+
+# 41 bytes total, 37 bytes payload + 2 header + 2 footer
 PACKET_FORMAT = "<iBBhhhhhhhhHiihhB"
 PACKET_SIZE = struct.calcsize(PACKET_FORMAT)
+HEADER_BYTES = b"\xAA\xBB"
+FOOTER_BYTES = b"\xEE\xFF"
+FULL_PACKET_SIZE = len(HEADER_BYTES) + PACKET_SIZE + len(FOOTER_BYTES)
 
 def parse_packet (raw: bytes) -> dict:
-  """Unpack 37-byte binary telemetry struct"""
+  """Validate header/footer and unpack telemetry payload"""
+  if len(raw) != FULL_PACKET_SIZE:
+    logger(f"EXPECTED {FULL_PACKET_SIZE} BYTES, GOT {len(raw)}", "ERROR")
+
+  if not raw.startswith(HEADER_BYTES) or not raw.endswith(FOOTER_BYTES):
+    logger("INVALID PACKET HEADER OR FOOTER", "ERROR")
+
+  payload = raw[len(HEADER_BYTES):-len(FOOTER_BYTES)]
   (
     altitude, gps_altitude, flight_status,
     acc_x, acc_y, acc_z,
@@ -14,7 +26,7 @@ def parse_packet (raw: bytes) -> dict:
     roll, pitch, yaw,
     gps_lat, gps_lon,
     battery_voltage, temperature, timestamp
-  ) = struct.unpack(PACKET_FORMAT, raw)
+  ) = struct.unpack(PACKET_FORMAT, payload)
 
   ax = acc_x / 1000.0
   ay = acc_y / 1000.0

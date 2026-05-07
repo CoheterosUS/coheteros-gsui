@@ -14,7 +14,7 @@ COM_PORT = getenv("TESTING_COM_PORT", "COM2")
 COM_BAUDRATE = int(getenv("TESTING_COM_BAUDRATE", 9600))
 PACKET_FREQUENCY = int(getenv("PACKET_FREQUENCY", 10))
 
-# Struct: Emisor.ino / Receptor.ino (37 bytes)
+# Struct: Emisor.ino / Receptor.ino (37 bytes payload)
 # struct PaqueteTelemetria {
 #     int32_t  altitude;        4
 #     uint8_t  gpsAltitude;     1
@@ -36,6 +36,9 @@ PACKET_FREQUENCY = int(getenv("PACKET_FREQUENCY", 10))
 # };
 PACKET_FORMAT = "<iBBhhhhhhhhHiihhB"
 PACKET_SIZE = struct.calcsize(PACKET_FORMAT)  # 37
+HEADER_BYTES = b"\xAA\xBB"
+FOOTER_BYTES = b"\xEE\xFF"
+FULL_PACKET_SIZE = len(HEADER_BYTES) + PACKET_SIZE + len(FOOTER_BYTES)
 
 START_TIME = time.time()
 _timestamp_counter = 0
@@ -69,7 +72,7 @@ def build_packet() -> bytes:
   battery_voltage = int((11.5 + random.uniform(-0.1, 0.1)) * 100)           # centi-V  (receptor / 100.0)
   temperature = int((25.0 + random.uniform(-2, 2)) * 10)                    # deci-C   (receptor / 10.0)
 
-  return struct.pack(
+  payload = struct.pack(
     PACKET_FORMAT,
     altitude,
     gps_altitude,
@@ -81,12 +84,13 @@ def build_packet() -> bytes:
     battery_voltage, temperature,
     _timestamp_counter,
   )
+  return HEADER_BYTES + payload + FOOTER_BYTES
 
 def main():
   try:
     with Serial(COM_PORT, COM_BAUDRATE, timeout=1) as ser:
       print(f"CONNECTED TO {COM_PORT} AT {COM_BAUDRATE} BAUD")
-      print(f"SENDING {PACKET_SIZE}-BYTE BINARY PACKETS AT {PACKET_FREQUENCY} Hz")
+      print(f"SENDING {FULL_PACKET_SIZE}-BYTE BINARY PACKETS AT {PACKET_FREQUENCY} Hz")
       while True:
         packet = build_packet()
         ser.write(packet)

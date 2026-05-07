@@ -7,7 +7,7 @@ from asyncio import Queue, QueueFull
 from ..state.state_manager import global_state
 from ..csv.csv_manager import global_csv
 from ..utils.logger import logger
-from ..utils.parser import PACKET_SIZE
+from ..utils.parser import FULL_PACKET_SIZE, HEADER_BYTES, FOOTER_BYTES
 
 class SerialManager:
   def __init__ (self, buffer_size: int = 100):
@@ -66,9 +66,28 @@ class SerialManager:
         if bytes_available > 0:
           buffer += self.serial_connection.read(bytes_available)
 
-          while len(buffer) >= PACKET_SIZE:
-            packet = buffer[:PACKET_SIZE]
-            buffer = buffer[PACKET_SIZE:]
+          while len(buffer) >= FULL_PACKET_SIZE:
+            header_index = buffer.find(HEADER_BYTES)
+            if header_index == -1:
+              logger(f"HEADER NOT FOUND, DROPPING {len(buffer) - (len(HEADER_BYTES) - 1)} BYTES", "WARNING")
+              buffer = buffer[-(len(HEADER_BYTES) - 1):]
+              break
+
+            if header_index > 0:
+              logger(f"MISALIGNED HEADER, DROPPING {header_index} BYTES", "WARNING")
+              buffer = buffer[header_index:]
+
+            if len(buffer) < FULL_PACKET_SIZE:
+              break
+
+            footer_index = FULL_PACKET_SIZE - len(FOOTER_BYTES)
+            if buffer[footer_index:FULL_PACKET_SIZE] != FOOTER_BYTES:
+              logger("FOOTER MISMATCH, DROPPING 1 BYTE", "WARNING")
+              buffer = buffer[1:]
+              continue
+
+            packet = buffer[:FULL_PACKET_SIZE]
+            buffer = buffer[FULL_PACKET_SIZE:]
 
             if self.async_queue:
               try:
