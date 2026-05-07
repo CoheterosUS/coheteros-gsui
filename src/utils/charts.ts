@@ -75,3 +75,33 @@ export const labelLayer = {
     'text-color': '#000',
   }
 }
+
+export const groundStationLayer = {
+  id: 'ground-station-point',
+  type: 'circle',
+  source: 'ground-station',
+  paint: {
+    'circle-radius': 7,
+    'circle-color': '#60a5fa',
+    'circle-stroke-width': 2,
+    'circle-stroke-color': '#000'
+  }
+}
+
+export const groundStationLabelLayer = {
+  id: 'ground-station-label',
+  type: 'symbol',
+  source: 'ground-station',
+  layout: {
+    'text-field': 'Ground Station',
+    'text-size': 16,
+    'text-offset': [0, -2],
+    'text-anchor': 'top',
+    'text-allow-overlap': true,
+    'text-ignore-placement': true,
+    'text-optional': true
+  },
+  paint: {
+    'text-color': '#000',
+  }
+}

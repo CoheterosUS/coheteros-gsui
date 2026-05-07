@@ -17,3 +17,9 @@ interface TelemetryTableFieldProps {
   unit?: string
   className?: string
 }
+
+interface LocationData {
+  latitude: number
+  longitude: number
+  accuracy: number
+}

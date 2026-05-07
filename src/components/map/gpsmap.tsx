@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Map, { type MapRef, Source, Layer } from 'react-map-gl/maplibre'
 import type { FeatureCollection } from 'geojson'
-import { pointLayer, labelLayer } from '@/utils/charts'
 import { useWebsocketAPI } from '@/contexts/WebsocketContext'
+import { useLocation } from '@/hooks/useLocation'
+import { pointLayer, labelLayer, groundStationLayer, groundStationLabelLayer } from '@/utils/charts'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 interface GPSMapProps {
@@ -13,6 +14,7 @@ export default function GPSMap ({
   initial
 }: GPSMapProps) {
   const { subscribe } = useWebsocketAPI()
+  const location = useLocation()
   const mapRef = useRef<MapRef>(null)
   const [anchored, setAnchored] = useState(true)
   const anchoredRef = useRef(true)
@@ -39,6 +41,24 @@ export default function GPSMap ({
       }
     }]
   }), [initial])
+
+  const groundStationLocation: FeatureCollection | null = useMemo(() => {
+    if (location == null) {
+      return null
+    }
+
+    return {
+      type: 'FeatureCollection',
+      features: [{
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [location.longitude, location.latitude]
+        },
+        properties: {}
+      }]
+    }
+  }, [location])
 
   useEffect(() => {
     anchoredRef.current = anchored
@@ -123,6 +143,24 @@ export default function GPSMap ({
             {...labelLayer}
           />
         </Source>
+        {
+          groundStationLocation != null && (
+            <Source
+              id='ground-station'
+              type='geojson'
+              data={groundStationLocation}
+            >
+              {/* @ts-expect-error */}
+              <Layer
+                {...groundStationLayer}
+              />
+              {/* @ts-expect-error */}
+              <Layer
+                {...groundStationLabelLayer}
+              />
+            </Source>
+          )
+        }
       </Map>
       <button
         title='TOGGLE ANCHOR'
