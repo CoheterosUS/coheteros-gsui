@@ -7,7 +7,7 @@ from asyncio import Queue, QueueFull
 from ..state.state_manager import global_state
 from ..csv.csv_manager import global_csv
 from ..utils.logger import logger
-from ..utils.parser import FULL_PACKET_SIZE, HEADER_BYTES, FOOTER_BYTES
+from ..utils.parser import FULL_PACKET_SIZE, HEADER_BYTES
 
 class SerialManager:
   def __init__ (self, buffer_size: int = 100):
@@ -79,12 +79,6 @@ class SerialManager:
 
             if len(buffer) < FULL_PACKET_SIZE:
               break
-
-            footer_index = FULL_PACKET_SIZE - len(FOOTER_BYTES)
-            if buffer[footer_index:FULL_PACKET_SIZE] != FOOTER_BYTES:
-              logger("FOOTER MISMATCH, DROPPING 1 BYTE", "WARNING")
-              buffer = buffer[1:]
-              continue
 
             packet = buffer[:FULL_PACKET_SIZE]
             buffer = buffer[FULL_PACKET_SIZE:]

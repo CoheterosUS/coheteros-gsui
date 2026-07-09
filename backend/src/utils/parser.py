@@ -3,22 +3,21 @@ import time
 
 from ..utils.logger import logger
 
-# 41 bytes total, 37 bytes payload + 2 header + 2 footer
+# 39 bytes total, 37 bytes payload + 2 header
 PACKET_FORMAT = "<iBBhhhhhhhhHiihhB"
 PACKET_SIZE = struct.calcsize(PACKET_FORMAT)
 HEADER_BYTES = b"\xAA\xBB"
-FOOTER_BYTES = b"\xEE\xFF"
-FULL_PACKET_SIZE = len(HEADER_BYTES) + PACKET_SIZE + len(FOOTER_BYTES)
+FULL_PACKET_SIZE = len(HEADER_BYTES) + PACKET_SIZE
 
 def parse_packet (raw: bytes) -> dict:
-  """Validate header/footer and unpack telemetry payload"""
+  """Validate header and unpack telemetry payload"""
   if len(raw) != FULL_PACKET_SIZE:
     logger(f"EXPECTED {FULL_PACKET_SIZE} BYTES, GOT {len(raw)}", "ERROR")
 
-  if not raw.startswith(HEADER_BYTES) or not raw.endswith(FOOTER_BYTES):
-    logger("INVALID PACKET HEADER OR FOOTER", "ERROR")
+  if not raw.startswith(HEADER_BYTES):
+    logger("INVALID PACKET HEADER", "ERROR")
 
-  payload = raw[len(HEADER_BYTES):-len(FOOTER_BYTES)]
+  payload = raw[len(HEADER_BYTES):]
   (
     altitude, gps_altitude, flight_status,
     acc_x, acc_y, acc_z,
