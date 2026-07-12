@@ -15,7 +15,7 @@ from src.serial.serial_manager import global_serial
 from src.utils.logger import logger
 from src.dispatchers.dispatcher import command_dispatch
 from src.utils.fake import create_fake_data
-from src.utils.parser import parse_packet
+from src.utils.parser import parse_hex_line
 
 load_dotenv()
 
@@ -52,7 +52,9 @@ async def broadcast_loop ():
           serial_data = await asyncio.wait_for(global_serial.async_queue.get(), timeout=0.1)
         except asyncio.TimeoutError:
           continue
-        parsed_data = parse_packet(serial_data)
+        parsed_data = parse_hex_line(serial_data)
+        if parsed_data is None:
+          continue
         encoded_data = json.dumps(parsed_data)
         packet = {"type": "TELEMETRY_PACKET", "data": encoded_data}
         await global_state.broadcast_packet(packet)

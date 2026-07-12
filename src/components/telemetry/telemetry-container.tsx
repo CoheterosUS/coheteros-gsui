@@ -16,7 +16,7 @@ export default function TelemetryContainer ({
     >
       <TelemetryHeader
         timestamp={data.timestamp}
-        batteryVoltage={data.batteryVoltage}
+        pressure={data.pressure}
         temperature={data.temperature}
       />
       <div
@@ -42,9 +42,9 @@ export default function TelemetryContainer ({
           }
         </div>
         <VisualizerScene
-          roll={data.roll}
-          pitch={data.pitch}
-          yaw={data.yaw}
+          roll={0}
+          pitch={0}
+          yaw={0}
         />
       </div>
     </div>

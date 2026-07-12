@@ -1,3 +1,4 @@
+import asyncio
 import time
 
 from threading import Thread, Event
@@ -7,7 +8,7 @@ from asyncio import Queue, QueueFull
 from ..state.state_manager import global_state
 from ..csv.csv_manager import global_csv
 from ..utils.logger import logger
-from ..utils.parser import FULL_PACKET_SIZE, HEADER_BYTES
+from ..utils.parser import CURRENT_LINE_LENGTH, TARGET_LINE_LENGTH
 
 class SerialManager:
   def __init__ (self, buffer_size: int = 100):
@@ -16,6 +17,7 @@ class SerialManager:
     self.baudrate: int | None = None
 
     self.async_queue = Queue(maxsize=buffer_size)
+    self._loop: asyncio.AbstractEventLoop | None = None
 
     self._read_thread: Thread | None = None
     self._stop_event: Event = Event()
@@ -48,6 +50,7 @@ class SerialManager:
       return
 
     self._stop_event.clear()
+    self._loop = asyncio.get_event_loop()
 
     self._read_thread = Thread(
       target=self._read_loop,
@@ -66,31 +69,25 @@ class SerialManager:
         if bytes_available > 0:
           buffer += self.serial_connection.read(bytes_available)
 
-          while len(buffer) >= FULL_PACKET_SIZE:
-            header_index = buffer.find(HEADER_BYTES)
-            if header_index == -1:
-              logger(f"HEADER NOT FOUND, DROPPING {len(buffer) - (len(HEADER_BYTES) - 1)} BYTES", "WARNING")
-              buffer = buffer[-(len(HEADER_BYTES) - 1):]
-              break
+          while b"\r\n" in buffer:
+            line_end = buffer.index(b"\r\n")
+            line = buffer[:line_end]
+            buffer = buffer[line_end + 2:]
 
-            if header_index > 0:
-              logger(f"MISALIGNED HEADER, DROPPING {header_index} BYTES", "WARNING")
-              buffer = buffer[header_index:]
+            hex_line = line.decode("ascii", errors="ignore").strip()
 
-            if len(buffer) < FULL_PACKET_SIZE:
-              break
+            if len(hex_line) not in (CURRENT_LINE_LENGTH, TARGET_LINE_LENGTH):
+              logger(f"BAD LINE LENGTH: {len(hex_line)}, EXPECTED {CURRENT_LINE_LENGTH} OR {TARGET_LINE_LENGTH}", "WARNING")
+              continue
 
-            packet = buffer[:FULL_PACKET_SIZE]
-            buffer = buffer[FULL_PACKET_SIZE:]
-
-            if self.async_queue:
+            if self.async_queue and self._loop:
               try:
-                self.async_queue.put_nowait(packet)
+                self._loop.call_soon_threadsafe(self.async_queue.put_nowait, hex_line)
               except QueueFull:
                 logger("ASYNC QUEUE FULL, DROPPING DATA", "WARNING")
 
             if global_state.is_recording_csv:
-              global_csv.push(packet)
+              global_csv.push(hex_line)
         else:
           time.sleep(0.01)
       except SerialException as e:

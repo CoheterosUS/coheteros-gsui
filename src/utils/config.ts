@@ -6,7 +6,7 @@ export const WS_URL = `ws://localhost:${WEBSOCKET_PORT}/ws`
 export const API_URL = `http://localhost:${WEBSOCKET_PORT}`
 
 // Serial
-export const DEFAULT_BAUDRATE = import.meta.env.VITE_DEFAULT_BAUDRATE ?? '9600'
+export const DEFAULT_BAUDRATE = import.meta.env.VITE_DEFAULT_BAUDRATE ?? '115200'
 export const BAUDRATE_OPTIONS = new Set<string>([
   DEFAULT_BAUDRATE,
   '9600',

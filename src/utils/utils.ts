@@ -32,14 +32,14 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     className: 'text-altitude',
     fields: [
       {
-        label: 'BAROMETRIC ALTITUDE',
+        label: 'ALTITUDE',
         value: (data: WebsocketTelemetryData) => data.altitude.toFixed(2),
         unit: 'm'
       },
       {
-        label: 'GPS ALTITUDE',
-        value: (data: WebsocketTelemetryData) => data.gpsAltitude.toFixed(2),
-        unit: 'm'
+        label: 'VELOCITY Z',
+        value: (data: WebsocketTelemetryData) => data.velocityZ.toFixed(2),
+        unit: 'm/s'
       }
     ]
   },
@@ -60,23 +60,20 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     ]
   },
   {
-    name: 'ORIENTATION',
+    name: 'MAGNETOMETER',
     className: 'text-orientation',
     fields: [
       {
-        label: 'ROLL',
-        value: (data: WebsocketTelemetryData) => data.roll.toFixed(2),
-        unit: '°'
+        label: 'MAGNETOMETER X',
+        value: (data: WebsocketTelemetryData) => data.magnetometerX.toFixed(2),
       },
       {
-        label: 'PITCH',
-        value: (data: WebsocketTelemetryData) => data.pitch.toFixed(2),
-        unit: '°'
+        label: 'MAGNETOMETER Y',
+        value: (data: WebsocketTelemetryData) => data.magnetometerY.toFixed(2),
       },
       {
-        label: 'YAW',
-        value: (data: WebsocketTelemetryData) => data.yaw.toFixed(2),
-        unit: '°'
+        label: 'MAGNETOMETER Z',
+        value: (data: WebsocketTelemetryData) => data.magnetometerZ.toFixed(2),
       }
     ]
   },

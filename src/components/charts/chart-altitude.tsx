@@ -13,16 +13,9 @@ export default function ChartAltitude () {
     labels: [],
     datasets: [
       {
-        label: 'Barometric Altitude (m)',
+        label: 'Altitude (m)',
         data: [],
         borderColor: colors.altitude,
-        tension: 0,
-        pointRadius: 0
-      },
-      {
-        label: 'GPS Altitude (m)',
-        data: [],
-        borderColor: colors.gpsAltitude,
         tension: 0,
         pointRadius: 0
       }
@@ -40,12 +33,10 @@ export default function ChartAltitude () {
       chart.data.labels?.push(timestamp)
 
       chart.data.datasets[0].data.push(packet.altitude)
-      chart.data.datasets[1].data.push(packet.gpsAltitude)
 
       if (chart.data.labels != null && chart.data.labels.length > MAX_DATA_POINTS) {
         chart.data.labels.shift()
         chart.data.datasets[0].data.shift()
-        chart.data.datasets[1].data.shift()
       }
 
       chart.update('none')

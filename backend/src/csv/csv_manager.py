@@ -6,16 +6,15 @@ from threading import Thread, Event
 from datetime import datetime
 
 from ..utils.logger import logger
-from ..utils.parser import parse_packet
+from ..utils.parser import parse_hex_line
 
 CSV_HEADERS = [
-  "ground_timestamp", "timestamp", "altitude", "gpsAltitude", "flightStatus",
-  "accelerationX", "accelerationY", "accelerationZ", "totalAcceleration",
+  "ground_timestamp", "timestamp", "flightStatus",
+  "altitude", "accelerationX", "accelerationY", "accelerationZ", "totalAcceleration",
   "gyroscopeX", "gyroscopeY", "gyroscopeZ",
-  "roll", "pitch", "yaw",
+  "magnetometerX", "magnetometerY", "magnetometerZ",
   "gpsLatitude", "gpsLongitude",
-  "payloadAltitude", "payloadLatitude", "payloadLongitude",
-  "batteryVoltage", "temperature",
+  "temperature", "pressure", "velocityZ",
 ]
 
 class CSVManager:
@@ -61,7 +60,7 @@ class CSVManager:
     self._running = False
     logger("CSV RECORDING STOPPED")
 
-  def push (self, data: bytes) -> None:
+  def push (self, data: str) -> None:
     if self._running:
       self._queue.put_nowait(data)
 
@@ -94,8 +93,10 @@ class CSVManager:
         writer.writerows(buffer)
         f.flush()
 
-  def _parse_into_buffer (self, data: bytes, buffer: list) -> None:
-    parsed = parse_packet(data)
+  def _parse_into_buffer (self, data: str, buffer: list) -> None:
+    parsed = parse_hex_line(data)
+    if parsed is None:
+      return
     row = [parsed.get(h, 0) for h in CSV_HEADERS]
     buffer.append(row)
 

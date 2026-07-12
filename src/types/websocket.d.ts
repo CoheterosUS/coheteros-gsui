@@ -20,9 +20,8 @@ type WebsocketCommandType =
 interface WebsocketTelemetryData {
   timestamp: number
   ground_timestamp: number
-  altitude: number
-  gpsAltitude: number
   flightStatus: number
+  altitude: number
   accelerationX: number
   accelerationY: number
   accelerationZ: number
@@ -30,16 +29,14 @@ interface WebsocketTelemetryData {
   gyroscopeX: number
   gyroscopeY: number
   gyroscopeZ: number
-  roll: number
-  pitch: number
-  yaw: number
+  magnetometerX: number
+  magnetometerY: number
+  magnetometerZ: number
   gpsLatitude: number
   gpsLongitude: number
-  payloadAltitude: number
-  payloadLatitude: number
-  payloadLongitude: number
-  batteryVoltage: number
   temperature: number
+  pressure: number
+  velocityZ: number
 }
 
 interface WebsocketNotificationPacket {

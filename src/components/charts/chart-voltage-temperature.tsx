@@ -7,16 +7,16 @@ import { MAX_DATA_POINTS } from '@/utils/config'
 
 export default function ChartVoltageTemperature () {
   const { subscribe } = useWebsocketAPI()
-  const voltageRef = useRef<Chart<'line'>>(null)
+  const pressureRef = useRef<Chart<'line'>>(null)
   const temperatureRef = useRef<Chart<'line'>>(null)
 
-  const voltageInitialData = useMemo(() => ({
+  const pressureInitialData = useMemo(() => ({
     labels: [],
     datasets: [
       {
-        label: 'Battery Voltage (V)',
+        label: 'Pressure (Pa)',
         data: [],
-        borderColor: colors.batteryVoltage,
+        borderColor: colors.pressure,
         tension: 0,
         pointRadius: 0
       }
@@ -38,20 +38,20 @@ export default function ChartVoltageTemperature () {
 
   useEffect(() => {
     const unsubscribe = subscribe('TELEMETRY_PACKET', (packet) => {
-      const voltageChart = voltageRef.current
+      const pressureChart = pressureRef.current
       const temperatureChart = temperatureRef.current
 
       const timestamp = packet.timestamp.toFixed(2)
-      if (voltageChart != null) {
-        voltageChart.data.labels?.push(timestamp)
-        voltageChart.data.datasets[0].data.push(packet.batteryVoltage)
+      if (pressureChart != null) {
+        pressureChart.data.labels?.push(timestamp)
+        pressureChart.data.datasets[0].data.push(packet.pressure)
 
-        if (voltageChart.data.labels != null && voltageChart.data.labels.length > MAX_DATA_POINTS) {
-          voltageChart.data.labels.shift()
-          voltageChart.data.datasets[0].data.shift()
+        if (pressureChart.data.labels != null && pressureChart.data.labels.length > MAX_DATA_POINTS) {
+          pressureChart.data.labels.shift()
+          pressureChart.data.datasets[0].data.shift()
         }
 
-        voltageChart.update('none')
+        pressureChart.update('none')
       }
 
       if (temperatureChart != null) {
@@ -80,8 +80,8 @@ export default function ChartVoltageTemperature () {
         className='flex-1 min-w-0'
       >
         <Line
-          ref={voltageRef}
-          data={voltageInitialData}
+          ref={pressureRef}
+          data={pressureInitialData}
           options={options}
         />
       </div>

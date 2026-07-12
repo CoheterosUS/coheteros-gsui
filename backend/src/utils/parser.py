@@ -1,57 +1,70 @@
 import struct
+import math
 import time
 
 from ..utils.logger import logger
 
-# 39 bytes total, 37 bytes payload + 2 header
-PACKET_FORMAT = "<iBBhhhhhhhhHiihhB"
-PACKET_SIZE = struct.calcsize(PACKET_FORMAT)
-HEADER_BYTES = b"\xAA\xBB"
-FULL_PACKET_SIZE = len(HEADER_BYTES) + PACKET_SIZE
+SENSOR_DATA_FMT = "<HI11f2i2f"
+SENSOR_DATA_SIZE = struct.calcsize(SENSOR_DATA_FMT)
 
-def parse_packet (raw: bytes) -> dict:
-  """Validate header and unpack telemetry payload"""
-  if len(raw) != FULL_PACKET_SIZE:
-    logger(f"EXPECTED {FULL_PACKET_SIZE} BYTES, GOT {len(raw)}", "ERROR")
+STATE_EVENT_FMT = "<I66sI"
+STATE_EVENT_SIZE = struct.calcsize(STATE_EVENT_FMT)
 
-  if not raw.startswith(HEADER_BYTES):
-    logger("INVALID PACKET HEADER", "ERROR")
+# Current firmware: state(1) + SensorData(66) + trailing(1) = 68 bytes = 136 hex
+CURRENT_LINE_LENGTH = 136
+# Target firmware: state(1) + StateEvent_t(74) = 75 bytes = 150 hex
+TARGET_LINE_LENGTH = 150
 
-  payload = raw[len(HEADER_BYTES):]
+FULL_LINE_LENGTH = CURRENT_LINE_LENGTH
+
+def parse_hex_line (hex_line: str) -> dict | None:
+  hex_line = hex_line.strip()
+  length = len(hex_line)
+
+  try:
+    raw = bytes.fromhex(hex_line)
+  except ValueError:
+    logger("INVALID HEX IN PACKET", "ERROR")
+    return None
+
+  state_byte = raw[0]
+
+  if length == TARGET_LINE_LENGTH:
+    event_type, sd_bytes, cmd_type = struct.unpack(STATE_EVENT_FMT, raw[1:])
+  elif length == CURRENT_LINE_LENGTH:
+    sd_bytes = raw[1:1 + SENSOR_DATA_SIZE]
+  else:
+    logger(f"BAD HEX LENGTH: {length} (EXPECTED {CURRENT_LINE_LENGTH} OR {TARGET_LINE_LENGTH})", "ERROR")
+    return None
+
   (
-    altitude, gps_altitude, flight_status,
-    acc_x, acc_y, acc_z,
+    sync, timestamp,
+    accel_x, accel_y, accel_z,
     gyro_x, gyro_y, gyro_z,
-    roll, pitch, yaw,
-    gps_lat, gps_lon,
-    battery_voltage, temperature, timestamp
-  ) = struct.unpack(PACKET_FORMAT, payload)
-
-  ax = acc_x / 1000.0
-  ay = acc_y / 1000.0
-  az = acc_z / 1000.0
+    mag_x, mag_y, mag_z,
+    pressure_pa, temperature_c,
+    latitude, longitude,
+    altitude, velocity_z,
+  ) = struct.unpack(SENSOR_DATA_FMT, sd_bytes)
 
   return {
     "timestamp":         timestamp,
     "ground_timestamp":  time.time(),
-    "altitude":          altitude / 100.0,
-    "gpsAltitude":       gps_altitude,
-    "flightStatus":      flight_status,
-    "accelerationX":     ax,
-    "accelerationY":     ay,
-    "accelerationZ":     az,
-    "totalAcceleration": 0,
-    "gyroscopeX":        gyro_x / 100.0,
-    "gyroscopeY":        gyro_y / 100.0,
-    "gyroscopeZ":        gyro_z / 100.0,
-    "roll":              roll / 10.0,
-    "pitch":             pitch / 10.0,
-    "yaw":               yaw / 100.0,
-    "gpsLatitude":       gps_lat / 100000.0,
-    "gpsLongitude":      gps_lon / 100000.0,
-    "payloadAltitude":   0,
-    "payloadLatitude":   0,
-    "payloadLongitude":  0,
-    "batteryVoltage":    battery_voltage / 100.0,
-    "temperature":       temperature / 10.0,
+    "flightStatus":      state_byte,
+    "altitude":          altitude,
+    "accelerationX":     accel_x,
+    "accelerationY":     accel_y,
+    "accelerationZ":     accel_z,
+    "totalAcceleration": math.sqrt(accel_x**2 + accel_y**2 + accel_z**2),
+    "gyroscopeX":        gyro_x,
+    "gyroscopeY":        gyro_y,
+    "gyroscopeZ":        gyro_z,
+    "magnetometerX":     mag_x,
+    "magnetometerY":     mag_y,
+    "magnetometerZ":     mag_z,
+    "gpsLatitude":       latitude / 1e7,
+    "gpsLongitude":      longitude / 1e7,
+    "temperature":       temperature_c,
+    "pressure":          pressure_pa,
+    "velocityZ":         velocity_z,
   }
