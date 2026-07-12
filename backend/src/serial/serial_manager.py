@@ -3,12 +3,14 @@ import time
 
 from threading import Thread, Event
 from serial import Serial, SerialException
-from asyncio import Queue, QueueFull
+from asyncio import Queue, QueueFull, QueueEmpty
 
 from ..state.state_manager import global_state
 from ..csv.csv_manager import global_csv
 from ..utils.logger import logger
-from ..utils.parser import CURRENT_LINE_LENGTH, TARGET_LINE_LENGTH
+from ..utils.parser import FLIGHT_DATA_SIZE, SYNC_BYTES, SYNC_END
+
+MAX_BUFFER_SIZE = FLIGHT_DATA_SIZE * 32
 
 class SerialManager:
   def __init__ (self, buffer_size: int = 100):
@@ -60,6 +62,19 @@ class SerialManager:
     self._read_thread.start()
     logger("STARTED SERIAL READING THREAD")
 
+  def _enqueue (self, hex_line: str) -> None:
+    # runs on the event loop thread, so put_nowait raises here and not in the reader
+    try:
+      self.async_queue.put_nowait(hex_line)
+    except QueueFull:
+      try:
+        self.async_queue.get_nowait()
+      except QueueEmpty:
+        pass
+      else:
+        logger("ASYNC QUEUE FULL, DROPPING OLDEST PACKET", "WARNING")
+      self.async_queue.put_nowait(hex_line)
+
   def _read_loop (self) -> None:
     self._running = True
     buffer = b""
@@ -69,22 +84,37 @@ class SerialManager:
         if bytes_available > 0:
           buffer += self.serial_connection.read(bytes_available)
 
-          while b"\r\n" in buffer:
-            line_end = buffer.index(b"\r\n")
-            line = buffer[:line_end]
-            buffer = buffer[line_end + 2:]
+          while True:
+            sync_index = buffer.find(SYNC_BYTES)
+            if sync_index == -1:
+              # keep a trailing byte in case the sync word is split across reads
+              buffer = buffer[-1:] if len(buffer) < MAX_BUFFER_SIZE else b""
+              break
 
-            hex_line = line.decode("ascii", errors="ignore").strip()
+            if sync_index > 0:
+              logger(f"DISCARDED {sync_index} BYTES BEFORE SYNC", "WARNING")
+              buffer = buffer[sync_index:]
 
-            if len(hex_line) not in (CURRENT_LINE_LENGTH, TARGET_LINE_LENGTH):
-              logger(f"BAD LINE LENGTH: {len(hex_line)}, EXPECTED {CURRENT_LINE_LENGTH} OR {TARGET_LINE_LENGTH}", "WARNING")
+            if len(buffer) < FLIGHT_DATA_SIZE:
+              break
+
+            frame = buffer[:FLIGHT_DATA_SIZE]
+
+            # sync word can occur inside a payload; footer confirms the frame
+            if frame[-1] != SYNC_END:
+              logger("SYNC END MISMATCH, RESYNCING", "WARNING")
+              buffer = buffer[len(SYNC_BYTES):]
               continue
+
+            buffer = buffer[FLIGHT_DATA_SIZE:]
+
+            hex_line = frame.hex()
 
             if self.async_queue and self._loop:
               try:
-                self._loop.call_soon_threadsafe(self.async_queue.put_nowait, hex_line)
-              except QueueFull:
-                logger("ASYNC QUEUE FULL, DROPPING DATA", "WARNING")
+                self._loop.call_soon_threadsafe(self._enqueue, hex_line)
+              except RuntimeError:
+                logger("EVENT LOOP CLOSED, DROPPING DATA", "WARNING")
 
             if global_state.is_recording_csv:
               global_csv.push(hex_line)

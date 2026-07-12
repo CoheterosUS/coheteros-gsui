@@ -14,16 +14,12 @@ COM_PORT = getenv("TESTING_COM_PORT", "COM2")
 COM_BAUDRATE = int(getenv("TESTING_COM_BAUDRATE", 115200))
 PACKET_FREQUENCY = int(getenv("PACKET_FREQUENCY", 10))
 
-SENSOR_DATA_FMT = "<HI11f2i2f"
-STATE_EVENT_FMT = "<I66sI"
+FLIGHT_DATA_FMT = "<H9f2f2i2fIfBB"
 
 START_TIME = time.time()
 
-def build_hex_line() -> bytes:
+def build_packet() -> bytes:
   elapsed = time.time() - START_TIME
-  timestamp_ms = int(elapsed * 1000)
-
-  state_byte = int((elapsed // 10) % 7)
 
   accel_x = random.uniform(-2, 2)
   accel_y = random.uniform(-2, 2)
@@ -45,35 +41,34 @@ def build_hex_line() -> bytes:
 
   altitude = 100 + (50 * (elapsed % 10))
   velocity_z = random.uniform(-5, 5)
+  battery_voltage = 12.6 - (0.01 * elapsed) + random.uniform(-0.05, 0.05)
+  flags = 0
+  state = int((elapsed // 10) % 7)
 
-  sensor_data = struct.pack(
-    SENSOR_DATA_FMT,
+  flight_data = struct.pack(
+    FLIGHT_DATA_FMT,
     0xCAFE,
-    timestamp_ms,
     accel_x, accel_y, accel_z,
     gyro_x, gyro_y, gyro_z,
     mag_x, mag_y, mag_z,
     pressure_pa, temperature_c,
     latitude, longitude,
     altitude, velocity_z,
+    flags,
+    battery_voltage,
+    state,
+    0xBE,
   )
 
-  event_type = 0
-  cmd_type = 0
-  state_event = struct.pack(STATE_EVENT_FMT, event_type, sensor_data, cmd_type)
-
-  raw = bytes([state_byte]) + state_event
-  hex_str = raw.hex().upper()
-  return (hex_str + "\r\n").encode("ascii")
+  return flight_data
 
 def main():
   try:
     with Serial(COM_PORT, COM_BAUDRATE, timeout=1) as ser:
       print(f"CONNECTED TO {COM_PORT} AT {COM_BAUDRATE} BAUD")
-      print(f"SENDING HEX LINES AT {PACKET_FREQUENCY} Hz")
+      print(f"SENDING RAW PACKETS AT {PACKET_FREQUENCY} Hz")
       while True:
-        line = build_hex_line()
-        ser.write(line)
+        ser.write(build_packet())
         ser.flush()
         time.sleep(1 / PACKET_FREQUENCY)
   except SerialException as e:
