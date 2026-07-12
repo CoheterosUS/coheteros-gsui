@@ -2,12 +2,14 @@ interface TelemetryHeaderProps {
   timestamp: number
   pressure: number
   temperature: number
+  batteryVoltage: number
 }
 
 export default function TelemetryHeader ({
   timestamp,
   pressure,
-  temperature
+  temperature,
+  batteryVoltage
 }: TelemetryHeaderProps) {
   return (
     <div
@@ -19,6 +21,9 @@ export default function TelemetryHeader ({
       <p
         className='text-battery'
       >
+        BATTERY: {batteryVoltage.toFixed(2)} V
+      </p>
+      <p>
         PRESSURE: {pressure.toFixed(0)} Pa
       </p>
       <p

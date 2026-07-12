@@ -37,6 +37,7 @@ interface WebsocketTelemetryData {
   temperature: number
   pressure: number
   velocityZ: number
+  batteryVoltage: number
 }
 
 interface WebsocketNotificationPacket {

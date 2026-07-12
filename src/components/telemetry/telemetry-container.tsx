@@ -18,6 +18,7 @@ export default function TelemetryContainer ({
         timestamp={data.timestamp}
         pressure={data.pressure}
         temperature={data.temperature}
+        batteryVoltage={data.batteryVoltage}
       />
       <div
         className='flex flex-1 gap-1'
