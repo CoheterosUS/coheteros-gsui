@@ -29,8 +29,7 @@ export default function ChartAltitude () {
         return
       }
 
-      const timestamp = packet.timestamp.toFixed(2)
-      chart.data.labels?.push(timestamp)
+      chart.data.labels?.push(packet.tick.toString())
 
       chart.data.datasets[0].data.push(packet.altitude)
 

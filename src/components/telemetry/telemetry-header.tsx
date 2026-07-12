@@ -1,16 +1,20 @@
 interface TelemetryHeaderProps {
-  timestamp: number
-  pressure: number
-  temperature: number
+  sync: number
+  tick: number
+  pressurePa: number
+  temperatureC: number
   batteryVoltage: number
 }
 
 export default function TelemetryHeader ({
-  timestamp,
-  pressure,
-  temperature,
+  sync,
+  tick,
+  pressurePa,
+  temperatureC,
   batteryVoltage
 }: TelemetryHeaderProps) {
+  const syncLabel = `0x${sync.toString(16).toUpperCase().padStart(4, '0')}`
+
   return (
     <div
       className='flex justify-between text-sm'
@@ -24,15 +28,20 @@ export default function TelemetryHeader ({
         BATTERY: {batteryVoltage.toFixed(2)} V
       </p>
       <p>
-        PRESSURE: {pressure.toFixed(0)} Pa
+        SYNC: {syncLabel}
       </p>
       <p
         className='text-temperature'
       >
-        TEMPERATURE: {temperature.toFixed(2)} °C
+        PRESSURE: {pressurePa.toFixed(0)} Pa
+      </p>
+      <p
+        className='text-temperature'
+      >
+        TEMPERATURE: {temperatureC.toFixed(2)} °C
       </p>
       <p>
-        TIMESTAMP: {timestamp.toFixed(2)} s
+        TICK: {tick}
       </p>
     </div>
   )

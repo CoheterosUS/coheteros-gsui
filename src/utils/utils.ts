@@ -14,16 +14,24 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     className: 'text-status',
     fields: [
       {
-        label: 'FSM STATE',
-        value: (data: WebsocketTelemetryData) => data.flightStatus
+        label: 'SYNC',
+        value: (data: WebsocketTelemetryData) => `0x${data.sync.toString(16).toUpperCase().padStart(4, '0')}`
       },
       {
-        label: 'DROGUE',
-        value: () => 'DEPLOYED'
+        label: 'TICK',
+        value: (data: WebsocketTelemetryData) => data.tick
       },
       {
-        label: 'MAIN',
-        value: () => 'NOT DEPLOYED'
+        label: 'STATE',
+        value: (data: WebsocketTelemetryData) => data.state
+      },
+      {
+        label: 'FLAGS',
+        value: (data: WebsocketTelemetryData) => data.flags
+      },
+      {
+        label: 'SYNC END',
+        value: (data: WebsocketTelemetryData) => `0x${data.syncEnd.toString(16).toUpperCase().padStart(2, '0')}`
       }
     ]
   },
@@ -48,13 +56,13 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     className: 'text-position',
     fields: [
       {
-        label: 'GPS LATITUDE',
-        value: (data: WebsocketTelemetryData) => data.gpsLatitude.toFixed(6),
+        label: 'LATITUDE',
+        value: (data: WebsocketTelemetryData) => (data.latitude / 1e7).toFixed(6),
         unit: '°'
       },
       {
-        label: 'GPS LONGITUDE',
-        value: (data: WebsocketTelemetryData) => data.gpsLongitude.toFixed(6),
+        label: 'LONGITUDE',
+        value: (data: WebsocketTelemetryData) => (data.longitude / 1e7).toFixed(6),
         unit: '°'
       }
     ]
@@ -65,15 +73,15 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'MAGNETOMETER X',
-        value: (data: WebsocketTelemetryData) => data.magnetometerX.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.magX.toFixed(2),
       },
       {
         label: 'MAGNETOMETER Y',
-        value: (data: WebsocketTelemetryData) => data.magnetometerY.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.magY.toFixed(2),
       },
       {
         label: 'MAGNETOMETER Z',
-        value: (data: WebsocketTelemetryData) => data.magnetometerZ.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.magZ.toFixed(2),
       }
     ]
   },
@@ -83,22 +91,17 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'ACCELERATION X',
-        value: (data: WebsocketTelemetryData) => data.accelerationX.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.accelX.toFixed(2),
         unit: 'm/s²'
       },
       {
         label: 'ACCELERATION Y',
-        value: (data: WebsocketTelemetryData) => data.accelerationY.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.accelY.toFixed(2),
         unit: 'm/s²'
       },
       {
         label: 'ACCELERATION Z',
-        value: (data: WebsocketTelemetryData) => data.accelerationZ.toFixed(2),
-        unit: 'm/s²'
-      },
-      {
-        label: 'TOTAL ACCELERATION',
-        value: (data: WebsocketTelemetryData) => data.totalAcceleration.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.accelZ.toFixed(2),
         unit: 'm/s²'
       }
     ]
@@ -109,17 +112,17 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     fields: [
       {
         label: 'GYROSCOPE X',
-        value: (data: WebsocketTelemetryData) => data.gyroscopeX.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.gyroX.toFixed(2),
         unit: '°/s'
       },
       {
         label: 'GYROSCOPE Y',
-        value: (data: WebsocketTelemetryData) => data.gyroscopeY.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.gyroY.toFixed(2),
         unit: '°/s'
       },
       {
         label: 'GYROSCOPE Z',
-        value: (data: WebsocketTelemetryData) => data.gyroscopeZ.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.gyroZ.toFixed(2),
         unit: '°/s'
       }
     ]

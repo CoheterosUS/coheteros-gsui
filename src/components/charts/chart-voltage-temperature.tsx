@@ -41,10 +41,10 @@ export default function ChartVoltageTemperature () {
       const pressureChart = pressureRef.current
       const temperatureChart = temperatureRef.current
 
-      const timestamp = packet.timestamp.toFixed(2)
+      const timestamp = packet.tick.toString()
       if (pressureChart != null) {
         pressureChart.data.labels?.push(timestamp)
-        pressureChart.data.datasets[0].data.push(packet.pressure)
+        pressureChart.data.datasets[0].data.push(packet.pressurePa)
 
         if (pressureChart.data.labels != null && pressureChart.data.labels.length > MAX_DATA_POINTS) {
           pressureChart.data.labels.shift()
@@ -56,7 +56,7 @@ export default function ChartVoltageTemperature () {
 
       if (temperatureChart != null) {
         temperatureChart.data.labels?.push(timestamp)
-        temperatureChart.data.datasets[0].data.push(packet.temperature)
+        temperatureChart.data.datasets[0].data.push(packet.temperatureC)
 
         if (temperatureChart.data.labels != null && temperatureChart.data.labels.length > MAX_DATA_POINTS) {
           temperatureChart.data.labels.shift()

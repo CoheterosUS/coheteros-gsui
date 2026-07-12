@@ -15,9 +15,10 @@ export default function TelemetryContainer ({
       className='flex flex-col gap-2 p-2'
     >
       <TelemetryHeader
-        timestamp={data.timestamp}
-        pressure={data.pressure}
-        temperature={data.temperature}
+        sync={data.sync}
+        tick={data.tick}
+        pressurePa={data.pressurePa}
+        temperatureC={data.temperatureC}
         batteryVoltage={data.batteryVoltage}
       />
       <div

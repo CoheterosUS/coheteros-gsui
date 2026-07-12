@@ -18,26 +18,29 @@ type WebsocketCommandType =
   | 'DISCONNECT_SERIAL'
 
 interface WebsocketTelemetryData {
+  sync: number
+  tick: number
   timestamp: number
   ground_timestamp: number
-  flightStatus: number
+  state: number
   altitude: number
-  accelerationX: number
-  accelerationY: number
-  accelerationZ: number
-  totalAcceleration: number
-  gyroscopeX: number
-  gyroscopeY: number
-  gyroscopeZ: number
-  magnetometerX: number
-  magnetometerY: number
-  magnetometerZ: number
-  gpsLatitude: number
-  gpsLongitude: number
-  temperature: number
-  pressure: number
+  accelX: number
+  accelY: number
+  accelZ: number
+  gyroX: number
+  gyroY: number
+  gyroZ: number
+  magX: number
+  magY: number
+  magZ: number
+  latitude: number
+  longitude: number
+  pressurePa: number
+  temperatureC: number
   velocityZ: number
   batteryVoltage: number
+  flags: number
+  syncEnd: number
 }
 
 interface WebsocketNotificationPacket {

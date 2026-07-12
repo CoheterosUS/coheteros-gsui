@@ -4,7 +4,7 @@ import time
 
 from ..utils.logger import logger
 
-FLIGHT_DATA_FMT = "<H9f2f2i2fIfBB"
+FLIGHT_DATA_FMT = "<HI9f2f2i2fIfBB"
 FLIGHT_DATA_SIZE = struct.calcsize(FLIGHT_DATA_FMT)
 FLIGHT_DATA_LENGTH = FLIGHT_DATA_SIZE * 2
 
@@ -29,6 +29,7 @@ def parse_hex_line (hex_line: str) -> dict | None:
 
   (
     sync,
+    tick,
     accel_x, accel_y, accel_z,
     gyro_x, gyro_y, gyro_z,
     mag_x, mag_y, mag_z,
@@ -46,25 +47,26 @@ def parse_hex_line (hex_line: str) -> dict | None:
 
   return {
     "sync":             sync,
+    "tick":             tick,
     "timestamp":         timestamp,
     "ground_timestamp":  time.time(),
-    "flightStatus":      state,
+    "state":             state,
     "altitude":          altitude,
-    "accelerationX":     accel_x,
-    "accelerationY":     accel_y,
-    "accelerationZ":     accel_z,
-    "totalAcceleration": math.sqrt(accel_x**2 + accel_y**2 + accel_z**2),
-    "gyroscopeX":        gyro_x,
-    "gyroscopeY":        gyro_y,
-    "gyroscopeZ":        gyro_z,
-    "magnetometerX":     mag_x,
-    "magnetometerY":     mag_y,
-    "magnetometerZ":     mag_z,
-    "gpsLatitude":       latitude / 1e7,
-    "gpsLongitude":      longitude / 1e7,
-    "temperature":       temperature_c,
-    "pressure":          pressure_pa,
+    "accelX":            accel_x,
+    "accelY":            accel_y,
+    "accelZ":            accel_z,
+    "gyroX":             gyro_x,
+    "gyroY":             gyro_y,
+    "gyroZ":             gyro_z,
+    "magX":              mag_x,
+    "magY":              mag_y,
+    "magZ":              mag_z,
+    "latitude":          latitude,
+    "longitude":         longitude,
+    "pressurePa":        pressure_pa,
+    "temperatureC":      temperature_c,
     "velocityZ":         velocity_z,
     "batteryVoltage":    battery_voltage,
     "flags":             flags,
+    "syncEnd":           sync_end,
   }

@@ -21,8 +21,8 @@ export default function GPSMap ({
   const lastUpdateRef = useRef(0)
 
   const initialViewState = useMemo(() => ({
-    longitude: initial.gpsLongitude,
-    latitude: initial.gpsLatitude,
+    longitude: initial.longitude / 1e7,
+    latitude: initial.latitude / 1e7,
     zoom: 15,
     pitch: 60,
     bearing: 0
@@ -34,7 +34,7 @@ export default function GPSMap ({
       type: 'Feature',
       geometry: {
         type: 'Point',
-        coordinates: [initial.gpsLongitude, initial.gpsLatitude]
+        coordinates: [initial.longitude / 1e7, initial.latitude / 1e7]
       },
       properties: {
         altitude: initial.altitude.toFixed(1)
@@ -76,8 +76,8 @@ export default function GPSMap ({
       // TODO: Implement refresh rate selection, settings
       if (now - lastUpdateRef.current > 100) {
         const {
-          gpsLatitude,
-          gpsLongitude,
+          latitude,
+          longitude,
           altitude
         } = packet
 
@@ -90,7 +90,7 @@ export default function GPSMap ({
               type: 'Feature',
               geometry: {
                 type: 'Point',
-                coordinates: [gpsLongitude, gpsLatitude]
+                coordinates: [longitude / 1e7, latitude / 1e7]
               },
               properties: {
                 altitude: altitude.toFixed(1)
@@ -101,7 +101,7 @@ export default function GPSMap ({
 
         if (anchoredRef.current) {
           map.jumpTo({
-            center: [gpsLongitude, gpsLatitude]
+            center: [longitude / 1e7, latitude / 1e7]
           })
         }
 

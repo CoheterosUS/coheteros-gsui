@@ -9,12 +9,13 @@ from ..utils.logger import logger
 from ..utils.parser import parse_hex_line
 
 CSV_HEADERS = [
-  "ground_timestamp", "timestamp", "flightStatus",
-  "altitude", "accelerationX", "accelerationY", "accelerationZ", "totalAcceleration",
-  "gyroscopeX", "gyroscopeY", "gyroscopeZ",
-  "magnetometerX", "magnetometerY", "magnetometerZ",
-  "gpsLatitude", "gpsLongitude",
-  "temperature", "pressure", "velocityZ", "batteryVoltage",
+  "ground_timestamp", "timestamp", "sync", "tick",
+  "state", "syncEnd", "flags",
+  "altitude", "accelX", "accelY", "accelZ",
+  "gyroX", "gyroY", "gyroZ",
+  "magX", "magY", "magZ",
+  "latitude", "longitude",
+  "pressurePa", "temperatureC", "velocityZ", "batteryVoltage",
 ]
 
 class CSVManager:

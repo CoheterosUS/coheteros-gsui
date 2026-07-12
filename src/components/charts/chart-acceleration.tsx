@@ -43,12 +43,11 @@ export default function ChartAcceleration () {
         return
       }
 
-      const timestamp = packet.timestamp.toFixed(2)
-      chart.data.labels?.push(timestamp)
+      chart.data.labels?.push(packet.tick.toString())
 
-      chart.data.datasets[0].data.push(packet.accelerationX)
-      chart.data.datasets[1].data.push(packet.accelerationY)
-      chart.data.datasets[2].data.push(packet.accelerationZ)
+      chart.data.datasets[0].data.push(packet.accelX)
+      chart.data.datasets[1].data.push(packet.accelY)
+      chart.data.datasets[2].data.push(packet.accelZ)
 
       if (chart.data.labels != null && chart.data.labels.length > MAX_DATA_POINTS) {
         chart.data.labels.shift()

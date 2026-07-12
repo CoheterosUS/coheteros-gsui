@@ -43,12 +43,11 @@ export default function ChartGyroscope () {
         return
       }
 
-      const timestamp = packet.timestamp.toFixed(2)
-      chart.data.labels?.push(timestamp)
+      chart.data.labels?.push(packet.tick.toString())
 
-      chart.data.datasets[0].data.push(packet.gyroscopeX)
-      chart.data.datasets[1].data.push(packet.gyroscopeY)
-      chart.data.datasets[2].data.push(packet.gyroscopeZ)
+      chart.data.datasets[0].data.push(packet.gyroX)
+      chart.data.datasets[1].data.push(packet.gyroY)
+      chart.data.datasets[2].data.push(packet.gyroZ)
 
       if (chart.data.labels != null && chart.data.labels.length > MAX_DATA_POINTS) {
         chart.data.labels.shift()

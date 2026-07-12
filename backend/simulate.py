@@ -14,12 +14,13 @@ COM_PORT = getenv("TESTING_COM_PORT", "COM2")
 COM_BAUDRATE = int(getenv("TESTING_COM_BAUDRATE", 115200))
 PACKET_FREQUENCY = int(getenv("PACKET_FREQUENCY", 10))
 
-FLIGHT_DATA_FMT = "<H9f2f2i2fIfBB"
+FLIGHT_DATA_FMT = "<HI9f2f2i2fIfBB"
 
 START_TIME = time.time()
 
 def build_packet() -> bytes:
   elapsed = time.time() - START_TIME
+  tick = int(elapsed * 1000)
 
   accel_x = random.uniform(-2, 2)
   accel_y = random.uniform(-2, 2)
@@ -48,6 +49,7 @@ def build_packet() -> bytes:
   flight_data = struct.pack(
     FLIGHT_DATA_FMT,
     0xCAFE,
+    tick,
     accel_x, accel_y, accel_z,
     gyro_x, gyro_y, gyro_z,
     mag_x, mag_y, mag_z,
