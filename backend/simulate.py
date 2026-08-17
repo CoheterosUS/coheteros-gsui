@@ -14,7 +14,7 @@ COM_PORT = getenv("TESTING_COM_PORT", "COM2")
 COM_BAUDRATE = int(getenv("TESTING_COM_BAUDRATE", 115200))
 PACKET_FREQUENCY = int(getenv("PACKET_FREQUENCY", 10))
 
-FLIGHT_DATA_FMT = "<HI9f2f2i2fIfBB"
+FLIGHT_DATA_FMT = "<HI9f2f2i4fIfBBB"
 
 START_TIME = time.time()
 
@@ -41,10 +41,13 @@ def build_packet() -> bytes:
   longitude = int((-6.0154051 + 0.001 * math.cos(2 * math.pi * elapsed / 15)) * 1e7)
 
   altitude = 100 + (50 * (elapsed % 10))
-  velocity_z = random.uniform(-5, 5)
+  vel_x = 0.0
+  vel_y = random.uniform(-5, 5)
+  vel_z = 0.0
   battery_voltage = 12.6 - (0.01 * elapsed) + random.uniform(-0.05, 0.05)
   flags = 0
   state = int((elapsed // 10) % 7)
+  relay_state = 0
 
   flight_data = struct.pack(
     FLIGHT_DATA_FMT,
@@ -55,10 +58,11 @@ def build_packet() -> bytes:
     mag_x, mag_y, mag_z,
     pressure_pa, temperature_c,
     latitude, longitude,
-    altitude, velocity_z,
+    altitude, vel_x, vel_y, vel_z,
     flags,
     battery_voltage,
     state,
+    relay_state,
     0xBE,
   )
 

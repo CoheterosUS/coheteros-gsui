@@ -27,9 +27,12 @@ def create_fake_data () -> dict[str, float | int]:
   packet['longitude'] = int((-6.0154051 + 0.001 * math.cos(2 * math.pi * elapsed / 15)) * 1e7)
   packet['temperatureC'] = 25.0 + random.uniform(-2, 2)
   packet['pressurePa'] = 101325.0 + random.uniform(-500, 500)
-  packet['velocityZ'] = random.uniform(-5, 5)
+  packet['velX'] = 0
+  packet['velY'] = random.uniform(-5, 5)
+  packet['velZ'] = 0
   packet['batteryVoltage'] = 12.6 - (0.01 * elapsed) + random.uniform(-0.05, 0.05)
   packet['flags'] = 0
+  packet['relayState'] = 0
   packet['syncEnd'] = 0xBE
 
   return packet

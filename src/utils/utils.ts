@@ -45,8 +45,18 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
         unit: 'm'
       },
       {
+        label: 'VELOCITY X',
+        value: (data: WebsocketTelemetryData) => data.velX.toFixed(2),
+        unit: 'm/s'
+      },
+      {
+        label: 'VELOCITY Y',
+        value: (data: WebsocketTelemetryData) => data.velY.toFixed(2),
+        unit: 'm/s'
+      },
+      {
         label: 'VELOCITY Z',
-        value: (data: WebsocketTelemetryData) => data.velocityZ.toFixed(2),
+        value: (data: WebsocketTelemetryData) => data.velZ.toFixed(2),
         unit: 'm/s'
       }
     ]

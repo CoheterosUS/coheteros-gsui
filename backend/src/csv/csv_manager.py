@@ -15,7 +15,8 @@ CSV_HEADERS = [
   "gyroX", "gyroY", "gyroZ",
   "magX", "magY", "magZ",
   "latitude", "longitude",
-  "pressurePa", "temperatureC", "velocityZ", "batteryVoltage",
+  "pressurePa", "temperatureC", "velX", "velY", "velZ",
+  "batteryVoltage", "relayState",
 ]
 
 class CSVManager:

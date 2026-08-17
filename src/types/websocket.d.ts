@@ -37,7 +37,10 @@ interface WebsocketTelemetryData {
   longitude: number
   pressurePa: number
   temperatureC: number
-  velocityZ: number
+  velX: number
+  velY: number
+  velZ: number
+  relayState: number
   batteryVoltage: number
   flags: number
   syncEnd: number
