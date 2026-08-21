@@ -8,7 +8,7 @@ from asyncio import Queue, QueueFull, QueueEmpty
 from ..state.state_manager import global_state
 from ..csv.csv_manager import global_csv
 from ..utils.logger import logger
-from ..utils.parser import FLIGHT_DATA_SIZE, SYNC_BYTES, SYNC_END
+from ..utils.parser import FLIGHT_DATA_SIZE, SYNC_BYTES, SYNC_END, build_command_frame
 
 MAX_BUFFER_SIZE = FLIGHT_DATA_SIZE * 32
 
@@ -41,6 +41,25 @@ class SerialManager:
     except Exception as e:
       logger(f"FAILED TO CONNECT TO SERIAL PORT: {e}", "ERROR")
       return False
+
+  def send_command (self, command: str) -> bool:
+    if not self.serial_connection or not self.serial_connection.is_open:
+      logger(f"CANNOT SEND {command}: SERIAL CONNECTION NOT ESTABLISHED", "ERROR")
+      return False
+
+    frame = build_command_frame(command)
+    if frame is None:
+      return False
+
+    try:
+      self.serial_connection.write(frame)
+      self.serial_connection.flush()
+    except Exception as e:
+      logger(f"FAILED TO SEND {command}: {e}", "ERROR")
+      return False
+
+    logger(f"SENT COMMAND {command}: {frame.hex()}")
+    return True
 
   def start_reading (self) -> None:
     if self._running:

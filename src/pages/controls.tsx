@@ -40,15 +40,6 @@ export default function ControlsPage () {
       className='h-full flex flex-col'
     >
       <ControlsSection
-        title='ACTIONS'
-      >
-        <ControlsButton
-          label='DEPLOY PARACHUTE'
-          onClick={() => handleCommand('DEPLOY_PARACHUTE')}
-          disabled={status !== 'connected'}
-        />
-      </ControlsSection>
-      <ControlsSection
         title='CSV RECORDING'
       >
         <ControlsButton

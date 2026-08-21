@@ -1,6 +1,11 @@
 import { Euler, MathUtils, Object3D } from 'three'
 import { CircleCheck, CircleX, Info } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { FLIGHT_STATES, RELAY_DROGUE, RELAY_PARACHUTE } from '@/utils/config'
+
+export function getStateName (state: number) {
+  return FLIGHT_STATES[state] ?? `UNKNOWN (${state})`
+}
 
 export const paddings = {
   gyroscope: 50,
@@ -14,24 +19,24 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     className: 'text-status',
     fields: [
       {
-        label: 'SYNC',
-        value: (data: WebsocketTelemetryData) => `0x${data.sync.toString(16).toUpperCase().padStart(4, '0')}`
-      },
-      {
         label: 'TICK',
         value: (data: WebsocketTelemetryData) => data.tick
       },
       {
         label: 'STATE',
-        value: (data: WebsocketTelemetryData) => data.state
+        value: (data: WebsocketTelemetryData) => getStateName(data.state)
       },
       {
         label: 'FLAGS',
         value: (data: WebsocketTelemetryData) => data.flags
       },
       {
-        label: 'SYNC END',
-        value: (data: WebsocketTelemetryData) => `0x${data.syncEnd.toString(16).toUpperCase().padStart(2, '0')}`
+        label: 'DROGUE',
+        value: (data: WebsocketTelemetryData) => (data.relayState & RELAY_DROGUE) ? 'FIRED' : 'SAFE'
+      },
+      {
+        label: 'PARACHUTE',
+        value: (data: WebsocketTelemetryData) => (data.relayState & RELAY_PARACHUTE) ? 'FIRED' : 'SAFE'
       }
     ]
   },
@@ -40,9 +45,14 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     className: 'text-altitude',
     fields: [
       {
-        label: 'ALTITUDE',
-        value: (data: WebsocketTelemetryData) => data.altitude.toFixed(2),
+        label: 'ALTITUDE (AGL)',
+        value: (data: WebsocketTelemetryData) => data.barometricAltitude.toFixed(2),
         unit: 'm'
+      },
+      {
+        label: 'VERTICAL VELOCITY',
+        value: (data: WebsocketTelemetryData) => data.barometricVelocity.toFixed(2),
+        unit: 'm/s'
       },
       {
         label: 'VELOCITY X',
@@ -74,6 +84,15 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
         label: 'LONGITUDE',
         value: (data: WebsocketTelemetryData) => (data.longitude / 1e7).toFixed(6),
         unit: '°'
+      },
+      {
+        label: 'GPS ALTITUDE (ASL)',
+        value: (data: WebsocketTelemetryData) => data.gpsAltitude.toFixed(2),
+        unit: 'm'
+      },
+      {
+        label: 'SATELLITES',
+        value: (data: WebsocketTelemetryData) => data.satellites
       }
     ]
   },

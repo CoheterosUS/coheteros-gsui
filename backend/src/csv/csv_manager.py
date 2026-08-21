@@ -11,10 +11,11 @@ from ..utils.parser import parse_hex_line
 CSV_HEADERS = [
   "ground_timestamp", "timestamp", "sync", "tick",
   "state", "syncEnd", "flags",
-  "altitude", "accelX", "accelY", "accelZ",
+  "accelX", "accelY", "accelZ",
   "gyroX", "gyroY", "gyroZ",
   "magX", "magY", "magZ",
-  "latitude", "longitude",
+  "latitude", "longitude", "gpsAltitude", "satellites",
+  "barometricAltitude", "barometricVelocity",
   "pressurePa", "temperatureC", "velX", "velY", "velZ",
   "batteryVoltage", "relayState",
 ]

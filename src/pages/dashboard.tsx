@@ -6,6 +6,7 @@ import ChartAcceleration from '@/components/charts/chart-acceleration'
 import ChartVoltageTemperature from '@/components/charts/chart-voltage-temperature'
 import Telemetry from '@/components/telemetry/telemetry'
 import TelemetryEmpty from '@/components/telemetry/telemetry-empty'
+import FlightControls from '@/components/controls/flight-controls'
 
 import {
   Chart,
@@ -45,6 +46,13 @@ export default function DashboardPage () {
         <ChartGyroscope />
         <ChartAcceleration />
         <ChartVoltageTemperature />
+      </div>
+      <div
+        className='shrink-0 flex flex-row items-start gap-4 border-t-2 border-primary-muted'
+      >
+        <FlightControls
+          bordered={false}
+        />
       </div>
     </div>
   ) : (

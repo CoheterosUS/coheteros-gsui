@@ -13,9 +13,17 @@ export default function ChartAltitude () {
     labels: [],
     datasets: [
       {
-        label: 'Altitude (m)',
+        label: 'Baro AGL (m)',
         data: [],
         borderColor: colors.altitude,
+        tension: 0,
+        pointRadius: 0
+      },
+      {
+        label: 'GPS ASL (m)',
+        data: [],
+        borderColor: colors.gpsAltitude,
+        borderDash: [6, 4],
         tension: 0,
         pointRadius: 0
       }
@@ -31,11 +39,13 @@ export default function ChartAltitude () {
 
       chart.data.labels?.push(packet.tick.toString())
 
-      chart.data.datasets[0].data.push(packet.altitude)
+      chart.data.datasets[0].data.push(packet.barometricAltitude)
+      chart.data.datasets[1].data.push(packet.gpsAltitude)
 
       if (chart.data.labels != null && chart.data.labels.length > MAX_DATA_POINTS) {
         chart.data.labels.shift()
         chart.data.datasets[0].data.shift()
+        chart.data.datasets[1].data.shift()
       }
 
       chart.update('none')

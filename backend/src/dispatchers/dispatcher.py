@@ -6,8 +6,13 @@ from .commands import connect_serial
 from .commands import disconnect_serial
 from .commands import start_csv_record
 from .commands import stop_csv_record
+from .commands import send_flight_command
 
 COMMAND_MAP = {
+  "RESET": send_flight_command.execute_reset,
+  "GROUND_ABORT": send_flight_command.execute_ground_abort,
+  "CALIBRATION": send_flight_command.execute_calibration,
+  "DROGUE": send_flight_command.execute_drogue,
   "START_FAKE_TELEMETRY": start_fake_telemetry.execute,
   "STOP_FAKE_TELEMETRY": stop_fake_telemetry.execute,
   "CONNECT_SERIAL": connect_serial.execute,

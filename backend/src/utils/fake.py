@@ -13,7 +13,10 @@ def create_fake_data () -> dict[str, float | int]:
   packet['ground_timestamp'] = time.time()
   packet['sync'] = 0xCAFE
   packet['state'] = int((elapsed // 10) % 4) + 1
-  packet['altitude'] = 100 + (50 * (elapsed % 10))
+  packet['barometricAltitude'] = 100 + (50 * (elapsed % 10))
+  packet['barometricVelocity'] = random.uniform(-5, 5)
+  packet['gpsAltitude'] = packet['barometricAltitude'] + random.uniform(-3, 3)
+  packet['satellites'] = random.randint(4, 12)
   packet['accelX'] = random.uniform(-2, 2)
   packet['accelY'] = random.uniform(-2, 2)
   packet['accelZ'] = 9.8 + random.uniform(-0.5, 0.5)

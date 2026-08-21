@@ -35,6 +35,7 @@ export const options = {
 
 export const colors = {
   altitude: 'rgba(255, 53, 53, 1)',
+  gpsAltitude: 'rgba(147, 112, 219, 1)',
   gyroscopeX: 'rgba(255, 99, 132, 1)',
   gyroscopeY: 'rgba(54, 162, 235, 1)',
   gyroscopeZ: 'rgba(255, 206, 86, 1)',
@@ -62,7 +63,11 @@ export const labelLayer = {
   type: 'symbol',
   source: 'gps',
   layout: {
-    'text-field': ['concat', ['to-string', ['get', 'altitude']], ' m'],
+    'text-field': [
+      'concat',
+      'BARO ', ['to-string', ['get', 'barometricAltitude']], ' m AGL\n',
+      'GPS ', ['to-string', ['get', 'gpsAltitude']], ' m ASL'
+    ],
     'text-size': 16,
     'text-offset': [0, -2],
     'text-anchor': 'top',

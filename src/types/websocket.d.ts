@@ -9,7 +9,10 @@ type WebsocketPacketType =
   | 'STATE_UPDATE_PACKET'
 
 type WebsocketCommandType =
-  | 'DEPLOY_PARACHUTE'
+  | 'RESET'
+  | 'GROUND_ABORT'
+  | 'CALIBRATION'
+  | 'DROGUE'
   | 'START_FAKE_TELEMETRY'
   | 'STOP_FAKE_TELEMETRY'
   | 'START_CSV_RECORD'
@@ -23,7 +26,6 @@ interface WebsocketTelemetryData {
   timestamp: number
   ground_timestamp: number
   state: number
-  altitude: number
   accelX: number
   accelY: number
   accelZ: number
@@ -35,6 +37,10 @@ interface WebsocketTelemetryData {
   magZ: number
   latitude: number
   longitude: number
+  gpsAltitude: number
+  satellites: number
+  barometricAltitude: number
+  barometricVelocity: number
   pressurePa: number
   temperatureC: number
   velX: number

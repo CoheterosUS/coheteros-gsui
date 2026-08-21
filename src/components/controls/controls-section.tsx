@@ -4,16 +4,18 @@ interface ControlsSectionProps {
   title: string
   children: ReactNode
   direction?: 'row' | 'col'
+  bordered?: boolean
 }
 
 export default function ControlsSection ({
   title,
   children,
-  direction = 'row'
+  direction = 'row',
+  bordered = true
 }: ControlsSectionProps) {
   return (
     <div
-      className='flex flex-col gap-2 p-4 border-b-2 border-primary-muted'
+      className={`flex flex-col gap-2 p-4 ${bordered ? 'border-b-2 border-primary-muted' : ''}`}
     >
       <p
         className='text-primary-foreground'

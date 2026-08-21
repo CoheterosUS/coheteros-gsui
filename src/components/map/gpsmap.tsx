@@ -37,7 +37,8 @@ export default function GPSMap ({
         coordinates: [initial.longitude / 1e7, initial.latitude / 1e7]
       },
       properties: {
-        altitude: initial.altitude.toFixed(1)
+        barometricAltitude: initial.barometricAltitude.toFixed(1),
+        gpsAltitude: initial.gpsAltitude.toFixed(1)
       }
     }]
   }), [initial])
@@ -78,7 +79,8 @@ export default function GPSMap ({
         const {
           latitude,
           longitude,
-          altitude
+          barometricAltitude,
+          gpsAltitude
         } = packet
 
         const source = map.getSource('gps')
@@ -93,7 +95,8 @@ export default function GPSMap ({
                 coordinates: [longitude / 1e7, latitude / 1e7]
               },
               properties: {
-                altitude: altitude.toFixed(1)
+                barometricAltitude: barometricAltitude.toFixed(1),
+                gpsAltitude: gpsAltitude.toFixed(1)
               }
             }]
           })

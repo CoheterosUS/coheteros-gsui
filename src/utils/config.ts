@@ -19,6 +19,28 @@ export const BAUDRATE_OPTIONS = new Set<string>([
 // Testing
 export const DEVELOPMENT_MODE = import.meta.env.VITE_MODE === 'TEST'
 
+// Flight state machine, values come straight from the telemetry packet
+export const STATE_IDLE = 0
+export const STATE_GROUND_ABORT = 9
+
+export const FLIGHT_STATES: Record<number, string> = {
+  0: 'IDLE',
+  1: 'CALIBRATION',
+  2: 'PRELAUNCH',
+  3: 'BURN',
+  4: 'PASSIVE BURNOUT',
+  5: 'ACTIVE BURNOUT',
+  6: 'APOGEE',
+  7: 'PARACHUTE',
+  8: 'LANDED',
+  9: 'GROUND ABORT',
+  10: 'DESCENT ABORT'
+}
+
+// Relay/pyro bitmask, latching: set on fire, cleared on safe
+export const RELAY_DROGUE = 0x01
+export const RELAY_PARACHUTE = 0x02
+
 // Visualizer
 export const MODEL_PATH = '/model/rocket.obj'
 export const SPHERE_RADIUS = 3
