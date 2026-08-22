@@ -10,22 +10,27 @@ export default function SerialPacketsIcon ({
   pps
 }: SerialPacketsIconProps) {
   const iconStyle = `
-    h-4 w-4
+    size-3.5
     ${status === 'connected' ? 'text-downlink' : 'text-primary-muted-foreground'}
   `
 
   return (
     <p
       title='PACKETS PER SECOND'
-      className='flex items-center justify-center gap-1 text-primary-muted-foreground'
+      className='flex items-center gap-1.5 px-3 text-primary-muted-foreground'
     >
       <Activity
         className={iconStyle}
       />
       <span
-        className='text-xs'
+        className='text-xs tabular-nums'
       >
-        {pps.toFixed(0)} PPS
+        {pps.toFixed(0)}
+      </span>
+      <span
+        className='text-[10px] tracking-widest text-primary-muted-foreground'
+      >
+        PPS
       </span>
     </p>
   )

@@ -16,8 +16,11 @@ export default function ControlsDropdown ({
   disabled = false
 }: ControlsDropdownProps) {
   const dropdownStyle = `
-    px-4 py-2 rounded border-dashed border-2 cursor-pointer focus:outline-none hover:border-solid transition
-    disabled:border-dashed disabled:cursor-default disabled:border-primary-muted disabled:text-primary-muted disabled:bg-transparent
+    px-3 py-1 text-xs tracking-widest bg-primary border-2 border-primary text-primary-muted-foreground
+    cursor-pointer transition-colors duration-100 hover:border-primary-foreground hover:text-primary-foreground
+    focus:outline-none focus-visible:border-primary-foreground focus-visible:text-primary-foreground
+    disabled:cursor-not-allowed disabled:border-primary disabled:bg-transparent disabled:text-primary-muted
+    disabled:hover:border-primary disabled:hover:text-primary-muted
   `
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -29,7 +32,7 @@ export default function ControlsDropdown ({
       className='relative flex flex-col gap-2'
     >
       <p
-        className='text-sm'
+        className='text-xs tracking-widest text-primary-muted-foreground'
       >
         {label}
       </p>

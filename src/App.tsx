@@ -2,7 +2,6 @@ import { Route, Routes } from 'react-router'
 import { ToastBar, Toaster } from 'react-hot-toast'
 import { WebsocketProvider } from '@/contexts/WebsocketContext'
 import DashboardPage from '@/pages/dashboard'
-import ControlsPage from '@/pages/controls'
 import LoggingPage from '@/pages/logging'
 import AboutPage from '@/pages/about'
 import MapPage from '@/pages/map'
@@ -27,10 +26,6 @@ export default function App () {
           <Route
             index
             element={<DashboardPage />}
-          />
-          <Route
-            path='/controls'
-            element={<ControlsPage />}
           />
           <Route
             path='/map'

@@ -3,10 +3,10 @@ import { useWebsocketAPI } from '@/contexts/WebsocketContext'
 import ChartAltitude from '@/components/charts/chart-altitude'
 import ChartGyroscope from '@/components/charts/chart-gyroscope'
 import ChartAcceleration from '@/components/charts/chart-acceleration'
-import ChartVoltageTemperature from '@/components/charts/chart-voltage-temperature'
 import Telemetry from '@/components/telemetry/telemetry'
 import TelemetryEmpty from '@/components/telemetry/telemetry-empty'
 import FlightControls from '@/components/controls/flight-controls'
+import Panel from '@/components/ui/panel'
 
 import {
   Chart,
@@ -40,15 +40,33 @@ export default function DashboardPage () {
     >
       <Telemetry />
       <div
-        className='min-h-0 flex-1 grid grid-cols-2 grid-rows-2 gap-4 px-2'
+        className='min-h-0 flex-1 grid grid-cols-2 grid-rows-2 gap-2 px-2 pb-2'
       >
-        <ChartAltitude />
-        <ChartGyroscope />
-        <ChartAcceleration />
-        <ChartVoltageTemperature />
+        <Panel
+          title='ALTITUDE'
+          accentClassName='text-altitude'
+          contentClassName='p-2'
+          className='col-span-2'
+        >
+          <ChartAltitude />
+        </Panel>
+        <Panel
+          title='GYROSCOPE'
+          accentClassName='text-gyroscope'
+          contentClassName='p-2'
+        >
+          <ChartGyroscope />
+        </Panel>
+        <Panel
+          title='ACCELERATION'
+          accentClassName='text-acceleration'
+          contentClassName='p-2'
+        >
+          <ChartAcceleration />
+        </Panel>
       </div>
       <div
-        className='shrink-0 flex flex-row items-start gap-4 border-t-2 border-primary-muted'
+        className='shrink-0 flex flex-row flex-wrap items-center gap-2 border-t-2 border-primary-muted bg-primary/30'
       >
         <FlightControls
           bordered={false}

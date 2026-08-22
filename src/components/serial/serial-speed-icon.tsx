@@ -10,21 +10,27 @@ export default function SerialSpeedIcon ({
   rate
 }: SerialSpeedIconProps) {
   const iconStyle = `
-    h-4 w-4
+    size-3.5
     ${status === 'connected' ? 'text-downlink' : 'text-primary-muted-foreground'}
   `
 
   return (
     <p
-      className='flex items-center justify-center gap-1 text-primary-muted-foreground'
+      title='DOWNLINK RATE'
+      className='flex items-center gap-1.5 pr-3 text-primary-muted-foreground'
     >
       <ArrowDownToLine
         className={iconStyle}
       />
       <span
-        className='text-xs'
+        className='text-xs tabular-nums'
       >
-        {rate.toFixed(2)} KB/s
+        {rate.toFixed(2)}
+      </span>
+      <span
+        className='text-[10px] tracking-widest text-primary-muted-foreground'
+      >
+        KB/S
       </span>
     </p>
   )

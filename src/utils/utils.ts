@@ -7,6 +7,24 @@ export function getStateName (state: number) {
   return FLIGHT_STATES[state] ?? `UNKNOWN (${state})`
 }
 
+// visual severity of the flight state, used by the dashboard status strip
+export function getStateStyle (state: number) {
+  switch (state) {
+    case 0:
+      return 'border-primary-muted text-primary-muted-foreground'
+    case 1:
+    case 2:
+      return 'border-warning text-warning'
+    case 9:
+    case 10:
+      return 'border-negative text-negative'
+    case 8:
+      return 'border-positive text-positive'
+    default:
+      return 'border-status text-status'
+  }
+}
+
 export const paddings = {
   gyroscope: 50,
   voltage: 0.5,
@@ -17,6 +35,7 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
   {
     name: 'STATUS',
     className: 'text-status',
+    accentClassName: 'bg-status',
     fields: [
       {
         label: 'TICK',
@@ -43,14 +62,15 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
   {
     name: 'ALTITUDE',
     className: 'text-altitude',
+    accentClassName: 'bg-altitude',
     fields: [
       {
-        label: 'ALTITUDE (AGL)',
+        label: 'BAROMETRIC ALTITUDE (AGL)',
         value: (data: WebsocketTelemetryData) => data.barometricAltitude.toFixed(2),
         unit: 'm'
       },
       {
-        label: 'VERTICAL VELOCITY',
+        label: 'BAROMETRIC VELOCITY',
         value: (data: WebsocketTelemetryData) => data.barometricVelocity.toFixed(2),
         unit: 'm/s'
       },
@@ -74,7 +94,13 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
   {
     name: 'POSITION',
     className: 'text-position',
+    accentClassName: 'bg-position',
     fields: [
+      {
+        label: 'GPS ALTITUDE (ASL)',
+        value: (data: WebsocketTelemetryData) => data.gpsAltitude.toFixed(2),
+        unit: 'm'
+      },
       {
         label: 'LATITUDE',
         value: (data: WebsocketTelemetryData) => (data.latitude / 1e7).toFixed(6),
@@ -86,11 +112,6 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
         unit: '°'
       },
       {
-        label: 'GPS ALTITUDE (ASL)',
-        value: (data: WebsocketTelemetryData) => data.gpsAltitude.toFixed(2),
-        unit: 'm'
-      },
-      {
         label: 'SATELLITES',
         value: (data: WebsocketTelemetryData) => data.satellites
       }
@@ -99,6 +120,7 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
   {
     name: 'MAGNETOMETER',
     className: 'text-orientation',
+    accentClassName: 'bg-orientation',
     fields: [
       {
         label: 'MAGNETOMETER X',
@@ -117,6 +139,7 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
   {
     name: 'ACCELERATION',
     className: 'text-acceleration',
+    accentClassName: 'bg-acceleration',
     fields: [
       {
         label: 'ACCELERATION X',
@@ -138,6 +161,7 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
   {
     name: 'GYROSCOPE',
     className: 'text-gyroscope',
+    accentClassName: 'bg-gyroscope',
     fields: [
       {
         label: 'GYROSCOPE X',
@@ -185,6 +209,26 @@ export function getPaddedMinMax (
     min: min - padding,
     max: max + padding
   }
+}
+
+const EARTH_RADIUS_M = 6371000
+
+// great-circle distance between two WGS84 points, in meters
+export function getDistanceMeters (
+  latitudeA: number,
+  longitudeA: number,
+  latitudeB: number,
+  longitudeB: number
+) {
+  const phiA = MathUtils.degToRad(latitudeA)
+  const phiB = MathUtils.degToRad(latitudeB)
+  const deltaPhi = MathUtils.degToRad(latitudeB - latitudeA)
+  const deltaLambda = MathUtils.degToRad(longitudeB - longitudeA)
+
+  const a = Math.sin(deltaPhi / 2) ** 2 +
+    Math.cos(phiA) * Math.cos(phiB) * Math.sin(deltaLambda / 2) ** 2
+
+  return 2 * EARTH_RADIUS_M * Math.asin(Math.sqrt(a))
 }
 
 export function getCenteredMesh (obj: Object3D) {

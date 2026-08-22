@@ -7,7 +7,8 @@ export default function Sidebar () {
   const location = useLocation()
 
   const sidebarStyle = `
-    min-w-14 group h-full flex flex-col justify-between bg-primary transition-all duration-100
+    min-w-14 group h-full flex flex-col justify-between overflow-hidden
+    border-r-2 border-primary-muted bg-primary transition-all duration-150
     w-14 hover:w-56
   `
 
@@ -29,7 +30,7 @@ export default function Sidebar () {
         }
       </div>
       <div
-        className='h-14 flex px-4'
+        className='h-14 flex shrink-0 items-center px-4'
       >
         <SidebarCredits />
       </div>

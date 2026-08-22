@@ -1,6 +1,7 @@
 import TelemetryHeader from '@/components/telemetry/telemetry-header'
 import TelemetryTableCell from '@/components/telemetry-table/telemetry-table-cell'
-import VisualizerScene from '@/components/visualizer/visualizer-scene'
+// import VisualizerScene from '@/components/visualizer/visualizer-scene'
+// import Panel from '@/components/ui/panel'
 import { telemetryTableFields } from '@/utils/utils'
 
 interface TelemetryContainerProps {
@@ -17,15 +18,16 @@ export default function TelemetryContainer ({
       <TelemetryHeader
         sync={data.sync}
         tick={data.tick}
+        state={data.state}
         pressurePa={data.pressurePa}
         temperatureC={data.temperatureC}
         batteryVoltage={data.batteryVoltage}
       />
       <div
-        className='flex flex-1 gap-1'
+        className='flex flex-1 gap-2'
       >
         <div
-          className='grid flex-1 grid-cols-3 gap-1'
+          className='grid flex-1 grid-cols-3 gap-2'
         >
           {
             telemetryTableFields.map((table) => (
@@ -33,6 +35,7 @@ export default function TelemetryContainer ({
                 key={table.name}
                 name={table.name}
                 className={table.className}
+                accentClassName={table.accentClassName}
                 fields={
                   table.fields.map((field) => ({
                     ...field,
@@ -43,11 +46,19 @@ export default function TelemetryContainer ({
             ))
           }
         </div>
-        <VisualizerScene
-          roll={0}
-          pitch={0}
-          yaw={0}
-        />
+        {/* 3D orientation viewer, uncomment this block and its two imports to bring it back
+        <Panel
+          title='ORIENTATION'
+          accentClassName='text-orientation'
+          className='w-64 shrink-0'
+        >
+          <VisualizerScene
+            roll={0}
+            pitch={0}
+            yaw={0}
+          />
+        </Panel>
+        */}
       </div>
     </div>
   )

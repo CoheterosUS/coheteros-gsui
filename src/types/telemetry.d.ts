@@ -1,6 +1,7 @@
 interface TelemetryTableStructure {
   name: string
   className: string
+  accentClassName: string
   fields: TelemetryTableStructureField[]
 }
 

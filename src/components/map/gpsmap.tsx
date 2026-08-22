@@ -3,7 +3,10 @@ import Map, { type MapRef, Source, Layer } from 'react-map-gl/maplibre'
 import type { FeatureCollection } from 'geojson'
 import { useWebsocketAPI } from '@/contexts/WebsocketContext'
 import { useLocation } from '@/hooks/useLocation'
-import { pointLayer, labelLayer, groundStationLayer, groundStationLabelLayer } from '@/utils/charts'
+import ControlsButton from '@/components/controls/controls-button'
+import MapHud from '@/components/map/map-hud'
+import { getDistanceMeters } from '@/utils/utils'
+import { pointLayer, groundStationLayer, groundStationLabelLayer, satelliteStyle, streetStyle } from '@/utils/charts'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 interface GPSMapProps {
@@ -17,6 +20,8 @@ export default function GPSMap ({
   const location = useLocation()
   const mapRef = useRef<MapRef>(null)
   const [anchored, setAnchored] = useState(true)
+  const [satellite, setSatellite] = useState(true)
+  const [readout, setReadout] = useState<WebsocketTelemetryData>(initial)
   const anchoredRef = useRef(true)
   const lastUpdateRef = useRef(0)
 
@@ -28,20 +33,21 @@ export default function GPSMap ({
     bearing: 0
   }), [initial])
 
-  const initialGeoJson: FeatureCollection = useMemo(() => ({
+  // React owns the source data so a basemap swap cannot wipe the position
+  const gpsGeoJson: FeatureCollection = useMemo(() => ({
     type: 'FeatureCollection',
     features: [{
       type: 'Feature',
       geometry: {
         type: 'Point',
-        coordinates: [initial.longitude / 1e7, initial.latitude / 1e7]
+        coordinates: [readout.longitude / 1e7, readout.latitude / 1e7]
       },
       properties: {
-        barometricAltitude: initial.barometricAltitude.toFixed(1),
-        gpsAltitude: initial.gpsAltitude.toFixed(1)
+        barometricAltitude: readout.barometricAltitude.toFixed(1),
+        gpsAltitude: readout.gpsAltitude.toFixed(1)
       }
     }]
-  }), [initial])
+  }), [readout])
 
   const groundStationLocation: FeatureCollection | null = useMemo(() => {
     if (location == null) {
@@ -61,6 +67,19 @@ export default function GPSMap ({
     }
   }, [location])
 
+  const groundDistance = useMemo(() => {
+    if (location == null) {
+      return null
+    }
+
+    return getDistanceMeters(
+      location.latitude,
+      location.longitude,
+      readout.latitude / 1e7,
+      readout.longitude / 1e7
+    )
+  }, [location, readout])
+
   useEffect(() => {
     anchoredRef.current = anchored
   }, [anchored])
@@ -72,35 +91,13 @@ export default function GPSMap ({
         return
       }
 
+      const { latitude, longitude } = packet
+
       const now = Date.now()
 
       // TODO: Implement refresh rate selection, settings
-      if (now - lastUpdateRef.current > 100) {
-        const {
-          latitude,
-          longitude,
-          barometricAltitude,
-          gpsAltitude
-        } = packet
-
-        const source = map.getSource('gps')
-        if (source != null) {
-          // @ts-expect-error
-          source.setData({
-            type: 'FeatureCollection',
-            features: [{
-              type: 'Feature',
-              geometry: {
-                type: 'Point',
-                coordinates: [longitude / 1e7, latitude / 1e7]
-              },
-              properties: {
-                barometricAltitude: barometricAltitude.toFixed(1),
-                gpsAltitude: gpsAltitude.toFixed(1)
-              }
-            }]
-          })
-        }
+      if (now - lastUpdateRef.current > 250) {
+        setReadout(packet)
 
         if (anchoredRef.current) {
           map.jumpTo({
@@ -117,33 +114,27 @@ export default function GPSMap ({
     }
   }, [subscribe])
 
-  const buttonStyle = `
-    fixed top-4 right-4 w-32 flex justify-center gap-2 px-2 py-1 font-semibold tracking-wider border-2 border-primary rounded cursor-pointer hover:opacity-80
-    ${anchored ? 'bg-primary text-primary-foreground' : 'bg-primary-foreground text-primary'}
-  `
-
   return (
     <div
-      className='w-full h-full flex flex-col'
+      className='relative w-full h-full flex flex-col'
     >
       <Map
         ref={mapRef}
         initialViewState={initialViewState}
-        mapStyle='https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
-        // mapStyle='https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json'
+        mapStyle={satellite ? satelliteStyle : streetStyle}
+        maxPitch={85}
+        dragRotate
+        pitchWithRotate
+        touchPitch
       >
         <Source
           id='gps'
           type='geojson'
-          data={initialGeoJson}
+          data={gpsGeoJson}
         >
           {/* @ts-expect-error */}
           <Layer
             {...pointLayer}
-          />
-          {/* @ts-expect-error */}
-          <Layer
-            {...labelLayer}
           />
         </Source>
         {
@@ -165,13 +156,33 @@ export default function GPSMap ({
           )
         }
       </Map>
-      <button
-        title='TOGGLE ANCHOR'
-        className={buttonStyle}
-        onClick={() => setAnchored(!anchored)}
+      <div
+        className='absolute bottom-4 left-4'
       >
-        {anchored ? 'ANCHORED' : 'FREE'}
-      </button>
+        <MapHud
+          latitude={readout.latitude}
+          longitude={readout.longitude}
+          gpsAltitude={readout.gpsAltitude}
+          barometricAltitude={readout.barometricAltitude}
+          barometricVelocity={readout.barometricVelocity}
+          satellites={readout.satellites}
+          groundDistance={groundDistance}
+        />
+      </div>
+      <div
+        className='absolute top-4 right-4 flex gap-2'
+      >
+        <ControlsButton
+          label={satellite ? 'SATELLITE' : 'STREET'}
+          active={satellite}
+          onClick={() => setSatellite(!satellite)}
+        />
+        <ControlsButton
+          label={anchored ? 'ANCHORED' : 'FREE'}
+          active={anchored}
+          onClick={() => setAnchored(!anchored)}
+        />
+      </div>
     </div>
   )
 }

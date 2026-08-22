@@ -9,10 +9,13 @@ export default function SerialConnectionIcon ({
   status,
   port
 }: SerialConnectionIconProps) {
-  const iconStyle = `
-    h-4 w-4
-    ${status === 'connected' ? 'text-green-500' : status === 'reconnecting' ? 'text-yellow-500' : 'text-red-500'}
-  `
+  const statusStyle = status === 'connected'
+    ? 'text-positive'
+    : status === 'reconnecting'
+      ? 'text-warning'
+      : 'text-negative'
+
+  const iconStyle = `size-3.5 ${statusStyle}`
 
   return (
     <p
@@ -20,15 +23,14 @@ export default function SerialConnectionIcon ({
       className='flex items-center gap-2'
     >
       <span
-        className='text-xs text-primary-muted-foreground'
+        className='text-[10px] tracking-widest text-primary-muted-foreground'
       >
-        {
-          status === 'connected' ? (
-            `:${port}`
-          ) : (
-            status.toUpperCase()
-          )
-        }
+        {status === 'connected' ? 'LINK' : status.toUpperCase()}
+      </span>
+      <span
+        className={`text-xs tabular-nums ${statusStyle}`}
+      >
+        :{port}
       </span>
       {
         status === 'connected' ? (

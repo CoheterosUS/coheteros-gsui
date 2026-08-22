@@ -9,10 +9,10 @@ export default function SerialStatus () {
 
   return (
     <div
-      className='h-6 flex items-center justify-between px-2 py-1 bg-primary'
+      className='h-7 shrink-0 flex items-center justify-between gap-4 border-t-2 border-primary-muted bg-primary px-3'
     >
       <div
-        className='flex gap-2'
+        className='flex items-center divide-x-2 divide-primary-muted'
       >
         <SerialSpeedIcon
           status={status}
@@ -26,7 +26,7 @@ export default function SerialStatus () {
       {
         DEVELOPMENT_MODE && (
           <p
-            className='text-xs text-negative'
+            className='text-[10px] tracking-widest text-negative'
           >
             DEVELOPMENT BUILD
           </p>

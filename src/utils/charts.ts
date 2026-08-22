@@ -1,3 +1,5 @@
+import type { StyleSpecification } from 'maplibre-gl'
+
 export const options = {
   // responsive: false,
   maintainAspectRatio: false,
@@ -9,12 +11,53 @@ export const options = {
     mode: undefined
   },
   scales: {
+    x: {
+      grid: {
+        display: false
+      },
+      border: {
+        color: 'rgba(255, 255, 255, 0.15)'
+      },
+      ticks: {
+        color: 'rgba(204, 204, 204, 0.7)',
+        maxTicksLimit: 6,
+        maxRotation: 0,
+        autoSkip: true,
+        font: {
+          family: `'suse', monospace`,
+          size: 10
+        }
+      }
+    },
     y: {
       grid: {
         drawTicks: true,
         drawOnChartArea: true,
-        color: 'rgba(255, 255, 255, 0.1)'
+        color: 'rgba(255, 255, 255, 0.06)'
+      },
+      border: {
+        color: 'rgba(255, 255, 255, 0.15)',
+        dash: [4, 4]
+      },
+      ticks: {
+        color: 'rgba(204, 204, 204, 0.7)',
+        maxTicksLimit: 6,
+        font: {
+          family: `'suse', monospace`,
+          size: 10
+        }
       }
+    }
+  },
+  layout: {
+    padding: {
+      top: 4,
+      right: 8
+    }
+  },
+  elements: {
+    line: {
+      borderWidth: 1.5
     }
   },
   plugins: {
@@ -22,10 +65,15 @@ export const options = {
       enabled: false
     },
     legend: {
+      align: 'end' as const,
       labels: {
+        boxWidth: 10,
+        boxHeight: 2,
+        padding: 12,
         color: 'rgba(255, 255, 255, 0.9)',
         font: {
-          family: `'suse', monospace`
+          family: `'suse', monospace`,
+          size: 11
         }
       }
     }
@@ -45,6 +93,29 @@ export const colors = {
   pressure: 'rgba(255, 215, 0, 1)',
   temperature: 'rgba(255, 112, 67, 1)'
 }
+
+// Esri World Imagery needs no API key, only attribution
+export const satelliteStyle: StyleSpecification = {
+  version: 8,
+  sources: {
+    'esri-imagery': {
+      type: 'raster',
+      tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+      tileSize: 256,
+      maxzoom: 19,
+      attribution: 'Imagery © Esri, Maxar, Earthstar Geographics'
+    }
+  },
+  layers: [
+    {
+      id: 'esri-imagery',
+      type: 'raster',
+      source: 'esri-imagery'
+    }
+  ]
+}
+
+export const streetStyle = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
 
 export const pointLayer = {
   id: 'point-layer',
@@ -76,7 +147,9 @@ export const labelLayer = {
     'text-optional': true
   },
   paint: {
-    'text-color': '#000',
+    'text-color': '#fff',
+    'text-halo-color': '#000',
+    'text-halo-width': 1.5
   }
 }
 
@@ -106,6 +179,8 @@ export const groundStationLabelLayer = {
     'text-optional': true
   },
   paint: {
-    'text-color': '#000',
+    'text-color': '#fff',
+    'text-halo-color': '#000',
+    'text-halo-width': 1.5
   }
 }

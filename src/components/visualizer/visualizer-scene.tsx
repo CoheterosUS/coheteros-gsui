@@ -14,7 +14,9 @@ export default function VisualizerScene ({
   yaw
 }: VisualizerSceneProps) {
   return (
-    <div>
+    <div
+      className='h-full w-full min-h-0'
+    >
       <Canvas
         camera={{
           position: [3, 4, 3],

@@ -2,11 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import { useWebsocketAPI } from '@/contexts/WebsocketContext'
 import Logging from '@/components/logging/logging'
 import TelemetryEmpty from '@/components/telemetry/telemetry-empty'
+import ControlsButton from '@/components/controls/controls-button'
+import Panel from '@/components/ui/panel'
 import { MAX_DATA_POINTS } from '@/utils/config'
 
 export default function LoggingPage () {
   const { subscribe } = useWebsocketAPI()
   const [logs, setLogs] = useState<WebsocketTelemetryData[]>([])
+  const [autoScroll, setAutoScroll] = useState(true)
   const bufferRef = useRef<WebsocketTelemetryData[]>([])
 
   useEffect(() => {
@@ -38,24 +41,55 @@ export default function LoggingPage () {
     }
   }, [])
 
-  return logs.length > 0 ? (
+  const handleClear = () => {
+    bufferRef.current = []
+    setLogs([])
+  }
+
+  const actions = (
     <div
-      className='h-full flex flex-col'
+      className='flex items-center gap-2'
     >
-      {
-        logs.length >= MAX_DATA_POINTS && (
-          <p
-            className='p-4 text-xs text-primary-muted-foreground border-b border-primary-muted'
-          >
-            DISPLAYING LAST {MAX_DATA_POINTS} PACKETS
-          </p>
-        )
-      }
-      <Logging
-        data={logs}
+      <span
+        className='text-[10px] tracking-widest text-primary-muted-foreground'
+      >
+        {logs.length} / {MAX_DATA_POINTS} PACKETS
+      </span>
+      <ControlsButton
+        label={autoScroll ? 'FOLLOWING' : 'PAUSED'}
+        active={autoScroll}
+        onClick={() => setAutoScroll((prev) => !prev)}
+      />
+      <ControlsButton
+        label='CLEAR'
+        variant='danger'
+        onClick={handleClear}
+        disabled={logs.length === 0}
       />
     </div>
-  ) : (
-    <TelemetryEmpty />
+  )
+
+  return (
+    <div
+      className='h-full flex flex-col p-2'
+    >
+      <Panel
+        title='PACKET LOG'
+        accentClassName='text-status'
+        className='flex-1'
+        actions={actions}
+      >
+        {
+          logs.length > 0 ? (
+            <Logging
+              data={logs}
+              autoScroll={autoScroll}
+            />
+          ) : (
+            <TelemetryEmpty />
+          )
+        }
+      </Panel>
+    </div>
   )
 }

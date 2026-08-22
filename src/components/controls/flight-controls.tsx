@@ -67,14 +67,20 @@ export default function FlightControls ({
   return (
     <>
       <ControlsSection
-        title='ACTIONS'
+        title='CSV RECORDING'
         bordered={bordered}
       >
         <ControlsButton
-          label='DEPLOY DROGUE'
-          onClick={() => handleConfirmedCommand('DROGUE', 'Fire the drogue pyro channel?')}
+          label='START RECORDING'
+          onClick={() => handleCommand('START_CSV_RECORD')}
+          variant='positive'
+          disabled={isDisabled || (data?.is_recording_csv ?? false)}
+        />
+        <ControlsButton
+          label='STOP RECORDING'
+          onClick={() => handleCommand('STOP_CSV_RECORD')}
           variant='danger'
-          disabled={noSerial}
+          disabled={isDisabled || !(data?.is_recording_csv ?? false)}
         />
       </ControlsSection>
       <ControlsSection
@@ -95,6 +101,17 @@ export default function FlightControls ({
         <ControlsButton
           label='GROUND ABORT'
           onClick={() => handleConfirmedCommand('GROUND_ABORT', 'Send GROUND ABORT to the flight controller? This ends the flight.')}
+          variant='danger'
+          disabled={noSerial}
+        />
+      </ControlsSection>
+      <ControlsSection
+        title='ACTIONS'
+        bordered={bordered}
+      >
+        <ControlsButton
+          label='DEPLOY DROGUE'
+          onClick={() => handleConfirmedCommand('DROGUE', 'Fire the drogue pyro channel?')}
           variant='danger'
           disabled={noSerial}
         />

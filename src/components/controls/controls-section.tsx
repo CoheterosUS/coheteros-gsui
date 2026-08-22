@@ -15,10 +15,10 @@ export default function ControlsSection ({
 }: ControlsSectionProps) {
   return (
     <div
-      className={`flex flex-col gap-2 p-4 ${bordered ? 'border-b-2 border-primary-muted' : ''}`}
+      className={`flex flex-col gap-2 ${bordered ? 'p-4 border-b-2 border-primary-muted' : 'px-4 py-2'}`}
     >
       <p
-        className='text-primary-foreground'
+        className='text-xs tracking-widest text-primary-muted-foreground'
       >
         {title}
       </p>
