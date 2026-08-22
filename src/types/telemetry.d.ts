@@ -10,6 +10,7 @@ interface TelemetryTableStructureField {
   value: (data: WebsocketTelemetryData) => string | number
   unit?: string
   className?: string
+  getClassName?: (value: string | number) => string
 }
 
 interface TelemetryTableFieldProps {

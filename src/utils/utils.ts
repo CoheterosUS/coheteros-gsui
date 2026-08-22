@@ -1,7 +1,7 @@
 import { Euler, MathUtils, Object3D } from 'three'
 import { CircleCheck, CircleX, Info } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { FLIGHT_STATES, RELAY_DROGUE, RELAY_PARACHUTE } from '@/utils/config'
+import { FAULT_DEVICES, FAULT_FLAGS, FLIGHT_STATES, RELAY_DROGUE, RELAY_PARACHUTE } from '@/utils/config'
 
 export function getStateName (state: number) {
   return FLIGHT_STATES[state] ?? `UNKNOWN (${state})`
@@ -23,6 +23,19 @@ export function getStateStyle (state: number) {
     default:
       return 'border-status text-status'
   }
+}
+
+// a device is OK or it names the modes that failed, IDLE+PERF when both did
+export function getFaultStatus (flags: number, device: string) {
+  const failed = FAULT_FLAGS
+    .filter((flag) => flag.device === device && (flags & (1 << flag.bit)))
+    .map((flag) => flag.mode)
+
+  return failed.length === 0 ? 'OK' : failed.join('+')
+}
+
+export function getFaultCount (flags: number) {
+  return FAULT_FLAGS.filter((flag) => flags & (1 << flag.bit)).length
 }
 
 export const paddings = {
@@ -51,11 +64,13 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
       },
       {
         label: 'DROGUE',
-        value: (data: WebsocketTelemetryData) => (data.relayState & RELAY_DROGUE) ? 'FIRED' : 'SAFE'
+        value: (data: WebsocketTelemetryData) => (data.relayState & RELAY_DROGUE) ? 'FIRED' : 'SAFE',
+        getClassName: (value: string | number) => value === 'FIRED' ? 'text-negative' : 'text-primary-foreground'
       },
       {
         label: 'PARACHUTE',
-        value: (data: WebsocketTelemetryData) => (data.relayState & RELAY_PARACHUTE) ? 'FIRED' : 'SAFE'
+        value: (data: WebsocketTelemetryData) => (data.relayState & RELAY_PARACHUTE) ? 'FIRED' : 'SAFE',
+        getClassName: (value: string | number) => value === 'FIRED' ? 'text-negative' : 'text-primary-foreground'
       }
     ]
   },
@@ -116,6 +131,16 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
         value: (data: WebsocketTelemetryData) => data.satellites
       }
     ]
+  },
+  {
+    name: 'FAULTS',
+    className: 'text-negative',
+    accentClassName: 'bg-negative',
+    fields: FAULT_DEVICES.map((device) => ({
+      label: device,
+      value: (data: WebsocketTelemetryData) => getFaultStatus(data.flags, device),
+      getClassName: (value: string | number) => value === 'OK' ? 'text-positive' : 'text-negative'
+    }))
   },
   {
     name: 'MAGNETOMETER',

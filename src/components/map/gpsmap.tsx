@@ -29,7 +29,7 @@ function GPSMap ({
     longitude: initial.longitude / 1e7,
     latitude: initial.latitude / 1e7,
     zoom: 15,
-    pitch: 60,
+    pitch: 0,
     bearing: 0
   }), [initial])
 

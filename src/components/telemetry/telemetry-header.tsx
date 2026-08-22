@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { getStateName, getStateStyle } from '@/utils/utils'
+import { getFaultCount, getStateName, getStateStyle } from '@/utils/utils'
 
 interface TelemetryHeaderProps {
   sync: number
   tick: number
   state: number
+  flags: number
   pressurePa: number
   temperatureC: number
   batteryVoltage: number
@@ -52,6 +53,7 @@ export default function TelemetryHeader ({
   sync,
   tick,
   state,
+  flags,
   pressurePa,
   temperatureC,
   batteryVoltage
@@ -65,7 +67,12 @@ export default function TelemetryHeader ({
   }, [])
 
   const syncLabel = `0x${sync.toString(16).toUpperCase().padStart(4, '0')}`
-  const batteryClassName = batteryVoltage < 7 ? 'text-negative' : 'text-battery'
+  const faultCount = getFaultCount(flags)
+
+  // silence must never be ambiguous with "not implemented", so NONE is shown too
+  const faultStyle = faultCount === 0
+    ? 'border-primary-muted text-primary-muted-foreground'
+    : 'border-negative text-negative'
 
   return (
     <div
@@ -75,6 +82,11 @@ export default function TelemetryHeader ({
         className={`border-2 border-dashed px-3 py-1 text-sm tracking-widest ${getStateStyle(state)}`}
       >
         {getStateName(state)}
+      </div>
+      <div
+        className={`border-2 border-dashed px-3 py-1 text-sm tracking-widest ${faultStyle}`}
+      >
+        FAULTS: {faultCount === 0 ? 'NONE' : faultCount}
       </div>
       <div
         className='flex flex-1 flex-wrap items-center justify-end gap-x-4 gap-y-2'
@@ -95,7 +107,7 @@ export default function TelemetryHeader ({
           label='BATTERY'
           value={batteryVoltage.toFixed(2)}
           unit='V'
-          className={batteryClassName}
+          className='text-battery'
         />
         <TelemetryHeaderItem
           label='PRESSURE'

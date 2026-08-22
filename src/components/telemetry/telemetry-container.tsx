@@ -19,6 +19,7 @@ export default function TelemetryContainer ({
         sync={data.sync}
         tick={data.tick}
         state={data.state}
+        flags={data.flags}
         pressurePa={data.pressurePa}
         temperatureC={data.temperatureC}
         batteryVoltage={data.batteryVoltage}
@@ -27,7 +28,7 @@ export default function TelemetryContainer ({
         className='flex flex-1 gap-2'
       >
         <div
-          className='grid flex-1 grid-cols-3 gap-2'
+          className='grid flex-1 grid-cols-4 gap-2'
         >
           {
             telemetryTableFields.map((table) => (
@@ -37,10 +38,15 @@ export default function TelemetryContainer ({
                 className={table.className}
                 accentClassName={table.accentClassName}
                 fields={
-                  table.fields.map((field) => ({
-                    ...field,
-                    value: field.value(data) ?? 0
-                  }))
+                  table.fields.map((field) => {
+                    const value = field.value(data) ?? 0
+
+                    return {
+                      ...field,
+                      value,
+                      className: field.getClassName?.(value) ?? field.className
+                    }
+                  })
                 }
               />
             ))
