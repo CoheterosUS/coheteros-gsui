@@ -11,9 +11,10 @@
     "preview-exp": "vite preview --host"
   },
   "dependencies": {
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.5.0",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
     "@tailwindcss/vite": "^4.1.18",
+    "@types/three": "^0.185.4",
     "chart.js": "^4.5.1",
     "lucide-react": "^0.563.0",
     "maplibre-gl": "^5.17.0",
