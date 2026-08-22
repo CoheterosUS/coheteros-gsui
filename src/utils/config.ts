@@ -21,7 +21,6 @@ export const DEVELOPMENT_MODE = import.meta.env.VITE_MODE === 'TEST'
 
 // Flight state machine, values come straight from the telemetry packet
 export const STATE_IDLE = 0
-export const STATE_GROUND_ABORT = 9
 
 export const FLIGHT_STATES: Record<number, string> = {
   0: 'IDLE',

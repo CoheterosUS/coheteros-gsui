@@ -38,12 +38,6 @@ export function getFaultCount (flags: number) {
   return FAULT_FLAGS.filter((flag) => flags & (1 << flag.bit)).length
 }
 
-export const paddings = {
-  gyroscope: 50,
-  voltage: 0.5,
-  temperature: 5
-}
-
 export const telemetryTableFields: TelemetryTableStructure[] = [
   {
     name: 'STATUS',
@@ -88,7 +82,14 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
         label: 'BAROMETRIC VELOCITY',
         value: (data: WebsocketTelemetryData) => data.barometricVelocity.toFixed(2),
         unit: 'm/s'
-      },
+      }
+    ]
+  },
+  {
+    name: 'VELOCITY',
+    className: 'text-altitude',
+    accentClassName: 'bg-altitude',
+    fields: [
       {
         label: 'VELOCITY X',
         value: (data: WebsocketTelemetryData) => data.velX.toFixed(2),
@@ -206,35 +207,6 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
     ]
   }
 ]
-
-export function getPaddedMinMax (
-  data: WebsocketTelemetryData[],
-  keys: string[],
-  padding = 0
-) {
-  if (data.length === 0) {
-    return {
-      min: 0,
-      max: 0
-    }
-  }
-
-  let min = Infinity
-  let max = -Infinity
-
-  for (const point of data) {
-    for (const key of keys) {
-      const value = point[key as keyof WebsocketTelemetryData]
-      if (value < min) min = value
-      if (value > max) max = value
-    }
-  }
-
-  return {
-    min: min - padding,
-    max: max + padding
-  }
-}
 
 const EARTH_RADIUS_M = 6371000
 

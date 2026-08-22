@@ -89,9 +89,7 @@ export const colors = {
   gyroscopeZ: 'rgba(255, 206, 86, 1)',
   accelerationX: 'rgba(255, 99, 132, 1)',
   accelerationY: 'rgba(54, 162, 235, 1)',
-  accelerationZ: 'rgba(255, 206, 86, 1)',
-  pressure: 'rgba(255, 215, 0, 1)',
-  temperature: 'rgba(255, 112, 67, 1)'
+  accelerationZ: 'rgba(255, 206, 86, 1)'
 }
 
 // Esri World Imagery needs no API key, only attribution
@@ -126,30 +124,6 @@ export const pointLayer = {
     'circle-color': '#f00',
     'circle-stroke-width': 2,
     'circle-stroke-color': '#000'
-  }
-}
-
-export const labelLayer = {
-  id: 'gps-label',
-  type: 'symbol',
-  source: 'gps',
-  layout: {
-    'text-field': [
-      'concat',
-      'BARO ', ['to-string', ['get', 'barometricAltitude']], ' m AGL\n',
-      'GPS ', ['to-string', ['get', 'gpsAltitude']], ' m ASL'
-    ],
-    'text-size': 16,
-    'text-offset': [0, -2],
-    'text-anchor': 'top',
-    'text-allow-overlap': true,
-    'text-ignore-placement': true,
-    'text-optional': true
-  },
-  paint: {
-    'text-color': '#fff',
-    'text-halo-color': '#000',
-    'text-halo-width': 1.5
   }
 }
 

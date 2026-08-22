@@ -52,8 +52,8 @@ export default function TelemetryContainer ({
             ))
           }
         </div>
-        {/* 3D orientation viewer, uncomment this block and its two imports to bring it back
-        <Panel
+        {/* 3D orientation viewer, uncomment this block and its two imports to bring it back */}
+        {/* <Panel
           title='ORIENTATION'
           accentClassName='text-orientation'
           className='w-64 shrink-0'
@@ -63,8 +63,7 @@ export default function TelemetryContainer ({
             pitch={0}
             yaw={0}
           />
-        </Panel>
-        */}
+        </Panel> */}
       </div>
     </div>
   )
