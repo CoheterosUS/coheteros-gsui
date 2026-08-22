@@ -52,8 +52,10 @@ class SerialManager:
       return False
 
     try:
+      # no flush() here: it spins on out_waiting with no timeout, so a wedged
+      # port would hang the event loop forever. write() already handed the
+      # bytes to the driver and is bounded by write_timeout
       self.serial_connection.write(frame)
-      self.serial_connection.flush()
     except Exception as e:
       logger(f"FAILED TO SEND {command}: {e}", "ERROR")
       return False
