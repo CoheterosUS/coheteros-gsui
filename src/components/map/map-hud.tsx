@@ -67,7 +67,7 @@ export default function MapHud ({
     <Panel
       title='VEHICLE'
       accentClassName='text-position'
-      className='w-96 bg-background/95'
+      className='w-full bg-background/95'
       contentClassName='flex flex-col gap-1 px-3 py-2'
     >
       <MapHudRow

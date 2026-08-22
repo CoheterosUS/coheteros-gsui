@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import Map, { type MapRef, Source, Layer } from 'react-map-gl/maplibre'
 import type { FeatureCollection } from 'geojson'
 import { useWebsocketAPI } from '@/contexts/WebsocketContext'
@@ -13,7 +13,7 @@ interface GPSMapProps {
   initial: WebsocketTelemetryData
 }
 
-export default function GPSMap ({
+function GPSMap ({
   initial
 }: GPSMapProps) {
   const { subscribe } = useWebsocketAPI()
@@ -157,7 +157,7 @@ export default function GPSMap ({
         }
       </Map>
       <div
-        className='absolute bottom-4 left-4'
+        className='absolute bottom-4 left-4 right-4'
       >
         <MapHud
           latitude={readout.latitude}
@@ -186,3 +186,6 @@ export default function GPSMap ({
     </div>
   )
 }
+
+// the dashboard re-renders on every telemetry tick, the map must not follow it
+export default memo(GPSMap)

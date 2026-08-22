@@ -4,7 +4,6 @@ import { WebsocketProvider } from '@/contexts/WebsocketContext'
 import DashboardPage from '@/pages/dashboard'
 import LoggingPage from '@/pages/logging'
 import AboutPage from '@/pages/about'
-import MapPage from '@/pages/map'
 import SettingsPage from '@/pages/settings'
 import AppLayout from '@/layout'
 import { getToastIcon } from '@/utils/utils'
@@ -26,10 +25,6 @@ export default function App () {
           <Route
             index
             element={<DashboardPage />}
-          />
-          <Route
-            path='/map'
-            element={<MapPage />}
           />
           <Route
             path='/logging'

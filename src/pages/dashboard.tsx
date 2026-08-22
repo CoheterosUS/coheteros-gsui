@@ -7,6 +7,7 @@ import Telemetry from '@/components/telemetry/telemetry'
 import TelemetryEmpty from '@/components/telemetry/telemetry-empty'
 import FlightControls from '@/components/controls/flight-controls'
 import Panel from '@/components/ui/panel'
+import MapPanel from '@/components/map/map-panel'
 
 import {
   Chart,
@@ -36,41 +37,50 @@ export default function DashboardPage () {
 
   return loaded ? (
     <div
-      className='h-full flex flex-col overflow-hidden'
+      className='h-full flex overflow-hidden'
     >
-      <Telemetry />
       <div
-        className='min-h-0 flex-1 grid grid-cols-2 grid-rows-2 gap-2 px-2 pb-2'
+        className='min-w-0 flex-1 flex flex-col overflow-hidden'
       >
-        <Panel
-          title='ALTITUDE'
-          accentClassName='text-altitude'
-          contentClassName='p-2'
-          className='col-span-2'
+        <Telemetry />
+        <div
+          className='min-h-0 flex-1 grid grid-cols-2 grid-rows-2 gap-2 px-2 pb-2'
         >
-          <ChartAltitude />
-        </Panel>
-        <Panel
-          title='GYROSCOPE'
-          accentClassName='text-gyroscope'
-          contentClassName='p-2'
+          <Panel
+            title='ALTITUDE'
+            accentClassName='text-altitude'
+            contentClassName='p-2'
+            className='col-span-2'
+          >
+            <ChartAltitude />
+          </Panel>
+          <Panel
+            title='GYROSCOPE'
+            accentClassName='text-gyroscope'
+            contentClassName='p-2'
+          >
+            <ChartGyroscope />
+          </Panel>
+          <Panel
+            title='ACCELERATION'
+            accentClassName='text-acceleration'
+            contentClassName='p-2'
+          >
+            <ChartAcceleration />
+          </Panel>
+        </div>
+        <div
+          className='shrink-0 flex flex-row flex-wrap items-center gap-2 border-t-2 border-primary-muted bg-primary/30'
         >
-          <ChartGyroscope />
-        </Panel>
-        <Panel
-          title='ACCELERATION'
-          accentClassName='text-acceleration'
-          contentClassName='p-2'
-        >
-          <ChartAcceleration />
-        </Panel>
+          <FlightControls
+            bordered={false}
+          />
+        </div>
       </div>
       <div
-        className='shrink-0 flex flex-row flex-wrap items-center gap-2 border-t-2 border-primary-muted bg-primary/30'
+        className='w-[28rem] shrink-0 py-2 pr-2'
       >
-        <FlightControls
-          bordered={false}
-        />
+        <MapPanel />
       </div>
     </div>
   ) : (
