@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useWebsocketAPI, useWebsocketStats } from '@/contexts/WebsocketContext'
 import ControlsButton from '@/components/controls/controls-button'
 import ControlsSection from '@/components/controls/controls-section'
+import useConfirm from '@/hooks/useConfirm'
 import useFetchState from '@/hooks/useFetchState'
 import { STATE_IDLE } from '@/utils/config'
 
@@ -15,6 +16,7 @@ export default function FlightControls ({
   const { send, subscribe } = useWebsocketAPI()
   const { status } = useWebsocketStats()
   const { data, getData } = useFetchState<WebsocketStateUpdateData>()
+  const { confirm, dialog } = useConfirm()
   const [flightState, setFlightState] = useState<number | null>(null)
 
   const handleCommand = async (type: WebsocketCommandType, payload?: string) => {
@@ -27,8 +29,8 @@ export default function FlightControls ({
   }
 
   // RESET and ABORT act on the vehicle and cannot be undone from here
-  const handleConfirmedCommand = async (type: WebsocketCommandType, prompt: string) => {
-    if (!window.confirm(prompt)) {
+  const handleConfirmedCommand = async (type: WebsocketCommandType, options: ConfirmOptions) => {
+    if (!await confirm(options)) {
       return
     }
 
@@ -94,13 +96,21 @@ export default function FlightControls ({
         />
         <ControlsButton
           label='RESET'
-          onClick={() => handleConfirmedCommand('RESET', 'Send RESET to the flight controller?')}
+          onClick={() => handleConfirmedCommand('RESET', {
+            title: 'RESET',
+            message: 'SEND RESET TO THE FLIGHT CONTROLLER?',
+            confirmLabel: 'SEND RESET'
+          })}
           variant='danger'
           disabled={noSerial}
         />
         <ControlsButton
           label='GROUND ABORT'
-          onClick={() => handleConfirmedCommand('GROUND_ABORT', 'Send GROUND ABORT to the flight controller? This ends the flight.')}
+          onClick={() => handleConfirmedCommand('GROUND_ABORT', {
+            title: 'GROUND ABORT',
+            message: 'SEND GROUND ABORT TO THE FLIGHT CONTROLLER? THIS ENDS THE FLIGHT.',
+            confirmLabel: 'SEND ABORT'
+          })}
           variant='danger'
           disabled={noSerial}
         />
@@ -111,11 +121,16 @@ export default function FlightControls ({
       >
         <ControlsButton
           label='DEPLOY DROGUE'
-          onClick={() => handleConfirmedCommand('DROGUE', 'Fire the drogue pyro channel?')}
+          onClick={() => handleConfirmedCommand('DROGUE', {
+            title: 'DEPLOY DROGUE',
+            message: 'FIRE THE DROGUE PYRO CHANNEL?',
+            confirmLabel: 'FIRE DROGUE'
+          })}
           variant='danger'
           disabled={noSerial}
         />
       </ControlsSection>
+      {dialog}
     </>
   )
 }

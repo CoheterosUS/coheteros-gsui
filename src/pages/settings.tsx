@@ -165,6 +165,11 @@ export default function SettingsPage () {
                     variant='danger'
                     disabled={!isSerialConnected}
                   />
+                  <ControlsButton
+                    label='REFRESH PORTS'
+                    onClick={fetchControls}
+                    disabled={status !== 'connected'}
+                  />
                 </div>
               </div>
             ) : (
