@@ -5,7 +5,6 @@ import ChartGyroscope from '@/components/charts/chart-gyroscope'
 import ChartAcceleration from '@/components/charts/chart-acceleration'
 import Telemetry from '@/components/telemetry/telemetry'
 import TelemetryEmpty from '@/components/telemetry/telemetry-empty'
-import FlightControls from '@/components/controls/flight-controls'
 import Panel from '@/components/ui/panel'
 import MapPanel from '@/components/map/map-panel'
 
@@ -37,14 +36,14 @@ export default function DashboardPage () {
 
   return loaded ? (
     <div
-      className='h-full flex overflow-hidden'
+      className='min-h-full flex'
     >
       <div
-        className='min-w-0 flex-1 flex flex-col overflow-hidden'
+        className='min-w-0 flex-1 flex flex-col'
       >
         <Telemetry />
         <div
-          className='min-h-0 flex-1 grid grid-cols-2 grid-rows-2 gap-2 px-2 pb-2'
+          className='min-h-0 flex-1 grid grid-cols-2 grid-rows-[repeat(2,minmax(12rem,1fr))] gap-2 px-2 pb-2'
         >
           <Panel
             title='ALTITUDE'
@@ -69,16 +68,9 @@ export default function DashboardPage () {
             <ChartAcceleration />
           </Panel>
         </div>
-        <div
-          className='shrink-0 flex flex-row flex-wrap items-center gap-2 border-t-2 border-primary-muted bg-primary/30'
-        >
-          <FlightControls
-            bordered={false}
-          />
-        </div>
       </div>
       <div
-        className='w-[28rem] shrink-0 py-2 pr-2'
+        className='sticky top-0 self-start h-[calc(100vh_-_1.75rem_-_2px)] w-[28rem] shrink-0 py-2 pr-2'
       >
         <MapPanel />
       </div>

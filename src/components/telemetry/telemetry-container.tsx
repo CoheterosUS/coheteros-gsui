@@ -1,5 +1,6 @@
 import TelemetryHeader from '@/components/telemetry/telemetry-header'
 import TelemetryTableCell from '@/components/telemetry-table/telemetry-table-cell'
+import FlightControls from '@/components/controls/flight-controls'
 // import VisualizerScene from '@/components/visualizer/visualizer-scene'
 // import Panel from '@/components/ui/panel'
 import { telemetryTableFields } from '@/utils/utils'
@@ -12,20 +13,27 @@ export default function TelemetryContainer ({
   data
 }: TelemetryContainerProps) {
   return (
-    <div
-      className='flex flex-col gap-2 p-2'
-    >
-      <TelemetryHeader
-        sync={data.sync}
-        tick={data.tick}
-        state={data.state}
-        flags={data.flags}
-        pressurePa={data.pressurePa}
-        temperatureC={data.temperatureC}
-        batteryVoltage={data.batteryVoltage}
-      />
+    <>
       <div
-        className='flex flex-1 gap-2'
+        className='sticky top-0 z-10 bg-background p-2'
+      >
+        <TelemetryHeader
+          sync={data.sync}
+          tick={data.tick}
+          state={data.state}
+          flags={data.flags}
+          pressurePa={data.pressurePa}
+          temperatureC={data.temperatureC}
+          batteryVoltage={data.batteryVoltage}
+          controls={
+            <FlightControls
+              bordered={false}
+            />
+          }
+        />
+      </div>
+      <div
+        className='flex gap-2 px-2 pb-2'
       >
         <div
           className='grid flex-1 grid-cols-4 gap-2'
@@ -65,6 +73,6 @@ export default function TelemetryContainer ({
           />
         </Panel> */}
       </div>
-    </div>
+    </>
   )
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { getFaultCount, getStateName, getStateStyle } from '@/utils/utils'
 
 interface TelemetryHeaderProps {
@@ -9,6 +10,7 @@ interface TelemetryHeaderProps {
   pressurePa: number
   temperatureC: number
   batteryVoltage: number
+  controls?: ReactNode
 }
 
 interface TelemetryHeaderItemProps {
@@ -56,7 +58,8 @@ export default function TelemetryHeader ({
   flags,
   pressurePa,
   temperatureC,
-  batteryVoltage
+  batteryVoltage,
+  controls
 }: TelemetryHeaderProps) {
   const [clock, setClock] = useState(() => new Date().toLocaleTimeString())
 
@@ -76,51 +79,62 @@ export default function TelemetryHeader ({
 
   return (
     <div
-      className='flex flex-wrap items-center gap-x-4 gap-y-2 border-2 border-primary bg-primary/40 px-3 py-2'
+      className='border-2 border-primary bg-primary/40'
     >
       <div
-        className={`border-2 border-dashed px-3 py-1 text-sm tracking-widest ${getStateStyle(state)}`}
+        className='flex flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2'
       >
-        {getStateName(state)}
+        <div
+          className={`border-2 border-dashed px-3 py-1 text-sm tracking-widest ${getStateStyle(state)}`}
+        >
+          {getStateName(state)}
+        </div>
+        <div
+          className={`border-2 border-dashed px-3 py-1 text-sm tracking-widest ${faultStyle}`}
+        >
+          FAULTS: {faultCount === 0 ? 'NONE' : faultCount}
+        </div>
+        <div
+          className='flex flex-1 flex-wrap items-center justify-end gap-x-4 gap-y-2'
+        >
+          <TelemetryHeaderItem
+            label='LOCAL'
+            value={clock}
+          />
+          <TelemetryHeaderItem
+            label='TICK'
+            value={tick.toString()}
+          />
+          <TelemetryHeaderItem
+            label='SYNC'
+            value={syncLabel}
+          />
+          <TelemetryHeaderItem
+            label='BATTERY'
+            value={batteryVoltage.toFixed(2)}
+            unit='V'
+            className='text-battery'
+          />
+          <TelemetryHeaderItem
+            label='PRESSURE'
+            value={pressurePa.toFixed(0)}
+            unit='Pa'
+          />
+          <TelemetryHeaderItem
+            label='TEMPERATURE'
+            value={temperatureC.toFixed(2)}
+            unit='°C'
+            className='text-temperature'
+          />
+        </div>
       </div>
-      <div
-        className={`border-2 border-dashed px-3 py-1 text-sm tracking-widest ${faultStyle}`}
-      >
-        FAULTS: {faultCount === 0 ? 'NONE' : faultCount}
-      </div>
-      <div
-        className='flex flex-1 flex-wrap items-center justify-end gap-x-4 gap-y-2'
-      >
-        <TelemetryHeaderItem
-          label='LOCAL'
-          value={clock}
-        />
-        <TelemetryHeaderItem
-          label='TICK'
-          value={tick.toString()}
-        />
-        <TelemetryHeaderItem
-          label='SYNC'
-          value={syncLabel}
-        />
-        <TelemetryHeaderItem
-          label='BATTERY'
-          value={batteryVoltage.toFixed(2)}
-          unit='V'
-          className='text-battery'
-        />
-        <TelemetryHeaderItem
-          label='PRESSURE'
-          value={pressurePa.toFixed(0)}
-          unit='Pa'
-        />
-        <TelemetryHeaderItem
-          label='TEMPERATURE'
-          value={temperatureC.toFixed(2)}
-          unit='°C'
-          className='text-temperature'
-        />
-      </div>
+      {controls && (
+        <div
+          className='flex flex-row flex-wrap items-center gap-2 border-t-2 border-primary'
+        >
+          {controls}
+        </div>
+      )}
     </div>
   )
 }

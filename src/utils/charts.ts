@@ -95,6 +95,7 @@ export const colors = {
 // Esri World Imagery needs no API key, only attribution
 export const satelliteStyle: StyleSpecification = {
   version: 8,
+  // raster imagery ships no glyphs, without these the label layer draws nothing
   sources: {
     'esri-imagery': {
       type: 'raster',
@@ -144,9 +145,12 @@ export const groundStationLabelLayer = {
   type: 'symbol',
   source: 'ground-station',
   layout: {
-    'text-field': 'Ground Station',
-    'text-size': 16,
-    'text-offset': [0, -2],
+    'text-field': 'GROUND STATION',
+    // bold caps over noisy satellite imagery, both basemaps serve this font
+    'text-font': ['Open Sans Bold'],
+    'text-size': 14,
+    'text-letter-spacing': 0.08,
+    'text-offset': [0, -3],
     'text-anchor': 'top',
     'text-allow-overlap': true,
     'text-ignore-placement': true,
@@ -155,6 +159,6 @@ export const groundStationLabelLayer = {
   paint: {
     'text-color': '#fff',
     'text-halo-color': '#000',
-    'text-halo-width': 1.5
+    'text-halo-width': 2
   }
 }
