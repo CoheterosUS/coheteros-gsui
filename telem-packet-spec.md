@@ -4,7 +4,7 @@
 
 The flight controller sends telemetry packets over UART at **115200 baud, 8N1**. Each packet is a packed C struct (`TelemetryPacket_t`) sent as raw little-endian bytes. No additional protocol wrapping — the struct IS the packet.
 
-**Packet size:** 94 bytes  
+**Packet size:** 95 bytes  
 **Byte order:** Little-endian  
 **Sync word:** `0xCAFE` (on wire: `0xFE` then `0xCA`)  
 **Footer byte:** `0xBE` at offset 93  
@@ -42,15 +42,16 @@ All `int32 (×100)` fields are float values multiplied by 100 before sending. Di
 | 87     | 4    | int32  | BatteryVoltage     | Volts × 100                        |
 | 91     | 1    | uint8  | State              | State machine enum (see below)      |
 | 92     | 1    | uint8  | RelayState         | Pyro bitmask (see below)            |
-| 93     | 1    | uint8  | SyncEnd            | Always `0xBE`                       |
+| 93     | 1    | uint8  | LastCommand        | Last received command (see below)   |
+| 94     | 1    | uint8  | SyncEnd            | Always `0xBE`                       |
 
-**Total: 94 bytes (packed, no padding)**
+**Total: 95 bytes (packed, no padding)**
 
 ## Parsing Strategy
 
 1. Read bytes from serial port into a rolling buffer.
 2. Scan for sync word: byte `0xFE` followed by `0xCA`.
-3. Once sync found, accumulate 94 bytes total (including sync).
+3. Once sync found, accumulate 95 bytes total (including sync).
 4. Verify last byte is `0xBE` (footer). If not, discard and rescan.
 5. Parse fields at their offsets using little-endian byte order.
 6. For ×100 fields: `actual_value = raw_int32 / 100.0`
@@ -128,8 +129,24 @@ The ground station can send commands using this framing:
 | `0x02` | GROUND_ABORT|
 | `0x03` | CALIBRATION |
 | `0x04` | DROGUE      |
+| `0x10` | HIL_DATA    |
+| `0x20` | GPS_DATA    |
 
 These are 5-byte frames with no payload.
+
+## LastCommand Values
+
+| Value  | Command         |
+|--------|-----------------|
+| `0x00` | NONE            |
+| `0x01` | RESET           |
+| `0x02` | GROUND_ABORT    |
+| `0x03` | CALIBRATION     |
+| `0x04` | DROGUE          |
+| `0x10` | HIL_DATA        |
+| `0x20` | GPS_DATA        |
+
+Persists until next command is received.
 
 ## Verification Checklist
 
@@ -137,7 +154,7 @@ These are 5-byte frames with no payload.
 2. All int32 fields parsed as little-endian, divided by 100.0 for display
 3. Latitude/Longitude divided by 10000000.0 (NOT by 100)
 4. Field order matches layout exactly — no gaps, no padding
-5. Total packet size is exactly 94 bytes
-6. Footer 0xBE checked at byte 93
+5. Total packet size is exactly 95 bytes
+6. Footer 0xBE checked at byte 94
 7. State and RelayState are single bytes (not wider)
 8. Telemetry rate is ~10 Hz (decimated from 100 Hz main loop)
