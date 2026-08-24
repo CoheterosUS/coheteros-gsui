@@ -17,7 +17,7 @@ CSV_HEADERS = [
   "latitude", "longitude", "gpsAltitude", "satellites",
   "barometricAltitude", "barometricVelocity",
   "pressurePa", "temperatureC", "velX", "velY", "velZ",
-  "batteryVoltage", "relayState",
+  "batteryVoltage", "relayState", "lastCommand",
 ]
 
 class CSVManager:

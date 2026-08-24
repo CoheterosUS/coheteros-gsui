@@ -14,7 +14,7 @@ COM_PORT = getenv("TESTING_COM_PORT", "COM2")
 COM_BAUDRATE = int(getenv("TESTING_COM_BAUDRATE", 115200))
 PACKET_FREQUENCY = int(getenv("PACKET_FREQUENCY", 10))
 
-FLIGHT_DATA_FMT = "<HI14iB5iIiBBB"
+FLIGHT_DATA_FMT = "<HI14iB5iIiBBBB"
 
 SCALE = 100
 
@@ -54,6 +54,8 @@ def build_packet() -> bytes:
   flags = 0
   state = int((elapsed // 10) % 7)
   relay_state = 0
+  # this generator never reads the port, so no command has ever arrived
+  last_command = 0x00
 
   flight_data = struct.pack(
     FLIGHT_DATA_FMT,
@@ -72,6 +74,7 @@ def build_packet() -> bytes:
     int(battery_voltage * SCALE),
     state,
     relay_state,
+    last_command,
     0xBE,
   )
 

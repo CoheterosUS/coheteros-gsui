@@ -1,10 +1,14 @@
 import { Euler, MathUtils, Object3D } from 'three'
 import { CircleCheck, CircleX, Info } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { FAULT_DEVICES, FAULT_FLAGS, FLIGHT_STATES, RELAY_DROGUE, RELAY_PARACHUTE } from '@/utils/config'
+import { FAULT_DEVICES, FAULT_FLAGS, FLIGHT_STATES, LAST_COMMANDS, RELAY_DROGUE, RELAY_PARACHUTE } from '@/utils/config'
 
 export function getStateName (state: number) {
   return FLIGHT_STATES[state] ?? `UNKNOWN (${state})`
+}
+
+export function getLastCommandName (command: number) {
+  return LAST_COMMANDS[command] ?? `UNKNOWN (0x${command.toString(16).padStart(2, '0')})`
 }
 
 // visual severity of the flight state, used by the dashboard status strip
@@ -55,6 +59,10 @@ export const telemetryTableFields: TelemetryTableStructure[] = [
       {
         label: 'FLAGS',
         value: (data: WebsocketTelemetryData) => data.flags
+      },
+      {
+        label: 'LAST COMMAND',
+        value: (data: WebsocketTelemetryData) => getLastCommandName(data.lastCommand)
       },
       {
         label: 'DROGUE',

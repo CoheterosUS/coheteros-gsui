@@ -47,6 +47,7 @@ interface WebsocketTelemetryData {
   velY: number
   velZ: number
   relayState: number
+  lastCommand: number
   batteryVoltage: number
   flags: number
   syncEnd: number

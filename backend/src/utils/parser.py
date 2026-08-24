@@ -4,7 +4,7 @@ import time
 
 from ..utils.logger import logger
 
-FLIGHT_DATA_FMT = "<HI14iB5iIiBBB"
+FLIGHT_DATA_FMT = "<HI14iB5iIiBBBB"
 FLIGHT_DATA_SIZE = struct.calcsize(FLIGHT_DATA_FMT)
 FLIGHT_DATA_LENGTH = FLIGHT_DATA_SIZE * 2
 
@@ -60,7 +60,7 @@ def parse_hex_line (hex_line: str) -> dict | None:
     gps_altitude, satellites,
     barometric_altitude, barometric_velocity,
     vel_x, vel_y, vel_z,
-    flags, battery_voltage, state, relay_state, sync_end,
+    flags, battery_voltage, state, relay_state, last_command, sync_end,
   ) = struct.unpack(FLIGHT_DATA_FMT, raw)
 
   if sync != SYNC_WORD or sync_end != SYNC_END:
@@ -99,5 +99,6 @@ def parse_hex_line (hex_line: str) -> dict | None:
     "flags":               flags,
     "batteryVoltage":      battery_voltage / SCALE,
     "relayState":          relay_state,
+    "lastCommand":         last_command,
     "syncEnd":             sync_end,
   }

@@ -36,6 +36,7 @@ def create_fake_data () -> dict[str, float | int]:
   packet['batteryVoltage'] = 12.6 - (0.01 * elapsed) + random.uniform(-0.05, 0.05)
   packet['flags'] = 0
   packet['relayState'] = 0
+  packet['lastCommand'] = 0x00
   packet['syncEnd'] = 0xBE
 
   return packet

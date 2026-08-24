@@ -7,7 +7,7 @@ The flight controller sends telemetry packets over UART at **115200 baud, 8N1**.
 **Packet size:** 95 bytes  
 **Byte order:** Little-endian  
 **Sync word:** `0xCAFE` (on wire: `0xFE` then `0xCA`)  
-**Footer byte:** `0xBE` at offset 93  
+**Footer byte:** `0xBE` at offset 94  
 **Estimated rate:** ~10 Hz (decimated from 100 Hz main loop)
 
 ## Packet Layout
@@ -143,10 +143,8 @@ These are 5-byte frames with no payload.
 | `0x02` | GROUND_ABORT    |
 | `0x03` | CALIBRATION     |
 | `0x04` | DROGUE          |
-| `0x10` | HIL_DATA        |
-| `0x20` | GPS_DATA        |
 
-Persists until next command is received.
+Persists until next operator command is received. Internal commands (HIL_DATA `0x10`, GPS_DATA `0x20`) are excluded from logging and telemetry.
 
 ## Verification Checklist
 

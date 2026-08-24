@@ -56,6 +56,14 @@ export const FAULT_DEVICES = [...new Set(FAULT_FLAGS.map((flag) => flag.device))
 export const RELAY_DROGUE = 0x01
 export const RELAY_PARACHUTE = 0x02
 
+export const LAST_COMMANDS: Record<number, string> = {
+  0x00: 'NONE',
+  0x01: 'RESET',
+  0x02: 'GROUND ABORT',
+  0x03: 'CALIBRATION',
+  0x04: 'DROGUE'
+}
+
 // Visualizer
 export const MODEL_PATH = '/model/rocket.obj'
 export const SPHERE_RADIUS = 3

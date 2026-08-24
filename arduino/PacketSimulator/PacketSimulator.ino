@@ -1,7 +1,7 @@
 /*
  * PacketSimulator - Arduino Uno telemetry packet generator
  *
- * Emits TelemetryPacket_t (94 bytes, packed, little-endian) at 10 Hz over the
+ * Emits TelemetryPacket_t (95 bytes, packed, little-endian) at 10 Hz over the
  * hardware UART so the ground station UI can be tested without the real flight
  * controller. Also accepts the ground station's 5-byte command frames.
  *
@@ -49,6 +49,11 @@ const uint8_t CMD_GROUND_ABORT = 0x02;
 const uint8_t CMD_CALIBRATION = 0x03;
 const uint8_t CMD_DROGUE = 0x04;
 
+const uint8_t CMD_NONE = 0x00;
+
+// echoed back in every packet, persists until the next command arrives
+uint8_t lastCommand = CMD_NONE;
+
 struct __attribute__((packed)) TelemetryPacket_t {
   uint16_t sync;
   uint32_t tick;
@@ -76,10 +81,11 @@ struct __attribute__((packed)) TelemetryPacket_t {
   int32_t batteryVoltage;
   uint8_t state;
   uint8_t relayState;
+  uint8_t lastCommand;
   uint8_t syncEnd;
 };
 
-static_assert(sizeof(TelemetryPacket_t) == 94, "packet must be exactly 94 bytes");
+static_assert(sizeof(TelemetryPacket_t) == 95, "packet must be exactly 95 bytes");
 
 // simulated flight state
 const float PAD_LATITUDE = 37.3852298f;
@@ -155,7 +161,13 @@ void handleCommand(uint8_t command) {
       autoSequence = true;
       enterState(STATE_APOGEE);
       break;
+
+    default:
+      // unknown byte, not a command: leave the echo untouched
+      return;
   }
+
+  lastCommand = command;
 }
 
 // Scans the incoming byte stream for FE CA <cmd> <len> BE. Anything that does
@@ -324,6 +336,7 @@ void buildPacket(TelemetryPacket_t &packet) {
 
   packet.state = flightState;
   packet.relayState = relayState;
+  packet.lastCommand = lastCommand;
   packet.syncEnd = SYNC_END;
 }
 
