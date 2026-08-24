@@ -5,8 +5,8 @@ import { useWebsocketAPI } from '@/contexts/WebsocketContext'
 import { useLocation } from '@/hooks/useLocation'
 import ControlsButton from '@/components/controls/controls-button'
 import MapHud from '@/components/map/map-hud'
-import { getDistanceMeters } from '@/utils/utils'
-import { pointLayer, groundStationLayer, groundStationLabelLayer, satelliteStyle, streetStyle } from '@/utils/charts'
+import { getDistanceLabel, getDistanceMeters } from '@/utils/utils'
+import { pointLayer, groundStationLayer, groundStationLabelLayer, groundLinkCasingLayer, groundLinkLayer, groundLinkLabelLayer, satelliteStyle, streetStyle } from '@/utils/charts'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 interface GPSMapProps {
@@ -80,6 +80,31 @@ function GPSMap ({
     )
   }, [location, readout])
 
+  const groundLink: FeatureCollection | null = useMemo(() => {
+    if (location == null || groundDistance == null) {
+      return null
+    }
+
+    const { value, unit } = getDistanceLabel(groundDistance)
+
+    return {
+      type: 'FeatureCollection',
+      features: [{
+        type: 'Feature',
+        geometry: {
+          type: 'LineString',
+          coordinates: [
+            [location.longitude, location.latitude],
+            [readout.longitude / 1e7, readout.latitude / 1e7]
+          ]
+        },
+        properties: {
+          distance: `${value} ${unit}`
+        }
+      }]
+    }
+  }, [location, readout, groundDistance])
+
   useEffect(() => {
     anchoredRef.current = anchored
   }, [anchored])
@@ -127,6 +152,28 @@ function GPSMap ({
         pitchWithRotate
         touchPitch
       >
+        {
+          groundLink != null && (
+            <Source
+              id='ground-link'
+              type='geojson'
+              data={groundLink}
+            >
+              {/* @ts-expect-error */}
+              <Layer
+                {...groundLinkCasingLayer}
+              />
+              {/* @ts-expect-error */}
+              <Layer
+                {...groundLinkLayer}
+              />
+              {/* @ts-expect-error */}
+              <Layer
+                {...groundLinkLabelLayer}
+              />
+            </Source>
+          )
+        }
         <Source
           id='gps'
           type='geojson'

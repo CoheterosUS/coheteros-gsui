@@ -1,4 +1,5 @@
 import Panel from '@/components/ui/panel'
+import { getDistanceLabel } from '@/utils/utils'
 
 interface MapHudProps {
   latitude: number
@@ -106,8 +107,7 @@ export default function MapHud ({
         groundDistance != null && (
           <MapHudRow
             label='GROUND DISTANCE'
-            value={groundDistance < 1000 ? groundDistance.toFixed(0) : (groundDistance / 1000).toFixed(2)}
-            unit={groundDistance < 1000 ? 'm' : 'km'}
+            {...getDistanceLabel(groundDistance)}
             className='text-downlink'
           />
         )

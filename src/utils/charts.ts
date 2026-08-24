@@ -148,10 +148,61 @@ export const groundStationLabelLayer = {
     'text-field': 'GROUND STATION',
     // bold caps over noisy satellite imagery, both basemaps serve this font
     'text-font': ['Open Sans Bold'],
+    'text-max-width': 20,
     'text-size': 14,
     'text-letter-spacing': 0.08,
-    'text-offset': [0, -3],
+    'text-offset': [0, -2],
     'text-anchor': 'top',
+    'text-allow-overlap': true,
+    'text-ignore-placement': true,
+    'text-optional': true
+  },
+  paint: {
+    'text-color': '#fff',
+    'text-halo-color': '#000',
+    'text-halo-width': 2
+  }
+}
+
+export const groundLinkCasingLayer = {
+  id: 'ground-link-casing',
+  type: 'line',
+  source: 'ground-link',
+  layout: {
+    'line-cap': 'round'
+  },
+  paint: {
+    'line-color': '#000',
+    'line-width': 6,
+    'line-opacity': 0.8
+  }
+}
+
+export const groundLinkLayer = {
+  id: 'ground-link-line',
+  type: 'line',
+  source: 'ground-link',
+  layout: {
+    'line-cap': 'round'
+  },
+  paint: {
+    'line-color': '#f00',
+    'line-width': 3,
+    'line-dasharray': [2, 2]
+  }
+}
+
+export const groundLinkLabelLayer = {
+  id: 'ground-link-label',
+  type: 'symbol',
+  source: 'ground-link',
+  layout: {
+    'text-field': ['get', 'distance'],
+    'symbol-placement': 'line-center',
+    'text-pitch-alignment': 'viewport',
+    'text-font': ['Open Sans Bold'],
+    'text-size': 12,
+    'text-letter-spacing': 0.08,
     'text-allow-overlap': true,
     'text-ignore-placement': true,
     'text-optional': true

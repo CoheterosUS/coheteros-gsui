@@ -236,6 +236,12 @@ export function getDistanceMeters (
   return 2 * EARTH_RADIUS_M * Math.asin(Math.sqrt(a))
 }
 
+export function getDistanceLabel (meters: number) {
+  return meters < 1000
+    ? { value: meters.toFixed(0), unit: 'm' }
+    : { value: (meters / 1000).toFixed(2), unit: 'km' }
+}
+
 export function getCenteredMesh (obj: Object3D) {
   if (obj == null) {
     return
