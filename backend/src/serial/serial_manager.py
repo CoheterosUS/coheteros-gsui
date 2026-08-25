@@ -8,7 +8,7 @@ from asyncio import Queue, QueueFull, QueueEmpty
 from ..state.state_manager import global_state
 from ..csv.csv_manager import global_csv
 from ..utils.logger import logger
-from ..utils.parser import FLIGHT_DATA_SIZE, SYNC_BYTES, SYNC_END, build_command_frame
+from ..utils.parser import FLIGHT_DATA_SIZE, SYNC_BYTES, SYNC_END, build_command_frame, parse_frame
 
 MAX_BUFFER_SIZE = FLIGHT_DATA_SIZE * 32
 
@@ -83,10 +83,9 @@ class SerialManager:
     self._read_thread.start()
     logger("STARTED SERIAL READING THREAD")
 
-  def _enqueue (self, hex_line: str) -> None:
-    # runs on the event loop thread, so put_nowait raises here and not in the reader
+  def _enqueue (self, packet: dict) -> None:
     try:
-      self.async_queue.put_nowait(hex_line)
+      self.async_queue.put_nowait(packet)
     except QueueFull:
       try:
         self.async_queue.get_nowait()
@@ -94,7 +93,7 @@ class SerialManager:
         pass
       else:
         logger("ASYNC QUEUE FULL, DROPPING OLDEST PACKET", "WARNING")
-      self.async_queue.put_nowait(hex_line)
+      self.async_queue.put_nowait(packet)
 
   def _read_loop (self) -> None:
     self._running = True
@@ -129,16 +128,18 @@ class SerialManager:
 
             buffer = buffer[FLIGHT_DATA_SIZE:]
 
-            hex_line = frame.hex()
+            parsed = parse_frame(frame)
+            if parsed is None:
+              continue
 
             if self.async_queue and self._loop:
               try:
-                self._loop.call_soon_threadsafe(self._enqueue, hex_line)
+                self._loop.call_soon_threadsafe(self._enqueue, parsed)
               except RuntimeError:
                 logger("EVENT LOOP CLOSED, DROPPING DATA", "WARNING")
 
             if global_state.is_recording_csv:
-              global_csv.push(hex_line)
+              global_csv.push(parsed)
         else:
           time.sleep(0.01)
       except SerialException as e:

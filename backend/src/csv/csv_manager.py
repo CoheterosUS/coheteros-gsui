@@ -6,7 +6,6 @@ from threading import Thread, Event
 from datetime import datetime
 
 from ..utils.logger import logger
-from ..utils.parser import parse_hex_line
 
 CSV_HEADERS = [
   "ground_timestamp", "timestamp", "sync", "tick",
@@ -63,7 +62,7 @@ class CSVManager:
     self._running = False
     logger("CSV RECORDING STOPPED")
 
-  def push (self, data: str) -> None:
+  def push (self, data: dict) -> None:
     if self._running:
       self._queue.put_nowait(data)
 
@@ -96,11 +95,8 @@ class CSVManager:
         writer.writerows(buffer)
         f.flush()
 
-  def _parse_into_buffer (self, data: str, buffer: list) -> None:
-    parsed = parse_hex_line(data)
-    if parsed is None:
-      return
-    row = [parsed.get(h, 0) for h in CSV_HEADERS]
+  def _parse_into_buffer (self, data: dict, buffer: list) -> None:
+    row = [data.get(h, 0) for h in CSV_HEADERS]
     buffer.append(row)
 
 global_csv = CSVManager()

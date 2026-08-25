@@ -1,12 +1,10 @@
 import struct
-import math
 import time
 
 from ..utils.logger import logger
 
 FLIGHT_DATA_FMT = "<HI14iB5iIiBBBB"
 FLIGHT_DATA_SIZE = struct.calcsize(FLIGHT_DATA_FMT)
-FLIGHT_DATA_LENGTH = FLIGHT_DATA_SIZE * 2
 
 SYNC_WORD = 0xCAFE
 SYNC_BYTES = struct.pack("<H", SYNC_WORD)
@@ -36,18 +34,9 @@ def build_command_frame (command: str) -> bytes | None:
 
   return struct.pack(COMMAND_FMT, SYNC_WORD, cmd_byte, 0x00, SYNC_END)
 
-def parse_hex_line (hex_line: str) -> dict | None:
-  hex_line = hex_line.strip()
-  length = len(hex_line)
-
-  try:
-    raw = bytes.fromhex(hex_line)
-  except ValueError:
-    logger("INVALID HEX IN PACKET", "ERROR")
-    return None
-
-  if length != FLIGHT_DATA_LENGTH:
-    logger(f"BAD HEX LENGTH: {length} (EXPECTED {FLIGHT_DATA_LENGTH})", "ERROR")
+def parse_frame (frame: bytes) -> dict | None:
+  if len(frame) != FLIGHT_DATA_SIZE:
+    logger(f"BAD FRAME SIZE: {len(frame)} (EXPECTED {FLIGHT_DATA_SIZE})", "ERROR")
     return None
 
   (
@@ -62,7 +51,7 @@ def parse_hex_line (hex_line: str) -> dict | None:
     barometric_altitude, barometric_velocity,
     vel_x, vel_y, vel_z,
     flags, battery_voltage, state, relay_state, last_command, sync_end,
-  ) = struct.unpack(FLIGHT_DATA_FMT, raw)
+  ) = struct.unpack(FLIGHT_DATA_FMT, frame)
 
   if sync != SYNC_WORD or sync_end != SYNC_END:
     logger(f"BAD SYNC: {sync:#06x}/{sync_end:#04x}", "ERROR")
