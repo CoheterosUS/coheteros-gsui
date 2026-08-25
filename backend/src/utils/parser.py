@@ -25,6 +25,7 @@ COMMAND_BYTES = {
   "GROUND_ABORT": 0x02,
   "CALIBRATION": 0x03,
   "DROGUE": 0x04,
+  "LANDED": 0x05,
 }
 
 def build_command_frame (command: str) -> bytes | None:

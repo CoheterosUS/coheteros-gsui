@@ -48,6 +48,7 @@ const uint8_t CMD_RESET = 0x01;
 const uint8_t CMD_GROUND_ABORT = 0x02;
 const uint8_t CMD_CALIBRATION = 0x03;
 const uint8_t CMD_DROGUE = 0x04;
+const uint8_t CMD_LANDED = 0x05;
 
 const uint8_t CMD_NONE = 0x00;
 
@@ -160,6 +161,13 @@ void handleCommand(uint8_t command) {
       relayState |= RELAY_DROGUE;
       autoSequence = true;
       enterState(STATE_APOGEE);
+      break;
+
+    case CMD_LANDED:
+      // operator calls the flight down: stop the profile where it stands
+      autoSequence = false;
+      velocity = 0.0f;
+      enterState(STATE_LANDED);
       break;
 
     default:

@@ -61,7 +61,8 @@ export const LAST_COMMANDS: Record<number, string> = {
   0x01: 'RESET',
   0x02: 'GROUND ABORT',
   0x03: 'CALIBRATION',
-  0x04: 'DROGUE'
+  0x04: 'DROGUE',
+  0x05: 'LANDED'
 }
 
 // Visualizer

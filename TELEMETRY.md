@@ -14,27 +14,27 @@ The flight controller sends telemetry packets over UART at **115200 baud, 8N1**.
 
 All `int32 (×100)` fields are float values multiplied by 100 before sending. Divide by 100 on receive to recover 2 decimal places. Latitude and Longitude are NOT ×100 — they use their own scaling (×10^7).
 
-| Offset | Size | Type   | Field          | Unit / Notes                        |
-|--------|------|--------|----------------|-------------------------------------|
-| 0      | 2    | uint16 | Sync           | Always `0xCAFE`                     |
-| 2      | 4    | uint32 | Tick           | FreeRTOS tick count (ms)            |
-| 6      | 4    | int32  | AccelX         | m/s² × 100                         |
-| 10     | 4    | int32  | AccelY         | m/s² × 100                         |
-| 14     | 4    | int32  | AccelZ         | m/s² × 100                         |
-| 18     | 4    | int32  | GyroX          | dps × 100, bias-corrected          |
-| 22     | 4    | int32  | GyroY          | dps × 100                          |
-| 26     | 4    | int32  | GyroZ          | dps × 100                          |
-| 30     | 4    | int32  | MagX           | milligauss × 100                   |
-| 34     | 4    | int32  | MagY           | milligauss × 100                   |
-| 38     | 4    | int32  | MagZ           | milligauss × 100                   |
-| 42     | 4    | int32  | PressurePa     | Pascals × 100                      |
-| 46     | 4    | int32  | TemperatureC   | Celsius × 100                      |
-| 50     | 4    | int32  | Latitude       | degrees × 10^7 (NOT ×100)          |
-| 54     | 4    | int32  | Longitude      | degrees × 10^7 (NOT ×100)          |
+| Offset | Size | Type   | Field              | Unit / Notes                        |
+|--------|------|--------|--------------------|-------------------------------------|
+| 0      | 2    | uint16 | Sync               | Always `0xCAFE`                     |
+| 2      | 4    | uint32 | Tick               | FreeRTOS tick count (ms)            |
+| 6      | 4    | int32  | AccelX             | m/s² × 100                         |
+| 10     | 4    | int32  | AccelY             | m/s² × 100                         |
+| 14     | 4    | int32  | AccelZ             | m/s² × 100                         |
+| 18     | 4    | int32  | GyroX              | dps × 100, bias-corrected          |
+| 22     | 4    | int32  | GyroY              | dps × 100                          |
+| 26     | 4    | int32  | GyroZ              | dps × 100                          |
+| 30     | 4    | int32  | MagX               | milligauss × 100                   |
+| 34     | 4    | int32  | MagY               | milligauss × 100                   |
+| 38     | 4    | int32  | MagZ               | milligauss × 100                   |
+| 42     | 4    | int32  | PressurePa         | Pascals × 100                      |
+| 46     | 4    | int32  | TemperatureC       | Celsius × 100                      |
+| 50     | 4    | int32  | Latitude           | degrees × 10^7 (NOT ×100)          |
+| 54     | 4    | int32  | Longitude          | degrees × 10^7 (NOT ×100)          |
 | 58     | 4    | int32  | GPSAltitude        | meters × 100                       |
 | 62     | 1    | uint8  | Satellites         | GPS satellite count                 |
-| 63     | 4    | int32  | BarometricAltitude | meters × 100, IIR filtered          |
-| 67     | 4    | int32  | BarometricVelocity | m/s × 100, vertical velocity        |
+| 63     | 4    | int32  | BarometricAltitude | meters × 100, IIR filtered         |
+| 67     | 4    | int32  | BarometricVelocity | m/s × 100, vertical velocity       |
 | 71     | 4    | int32  | VelX               | m/s × 100 (currently 0)            |
 | 75     | 4    | int32  | VelY               | m/s × 100 (currently 0)            |
 | 79     | 4    | int32  | VelZ               | m/s × 100 (currently 0)            |
@@ -129,6 +129,7 @@ The ground station can send commands using this framing:
 | `0x02` | GROUND_ABORT|
 | `0x03` | CALIBRATION |
 | `0x04` | DROGUE      |
+| `0x05` | LANDED      |
 | `0x10` | HIL_DATA    |
 | `0x20` | GPS_DATA    |
 
@@ -143,6 +144,7 @@ These are 5-byte frames with no payload.
 | `0x02` | GROUND_ABORT    |
 | `0x03` | CALIBRATION     |
 | `0x04` | DROGUE          |
+| `0x05` | LANDED          |
 
 Persists until next operator command is received. Internal commands (HIL_DATA `0x10`, GPS_DATA `0x20`) are excluded from logging and telemetry.
 

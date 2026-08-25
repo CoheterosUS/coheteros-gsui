@@ -20,3 +20,6 @@ async def execute_calibration (data: dict) -> None:
 
 async def execute_drogue (data: dict) -> None:
   await _send("DROGUE")
+
+async def execute_landed (data: dict) -> None:
+  await _send("LANDED")

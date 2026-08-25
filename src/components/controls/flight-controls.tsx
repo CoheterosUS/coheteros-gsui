@@ -120,6 +120,16 @@ export default function FlightControls ({
         bordered={bordered}
       >
         <ControlsButton
+          label='MARK LANDED'
+          onClick={() => handleConfirmedCommand('LANDED', {
+            title: 'MARK LANDED',
+            message: 'FORCE THE FLIGHT CONTROLLER INTO THE LANDED STATE?',
+            confirmLabel: 'SEND LANDED'
+          })}
+          variant='danger'
+          disabled={noSerial}
+        />
+        <ControlsButton
           label='DEPLOY DROGUE'
           onClick={() => handleConfirmedCommand('DROGUE', {
             title: 'DEPLOY DROGUE',

@@ -13,6 +13,7 @@ type WebsocketCommandType =
   | 'GROUND_ABORT'
   | 'CALIBRATION'
   | 'DROGUE'
+  | 'LANDED'
   | 'START_FAKE_TELEMETRY'
   | 'STOP_FAKE_TELEMETRY'
   | 'START_CSV_RECORD'
